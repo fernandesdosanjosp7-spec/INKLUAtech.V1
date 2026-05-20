@@ -555,16 +555,16 @@ a {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    flex: 0 0 6.7rem;
-    width: 6.7rem;
-    height: 4.1rem;
+    flex: 0 0 5.8rem;
+    width: 5.8rem;
+    height: 3.6rem;
     padding: 0;
     background: transparent;
 }
 
 .login-brand__mark img {
-    width: 180%;
-    height: 180%;
+    width: 100%;
+    height: 100%;
     display: block;
     object-fit: contain;
     filter: drop-shadow(0 12px 22px rgba(53, 121, 215, 0.18));
