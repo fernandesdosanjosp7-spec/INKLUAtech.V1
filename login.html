@@ -19,6 +19,10 @@
             <span class="bg-symbol bg-symbol--puzzle-two"></span>
             <span class="bg-symbol bg-symbol--puzzle-three"></span>
             <span class="bg-symbol bg-symbol--puzzle-four"></span>
+            <span class="bg-symbol bg-symbol--puzzle-five"></span>
+            <span class="bg-symbol bg-symbol--puzzle-six"></span>
+            <span class="bg-symbol bg-symbol--puzzle-seven"></span>
+            <span class="bg-symbol bg-symbol--puzzle-eight"></span>
             <span class="bg-symbol bg-symbol--infinity-one">&infin;</span>
             <span class="bg-symbol bg-symbol--infinity-two">&infin;</span>
             <span class="bg-symbol bg-symbol--infinity-three">&infin;</span>
@@ -32,26 +36,25 @@
 
         <section class="login-card" aria-labelledby="login-title">
             <div class="login-brand">
-                <span class="login-brand__mark" aria-hidden="true">IT</span>
+                <span class="login-brand__mark">
+                    <img src="assets/ink-logo.png" alt="Logo Inklua Tech">
+                </span>
                 <div>
                     <p class="login-brand__label">Inklua Tech</p>
                     <h1 id="login-title">Acesse sua conta</h1>
                 </div>
             </div>
 
-            <p class="login-card__text">
-                Um ambiente seguro e acolhedor para apoiar a inclus&atilde;o educacional de pessoas autistas.
-            </p>
-
             <form class="login-form" id="loginForm" novalidate>
                 <div class="login-form__group">
-                    <label for="email">Email</label>
+                    <label for="cpf">CPF</label>
                     <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        placeholder="voce@email.com"
+                        type="text"
+                        id="cpf"
+                        name="cpf"
+                        placeholder="000.000.000-00"
                         autocomplete="username"
+                        inputmode="numeric"
                         aria-describedby="loginError"
                     >
                 </div>

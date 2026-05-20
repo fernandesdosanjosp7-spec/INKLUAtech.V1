@@ -1,15 +1,15 @@
 :root {
     --color-ice: #f7fbff;
-    --color-blue-gray: #d9e6f2;
-    --color-blue-soft: #b8cce0;
-    --color-lilac: #ddd5f2;
-    --color-mint: #bfe8dc;
-    --color-autism-red: #ef8f8c;
-    --color-autism-yellow: #f3d98b;
-    --color-autism-green: #93d6bc;
-    --color-autism-blue: #8db7e8;
-    --color-primary: #557a9f;
-    --color-primary-dark: #355a7e;
+    --color-blue-gray: #bfe2ff;
+    --color-blue-soft: #9bcfff;
+    --color-lilac: #d8c2ff;
+    --color-mint: #a9efd8;
+    --color-autism-red: #ff8fa3;
+    --color-autism-yellow: #ffe27a;
+    --color-autism-green: #5fe3b1;
+    --color-autism-blue: #64b5ff;
+    --color-primary: #3579d7;
+    --color-primary-dark: #245fb0;
     --color-text: #23394d;
     --color-muted: #66788b;
     --color-border: rgba(112, 139, 166, 0.28);
@@ -29,10 +29,11 @@ body {
     color: var(--color-text);
     font-family: Inter, "Segoe UI", Arial, sans-serif;
     background:
-        radial-gradient(circle at 14% 12%, rgba(255, 255, 255, 0.94) 0 11rem, transparent 24rem),
-        radial-gradient(circle at 84% 18%, rgba(221, 213, 242, 0.42) 0 13rem, transparent 30rem),
-        radial-gradient(circle at 16% 86%, rgba(191, 232, 220, 0.42) 0 14rem, transparent 31rem),
-        linear-gradient(135deg, #eef5fa 0%, var(--color-ice) 45%, #f3effa 100%);
+        radial-gradient(circle at 14% 12%, rgba(100, 181, 255, 0.34) 0 12rem, transparent 25rem),
+        radial-gradient(circle at 84% 18%, rgba(216, 194, 255, 0.48) 0 13rem, transparent 30rem),
+        radial-gradient(circle at 16% 86%, rgba(95, 227, 177, 0.36) 0 14rem, transparent 31rem),
+        radial-gradient(circle at 78% 84%, rgba(255, 226, 122, 0.28) 0 10rem, transparent 26rem),
+        linear-gradient(135deg, #eaf6ff 0%, #fff9fd 45%, #f1eaff 100%);
 }
 
 body::before {
@@ -43,7 +44,7 @@ body::before {
     background-image:
         linear-gradient(rgba(85, 122, 159, 0.045) 1px, transparent 1px),
         linear-gradient(90deg, rgba(85, 122, 159, 0.04) 1px, transparent 1px),
-        radial-gradient(circle, rgba(85, 122, 159, 0.13) 0 1px, transparent 2px);
+        radial-gradient(circle, rgba(53, 121, 215, 0.2) 0 1px, transparent 2px);
     background-size: 5.5rem 5.5rem, 5.5rem 5.5rem, 1.65rem 1.65rem;
     mask-image: radial-gradient(circle at center, #000 0 42%, transparent 78%);
 }
@@ -54,8 +55,8 @@ body::after {
     inset: 0;
     pointer-events: none;
     background:
-        linear-gradient(120deg, transparent 0 17%, rgba(141, 183, 232, 0.08) 17.2% 17.5%, transparent 17.7% 100%),
-        linear-gradient(58deg, transparent 0 72%, rgba(147, 214, 188, 0.1) 72.2% 72.5%, transparent 72.7% 100%);
+        linear-gradient(120deg, transparent 0 17%, rgba(100, 181, 255, 0.14) 17.2% 17.5%, transparent 17.7% 100%),
+        linear-gradient(58deg, transparent 0 72%, rgba(95, 227, 177, 0.14) 72.2% 72.5%, transparent 72.7% 100%);
     mix-blend-mode: multiply;
 }
 
@@ -80,6 +81,41 @@ a {
     overflow: hidden;
 }
 
+.login-background::before,
+.login-background::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+}
+
+.login-background::before {
+    width: 24rem;
+    height: 24rem;
+    left: 50%;
+    top: 52%;
+    border-radius: 50%;
+    opacity: 0.22;
+    background:
+        radial-gradient(circle at 50% 50%, rgba(100, 181, 255, 0.28), transparent 62%),
+        radial-gradient(circle at 38% 36%, rgba(216, 194, 255, 0.34), transparent 46%),
+        radial-gradient(circle at 62% 64%, rgba(95, 227, 177, 0.24), transparent 48%);
+    filter: blur(6px);
+    transform: translate(-50%, -50%);
+}
+
+.login-background::after {
+    width: 18rem;
+    height: 18rem;
+    right: -5rem;
+    top: -4rem;
+    opacity: 0.2;
+    background:
+        radial-gradient(circle at 45% 40%, rgba(255, 226, 122, 0.34), transparent 58%),
+        radial-gradient(circle at 62% 62%, rgba(255, 143, 163, 0.3), transparent 54%);
+    border-radius: 50%;
+    filter: blur(8px);
+}
+
 .bg-shape,
 .bg-symbol,
 .bg-node,
@@ -94,13 +130,14 @@ a {
     width: 34rem;
     height: 11rem;
     border-radius: 999px;
-    opacity: 0.22;
+    opacity: 0.34;
     background:
-        radial-gradient(circle at 10% 50%, rgba(141, 183, 232, 0.52) 0 0.42rem, transparent 0.48rem),
-        radial-gradient(circle at 28% 35%, rgba(155, 138, 201, 0.5) 0 0.42rem, transparent 0.48rem),
-        radial-gradient(circle at 48% 56%, rgba(147, 214, 188, 0.54) 0 0.42rem, transparent 0.48rem),
-        radial-gradient(circle at 67% 40%, rgba(243, 217, 139, 0.5) 0 0.42rem, transparent 0.48rem),
-        radial-gradient(circle at 86% 54%, rgba(239, 143, 140, 0.42) 0 0.42rem, transparent 0.48rem);
+        radial-gradient(circle at 10% 50%, rgba(100, 181, 255, 0.8) 0 0.42rem, transparent 0.48rem),
+        radial-gradient(circle at 28% 35%, rgba(216, 194, 255, 0.82) 0 0.42rem, transparent 0.48rem),
+        radial-gradient(circle at 48% 56%, rgba(95, 227, 177, 0.82) 0 0.42rem, transparent 0.48rem),
+        radial-gradient(circle at 67% 40%, rgba(255, 226, 122, 0.84) 0 0.42rem, transparent 0.48rem),
+        radial-gradient(circle at 86% 54%, rgba(255, 143, 163, 0.72) 0 0.42rem, transparent 0.48rem);
+    animation: calm-drift 620s linear infinite;
 }
 
 .bg-path::before {
@@ -189,68 +226,50 @@ a {
 }
 
 .bg-symbol {
-    opacity: 0.13;
+    opacity: 0.34;
     color: #557a9f;
     line-height: 1;
-    filter: drop-shadow(0 16px 30px rgba(53, 90, 126, 0.08));
+    filter: drop-shadow(0 16px 30px rgba(53, 121, 215, 0.13));
 }
 
 .bg-symbol--puzzle-one,
 .bg-symbol--puzzle-two,
 .bg-symbol--puzzle-three,
-.bg-symbol--puzzle-four {
+.bg-symbol--puzzle-four,
+.bg-symbol--puzzle-five,
+.bg-symbol--puzzle-six,
+.bg-symbol--puzzle-seven,
+.bg-symbol--puzzle-eight {
     width: 5rem;
     height: 5rem;
-    border: 2px solid currentColor;
-    border-radius: 1.1rem;
     color: #557a9f;
+    background: currentColor;
+    border: 0;
+    border-radius: 0;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='M10 32H33C31 27 32 21 36 17C43 10 57 10 64 17C68 21 69 27 67 32H90V55H82C73 55 70 68 78 72C82 74 86 73 90 71V90H67C69 84 68 79 64 75C57 68 43 68 36 75C32 79 31 84 33 90H10V67C16 69 21 68 25 64C32 57 32 43 25 36C21 32 16 31 10 33V32Z'/%3E%3C/svg%3E") center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='M10 32H33C31 27 32 21 36 17C43 10 57 10 64 17C68 21 69 27 67 32H90V55H82C73 55 70 68 78 72C82 74 86 73 90 71V90H67C69 84 68 79 64 75C57 68 43 68 36 75C32 79 31 84 33 90H10V67C16 69 21 68 25 64C32 57 32 43 25 36C21 32 16 31 10 33V32Z'/%3E%3C/svg%3E") center / contain no-repeat;
     transform: rotate(-14deg);
-}
-
-.bg-symbol--puzzle-one::before,
-.bg-symbol--puzzle-one::after,
-.bg-symbol--puzzle-two::before,
-.bg-symbol--puzzle-two::after,
-.bg-symbol--puzzle-three::before,
-.bg-symbol--puzzle-three::after,
-.bg-symbol--puzzle-four::before,
-.bg-symbol--puzzle-four::after {
-    content: "";
-    position: absolute;
-    border: 2px solid currentColor;
-    border-radius: 50%;
-    background: rgba(247, 251, 255, 0.6);
-}
-
-.bg-symbol--puzzle-one::before,
-.bg-symbol--puzzle-two::before,
-.bg-symbol--puzzle-three::before,
-.bg-symbol--puzzle-four::before {
-    width: 1.35rem;
-    height: 1.35rem;
-    top: -0.78rem;
-    left: 1.72rem;
-}
-
-.bg-symbol--puzzle-one::after,
-.bg-symbol--puzzle-two::after,
-.bg-symbol--puzzle-three::after,
-.bg-symbol--puzzle-four::after {
-    width: 1.2rem;
-    height: 1.2rem;
-    right: -0.7rem;
-    top: 1.78rem;
+    filter:
+        drop-shadow(0 2px 0 rgba(255, 255, 255, 0.74))
+        drop-shadow(0 14px 24px rgba(53, 121, 215, 0.16));
 }
 
 .bg-symbol--puzzle-one {
-    left: 11%;
-    top: 25%;
+    left: 9%;
+    top: 24%;
+    width: 6.4rem;
+    height: 6.4rem;
+    color: var(--color-autism-blue);
+    opacity: 0.46;
 }
 
 .bg-symbol--puzzle-two {
-    right: 14%;
-    bottom: 23%;
+    right: 12%;
+    bottom: 22%;
+    width: 6.1rem;
+    height: 6.1rem;
     color: #9b8ac9;
+    opacity: 0.44;
     transform: rotate(16deg);
 }
 
@@ -258,16 +277,47 @@ a {
     left: 17%;
     top: 33%;
     color: #69a995;
-    opacity: 0.11;
-    transform: rotate(7deg) scale(0.74);
+    opacity: 0.38;
+    transform: rotate(7deg) scale(0.86);
 }
 
 .bg-symbol--puzzle-four {
     right: 20%;
     bottom: 33%;
     color: #d39b76;
-    opacity: 0.1;
-    transform: rotate(-10deg) scale(0.68);
+    opacity: 0.34;
+    transform: rotate(-10deg) scale(0.8);
+}
+
+.bg-symbol--puzzle-five,
+.bg-symbol--puzzle-six,
+.bg-symbol--puzzle-seven,
+.bg-symbol--puzzle-eight {
+    left: 50%;
+    top: 50%;
+    width: 5.35rem;
+    height: 5.35rem;
+    opacity: 0.62;
+}
+
+.bg-symbol--puzzle-five {
+    color: var(--color-autism-blue);
+    transform: translate(-13.2rem, -6.2rem) rotate(-3deg);
+}
+
+.bg-symbol--puzzle-six {
+    color: var(--color-lilac);
+    transform: translate(-8.7rem, -6rem) rotate(6deg);
+}
+
+.bg-symbol--puzzle-seven {
+    color: var(--color-autism-green);
+    transform: translate(-13rem, -1.7rem) rotate(7deg);
+}
+
+.bg-symbol--puzzle-eight {
+    color: var(--color-autism-yellow);
+    transform: translate(-8.5rem, -1.5rem) rotate(-5deg);
 }
 
 .bg-symbol--infinity-one,
@@ -309,6 +359,7 @@ a {
     border-radius: 50%;
     background: #557a9f;
     opacity: 0.18;
+    animation: calm-drift 720s linear infinite;
     box-shadow:
         3.1rem 1.7rem 0 rgba(155, 138, 201, 0.22),
         5.6rem -0.9rem 0 rgba(105, 169, 149, 0.2),
@@ -347,12 +398,16 @@ a {
     right: 29%;
     top: 32%;
     transform: scale(0.82) rotate(12deg);
+    animation-duration: 820s;
+    animation-delay: -70s;
 }
 
 .bg-node--three {
     right: 13%;
     top: 68%;
     transform: scale(0.7) rotate(-18deg);
+    animation-duration: 920s;
+    animation-delay: -130s;
 }
 
 .bg-edu {
@@ -362,7 +417,7 @@ a {
     border-radius: 1rem;
     opacity: 0.14;
     background: rgba(255, 255, 255, 0.38);
-    animation: calm-float 18s ease-in-out infinite;
+    animation: calm-drift 680s linear infinite;
 }
 
 .bg-edu::before,
@@ -493,27 +548,26 @@ a {
     display: flex;
     align-items: center;
     gap: 0.875rem;
-    margin-bottom: 1rem;
-}
-
-.login-card__text {
-    position: relative;
-    z-index: 1;
+    margin-bottom: 1.55rem;
 }
 
 .login-brand__mark {
-    display: inline-grid;
-    place-items: center;
-    flex: 0 0 3rem;
-    width: 3rem;
-    height: 3rem;
-    border: 1px solid rgba(255, 255, 255, 0.64);
-    border-radius: 1rem;
-    color: #ffffff;
-    background: linear-gradient(135deg, #557a9f, #79a897 58%, #9b8ac9);
-    box-shadow: 0 12px 28px rgba(85, 122, 159, 0.22);
-    font-weight: 800;
-    letter-spacing: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 6.7rem;
+    width: 6.7rem;
+    height: 4.1rem;
+    padding: 0;
+    background: transparent;
+}
+
+.login-brand__mark img {
+    width: 180%;
+    height: 180%;
+    display: block;
+    object-fit: contain;
+    filter: drop-shadow(0 12px 22px rgba(53, 121, 215, 0.18));
 }
 
 .login-brand__label {
@@ -529,13 +583,6 @@ a {
     font-size: clamp(1.55rem, 6vw, 2rem);
     line-height: 1.15;
     letter-spacing: 0;
-}
-
-.login-card__text {
-    margin: 0 0 1.6rem;
-    color: var(--color-muted);
-    font-size: 0.98rem;
-    line-height: 1.65;
 }
 
 .login-form {
@@ -694,7 +741,27 @@ a {
     }
 
     50% {
-        translate: 0 -0.65rem;
+        translate: 0 -0.75rem;
+    }
+}
+
+@keyframes calm-drift {
+    0% {
+        opacity: 0;
+        translate: -42vw 88vh;
+    }
+
+    12% {
+        opacity: 0.22;
+    }
+
+    88% {
+        opacity: 0.22;
+    }
+
+    100% {
+        opacity: 0;
+        translate: 42vw -88vh;
     }
 }
 
@@ -709,6 +776,21 @@ a {
 }
 
 @media (max-width: 48rem) {
+    .login-background::before {
+        width: 18rem;
+        height: 18rem;
+        opacity: 0.2;
+        transform: translate(-50%, -54%);
+    }
+
+    .login-background::after {
+        width: 18rem;
+        height: 18rem;
+        right: -8rem;
+        top: -4rem;
+        opacity: 0.24;
+    }
+
     .bg-path--right,
     .bg-cognitive-panel,
     .bg-symbol--puzzle-four,
@@ -735,6 +817,31 @@ a {
     .bg-symbol--puzzle-three {
         left: 58%;
         top: 12%;
+    }
+
+    .bg-symbol--puzzle-five,
+    .bg-symbol--puzzle-six,
+    .bg-symbol--puzzle-seven,
+    .bg-symbol--puzzle-eight {
+        width: 4rem;
+        height: 4rem;
+        opacity: 0.34;
+    }
+
+    .bg-symbol--puzzle-five {
+        transform: translate(-8.2rem, -11rem) rotate(-3deg);
+    }
+
+    .bg-symbol--puzzle-six {
+        transform: translate(-4.8rem, -10.8rem) rotate(6deg);
+    }
+
+    .bg-symbol--puzzle-seven {
+        transform: translate(-8.1rem, -7.6rem) rotate(7deg);
+    }
+
+    .bg-symbol--puzzle-eight {
+        transform: translate(-4.7rem, -7.4rem) rotate(-5deg);
     }
 
     .bg-symbol--infinity-one {

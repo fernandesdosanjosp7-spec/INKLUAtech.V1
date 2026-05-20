@@ -1,5 +1,5 @@
 const loginForm = document.getElementById("loginForm");
-const emailInput = document.getElementById("email");
+const cpfInput = document.getElementById("cpf");
 const passwordInput = document.getElementById("password");
 const loginError = document.getElementById("loginError");
 
@@ -11,36 +11,29 @@ const showError = (message, fields) => {
 
 const clearErrorState = () => {
     loginError.textContent = "";
-    emailInput.classList.remove("is-invalid");
+    cpfInput.classList.remove("is-invalid");
     passwordInput.classList.remove("is-invalid");
 };
-
-const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
 loginForm.addEventListener("submit", (event) => {
     event.preventDefault();
     clearErrorState();
 
-    const emptyFields = [emailInput, passwordInput].filter((field) => !field.value.trim());
+    const emptyFields = [cpfInput, passwordInput].filter((field) => !field.value.trim());
 
     if (emptyFields.length > 0) {
-        showError("Preencha o email e a senha para continuar.", emptyFields);
-        return;
-    }
-
-    if (!isValidEmail(emailInput.value.trim())) {
-        showError("Digite um email valido para continuar.", [emailInput]);
+        showError("Preencha o CPF e a senha para continuar.", emptyFields);
         return;
     }
 
     window.location.href = "Index.html";
 });
 
-[emailInput, passwordInput].forEach((field) => {
+[cpfInput, passwordInput].forEach((field) => {
     field.addEventListener("input", () => {
         field.classList.remove("is-invalid");
 
-        if (emailInput.value.trim() && passwordInput.value.trim()) {
+        if (cpfInput.value.trim() && passwordInput.value.trim()) {
             loginError.textContent = "";
         }
     });
