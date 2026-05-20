@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Inklua Tech</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <main class="login-page">
+        <section class="login-card" aria-labelledby="login-title">
+            <div class="login-brand">
+                <span class="login-brand__mark" aria-hidden="true">IT</span>
+                <div>
+                    <p class="login-brand__label">Inklua Tech</p>
+                    <h1 id="login-title">Acesse sua conta</h1>
+                </div>
+            </div>
+
+            <p class="login-card__text">
+                Um ambiente seguro e acolhedor para apoiar a inclus&atilde;o educacional de pessoas autistas.
+            </p>
+
+            <form class="login-form" id="loginForm" novalidate>
+                <div class="login-form__group">
+                    <label for="cpf">CPF</label>
+                    <input
+                        type="text"
+                        id="cpf"
+                        name="cpf"
+                        placeholder="000.000.000-00"
+                        autocomplete="username"
+                        inputmode="numeric"
+                        aria-describedby="loginError"
+                    >
+                </div>
+
+                <div class="login-form__group">
+                    <label for="password">Senha</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Digite sua senha"
+                        autocomplete="current-password"
+                        aria-describedby="loginError"
+                    >
+                </div>
+
+                <p class="login-form__error" id="loginError" aria-live="polite"></p>
+
+                <button class="login-button login-button--primary" type="submit">
+                    Entrar
+                </button>
+
+                <button class="login-button login-button--google" type="button" aria-label="Entrar com Google">
+                    <span class="login-button__google-mark" aria-hidden="true">G</span>
+                    Entrar com Google
+                </button>
+            </form>
+
+            <div class="login-links" aria-label="Links de acesso">
+                <a href="#" class="login-link">Criar conta</a>
+                <a href="#" class="login-link">Esqueci minha senha</a>
+            </div>
+        </section>
+    </main>
+
+    <script src="login.js"></script>
+</body>
+</html>
