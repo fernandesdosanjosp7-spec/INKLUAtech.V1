@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Inklua Tech</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <main class="login-page">
+        <div class="login-background" aria-hidden="true">
+            <span class="bg-path bg-path--left"></span>
+            <span class="bg-path bg-path--right"></span>
+            <span class="bg-cognitive-panel"></span>
+            <span class="bg-shape bg-shape--one"></span>
+            <span class="bg-shape bg-shape--two"></span>
+            <span class="bg-shape bg-shape--three"></span>
+            <span class="bg-symbol bg-symbol--puzzle-one"></span>
+            <span class="bg-symbol bg-symbol--puzzle-two"></span>
+            <span class="bg-symbol bg-symbol--puzzle-three"></span>
+            <span class="bg-symbol bg-symbol--puzzle-four"></span>
+            <span class="bg-symbol bg-symbol--puzzle-five"></span>
+            <span class="bg-symbol bg-symbol--puzzle-six"></span>
+            <span class="bg-symbol bg-symbol--puzzle-seven"></span>
+            <span class="bg-symbol bg-symbol--puzzle-eight"></span>
+            <span class="bg-symbol bg-symbol--infinity-one">&infin;</span>
+            <span class="bg-symbol bg-symbol--infinity-two">&infin;</span>
+            <span class="bg-symbol bg-symbol--infinity-three">&infin;</span>
+            <span class="bg-node bg-node--one"></span>
+            <span class="bg-node bg-node--two"></span>
+            <span class="bg-node bg-node--three"></span>
+            <span class="bg-edu bg-edu--book"></span>
+            <span class="bg-edu bg-edu--chat"></span>
+            <span class="bg-edu bg-edu--growth"></span>
+        </div>
+
+        <section class="login-card" aria-labelledby="login-title">
+            <div class="login-brand">
+                <span class="login-brand__mark">
+                    <img src="assets/ink-logo.png" alt="Logo Inklua Tech">
+                </span>
+                <div>
+                    <p class="login-brand__label">Inklua Tech</p>
+                    <h1 id="login-title">Acesse sua conta</h1>
+                </div>
+            </div>
+
+            <form class="login-form" id="loginForm" novalidate>
+                <div class="login-form__group">
+                    <label for="cpf">CPF</label>
+                    <input
+                        type="text"
+                        id="cpf"
+                        name="cpf"
+                        placeholder="000.000.000-00"
+                        autocomplete="username"
+                        inputmode="numeric"
+                        aria-describedby="loginError"
+                    >
+                </div>
+
+                <div class="login-form__group">
+                    <label for="password">Senha</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Digite sua senha"
+                        autocomplete="current-password"
+                        aria-describedby="loginError"
+                    >
+                </div>
+
+                <p class="login-form__error" id="loginError" aria-live="polite"></p>
+
+                <button class="login-button login-button--primary" type="submit">
+                    Entrar
+                </button>
+
+                <button class="login-button login-button--google" type="button" aria-label="Entrar com Google">
+                    <span class="login-button__google-mark" aria-hidden="true">G</span>
+                    Entrar com Google
+                </button>
+            </form>
+
+            <div class="login-links" aria-label="Links de acesso">
+                <a href="#" class="login-link">Criar conta</a>
+                <a href="#" class="login-link">Esqueci minha senha</a>
+            </div>
+        </section>
+    </main>
+
+    <script src="login.js"></script>
+</body>
+</html>
