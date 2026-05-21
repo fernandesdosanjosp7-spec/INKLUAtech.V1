@@ -26,7 +26,7 @@ loginForm.addEventListener("submit", (event) => {
         return;
     }
 
-    window.location.href = "Index.html";
+    window.location.href = "home.html";
 });
 
 [cpfInput, passwordInput].forEach((field) => {
