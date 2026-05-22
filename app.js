@@ -24,10 +24,44 @@ const activityContent = {
         title: "Alfabeto Falado",
         text: "Toque em uma letra para ouvir seu nome.",
         letters: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")
+    },
+    numeros: {
+        title: "N&uacute;meros Falados",
+        text: "Toque em um n&uacute;mero para ouvir qual n&uacute;mero &eacute;.",
+        numbers: Array.from({ length: 11 }, (_, index) => index)
     }
 };
 
 let completed = 0;
+
+const letterNames = {
+    A: "a",
+    B: "b\u00ea",
+    C: "c\u00ea",
+    D: "d\u00ea",
+    E: "\u00e9",
+    F: "\u00e9fe",
+    G: "g\u00ea",
+    H: "ag\u00e1",
+    I: "i",
+    J: "jota",
+    K: "c\u00e1",
+    L: "\u00e9le",
+    M: "\u00eame",
+    N: "\u00eane",
+    O: "\u00f3",
+    P: "p\u00ea",
+    Q: "qu\u00ea",
+    R: "\u00e9rre",
+    S: "\u00e9sse",
+    T: "t\u00ea",
+    U: "u",
+    V: "v\u00ea",
+    W: "d\u00e1blio",
+    X: "xis",
+    Y: "\u00edpsilon",
+    Z: "z\u00ea"
+};
 
 const renderActivity = (activityName) => {
     const activity = activityContent[activityName];
@@ -52,6 +86,20 @@ const renderActivity = (activityName) => {
         return;
     }
 
+    if (activity.numbers) {
+        activityPanel.innerHTML = `
+            <div class="number-game">
+                <p>${activity.text}</p>
+                <div class="number-display" id="numberDisplay" aria-live="polite">0</div>
+                <div class="number-grid" aria-label="N&uacute;meros de 0 a 10">
+                    ${activity.numbers.map((number) => `<button class="number-button" type="button" data-number="${number}">${number}</button>`).join("")}
+                </div>
+            </div>
+        `;
+        completeActivity.disabled = false;
+        return;
+    }
+
     activityPanel.innerHTML = `
         <p>${activity.text}</p>
         <div class="choice-row">
@@ -63,6 +111,10 @@ const renderActivity = (activityName) => {
 
 gameCards.forEach((card) => {
     const button = card.querySelector("button");
+
+    if (!button) {
+        return;
+    }
 
     button?.addEventListener("click", () => {
         renderActivity(card.dataset.activity);
@@ -83,7 +135,22 @@ const speakLetter = (letter) => {
 
     window.speechSynthesis.cancel();
 
-    const utterance = new SpeechSynthesisUtterance(`Letra ${letter}`);
+    const letterName = letterNames[letter] || letter;
+    const utterance = new SpeechSynthesisUtterance(`Letra ${letterName}.`);
+    utterance.lang = "pt-BR";
+    utterance.rate = 0.82;
+    utterance.pitch = 1;
+    window.speechSynthesis.speak(utterance);
+};
+
+const speakNumber = (number) => {
+    if (!("speechSynthesis" in window)) {
+        return;
+    }
+
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(`N\u00famero ${number}`);
     utterance.lang = "pt-BR";
     utterance.rate = 0.82;
     utterance.pitch = 1;
@@ -110,6 +177,24 @@ activityPanel?.addEventListener("click", (event) => {
         }
 
         speakLetter(letter);
+        return;
+    }
+
+    const number = event.target.dataset.number;
+
+    if (number) {
+        const display = document.getElementById("numberDisplay");
+
+        activityPanel.querySelectorAll(".number-button").forEach((button) => {
+            button.classList.remove("is-selected");
+        });
+        event.target.classList.add("is-selected");
+
+        if (display) {
+            display.textContent = number;
+        }
+
+        speakNumber(number);
         return;
     }
 
