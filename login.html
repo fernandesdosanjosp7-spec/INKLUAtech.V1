@@ -45,7 +45,8 @@
                 </div>
             </div>
 
-            <form class="login-form" id="loginForm" novalidate>
+            <form class="login-form" id="loginForm" action="auth.php" method="post" novalidate>
+                <input type="hidden" name="action" value="login">
                 <div class="login-form__group">
                     <label for="cpf">CPF</label>
                     <input

@@ -214,3 +214,82 @@ completeActivity?.addEventListener("click", () => {
     completeActivity.disabled = true;
     activityPanel.innerHTML = "<p>Atividade conclu&iacute;da. Escolha outro jogo para continuar aprendendo.</p>";
 });
+
+const formStorageKey = "inklua_formulario_adaptacao";
+
+const collectFormAnswers = (form) => {
+    const formData = new FormData(form);
+    const answers = {};
+
+    formData.forEach((value, key) => {
+        const normalizedKey = key.replace("[]", "");
+
+        if (key.endsWith("[]")) {
+            answers[normalizedKey] = answers[normalizedKey] || [];
+            answers[normalizedKey].push(value);
+            return;
+        }
+
+        answers[normalizedKey] = value;
+    });
+
+    return answers;
+};
+
+const getSavedFormAnswers = () => {
+    try {
+        return JSON.parse(localStorage.getItem(formStorageKey)) || {};
+    } catch (error) {
+        return {};
+    }
+};
+
+const fillFormWithSavedAnswers = (form, answers) => {
+    form.querySelectorAll("[name]").forEach((field) => {
+        const key = field.name.replace("[]", "");
+        const value = answers[key];
+
+        if (value === undefined) {
+            return;
+        }
+
+        if (field instanceof HTMLInputElement && field.type === "checkbox") {
+            const values = Array.isArray(value) ? value : String(value).split(", ");
+            field.checked = values.includes(field.value);
+            return;
+        }
+
+        if (field instanceof HTMLInputElement && field.type === "radio") {
+            field.checked = field.value === value;
+            return;
+        }
+
+        if (field instanceof HTMLInputElement || field instanceof HTMLSelectElement || field instanceof HTMLTextAreaElement) {
+            field.value = value;
+        }
+    });
+};
+
+document.querySelectorAll(".platform-form").forEach((form) => {
+    if (form.hasAttribute("data-local-form")) {
+        fillFormWithSavedAnswers(form, getSavedFormAnswers());
+    }
+
+    form.addEventListener("submit", (event) => {
+        const shouldSubmitToServer = form.method.toLowerCase() === "post" && form.action.includes("auth.php");
+
+        localStorage.setItem(formStorageKey, JSON.stringify(collectFormAnswers(form)));
+
+        if (shouldSubmitToServer) {
+            return;
+        }
+
+        event.preventDefault();
+
+        const status = form.querySelector(".form-status");
+
+        if (status) {
+            status.textContent = "Respostas salvas nesta plataforma.";
+        }
+    });
+});

@@ -1,114 +1,55 @@
 <?php
+session_start();
+
+require __DIR__ . "/db.php";
+
+if (empty($_SESSION["user_id"])) {
+    header("Location: Index.html#login");
+    exit;
+}
+
 $databaseError = "";
 $savedMessage = "";
+$user = [];
 
 try {
-    if (!extension_loaded("pdo_sqlite")) {
-        throw new RuntimeException("A extensao pdo_sqlite nao esta ativa no PHP.");
+    $pdo = getDatabase();
+    $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE id = :id LIMIT 1");
+    $stmt->execute([":id" => $_SESSION["user_id"]]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$user) {
+        $_SESSION = [];
+        session_destroy();
+        header("Location: Index.html#login");
+        exit;
     }
 
-    if (!is_writable(__DIR__)) {
-        throw new RuntimeException("A pasta do projeto nao tem permissao de escrita para criar ou atualizar o banco.");
+    if (($_GET["status"] ?? "") === "registered") {
+        $savedMessage = "Cadastro criado com sucesso.";
     }
 
-    $databasePath = __DIR__ . DIRECTORY_SEPARATOR . "database.db";
-    $pdo = new PDO("sqlite:" . $databasePath);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    $pdo->exec("
-        CREATE TABLE IF NOT EXISTS usuarios (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nome TEXT,
-            email TEXT,
-            cpf TEXT,
-            senha TEXT,
-            responsavel_nome TEXT,
-            responsavel_vinculo TEXT,
-            aluno_nome TEXT,
-            aluno_idade INTEGER,
-            preferencias TEXT,
-            sensibilidades TEXT,
-            comunicacao TEXT,
-            rotina TEXT
-        )
-    ");
-
-    $columns = $pdo->query("PRAGMA table_info(usuarios)")->fetchAll(PDO::FETCH_ASSOC);
-    $existingColumns = array_column($columns, "name");
-    $requiredColumns = [
-        "nome" => "TEXT",
-        "email" => "TEXT",
-        "cpf" => "TEXT",
-        "senha" => "TEXT",
-        "responsavel_nome" => "TEXT",
-        "responsavel_vinculo" => "TEXT",
-        "aluno_nome" => "TEXT",
-        "aluno_idade" => "INTEGER",
-        "preferencias" => "TEXT",
-        "sensibilidades" => "TEXT",
-        "comunicacao" => "TEXT",
-        "rotina" => "TEXT"
-    ];
-
-    foreach ($requiredColumns as $column => $type) {
-        if (!in_array($column, $existingColumns, true)) {
-            $pdo->exec("ALTER TABLE usuarios ADD COLUMN {$column} {$type}");
-        }
-    }
-
-    if ($_SERVER["REQUEST_METHOD"] === "POST" && !empty($_POST["responsavel_nome"])) {
-        $alunoIdade = $_POST["aluno_idade"] ?? null;
-        $alunoIdade = $alunoIdade === "" ? null : $alunoIdade;
-
-        $stmt = $pdo->prepare("
-            INSERT INTO usuarios (
-                nome,
-                email,
-                cpf,
-                senha,
-                responsavel_nome,
-                responsavel_vinculo,
-                aluno_nome,
-                aluno_idade,
-                preferencias,
-                sensibilidades,
-                comunicacao,
-                rotina
-            ) VALUES (
-                :nome,
-                :email,
-                :cpf,
-                :senha,
-                :responsavel_nome,
-                :responsavel_vinculo,
-                :aluno_nome,
-                :aluno_idade,
-                :preferencias,
-                :sensibilidades,
-                :comunicacao,
-                :rotina
-            )
-        ");
-
-        $stmt->execute([
-            ":nome" => $_POST["responsavel_nome"] ?? "",
-            ":email" => "",
-            ":cpf" => $_POST["cpf"] ?? "",
-            ":senha" => $_POST["senha"] ?? "",
-            ":responsavel_nome" => $_POST["responsavel_nome"] ?? "",
-            ":responsavel_vinculo" => $_POST["responsavel_vinculo"] ?? "",
-            ":aluno_nome" => $_POST["aluno_nome"] ?? "",
-            ":aluno_idade" => $alunoIdade,
-            ":preferencias" => $_POST["preferencias"] ?? "",
-            ":sensibilidades" => $_POST["sensibilidades"] ?? "",
-            ":comunicacao" => $_POST["comunicacao"] ?? "",
-            ":rotina" => $_POST["rotina"] ?? ""
-        ]);
-
-        $savedMessage = "Cadastro salvo com sucesso.";
+    if (($_GET["status"] ?? "") === "profile_saved") {
+        $savedMessage = "Formulario salvo com sucesso.";
     }
 } catch (Throwable $e) {
     $databaseError = $e->getMessage();
+}
+
+function h(?string $value): string
+{
+    return htmlspecialchars($value ?? "", ENT_QUOTES, "UTF-8");
+}
+
+function selectedValue(array $user, string $key, string $value): string
+{
+    return (($user[$key] ?? "") === $value) ? " selected" : "";
+}
+
+function checkedValue(array $user, string $key, string $value): string
+{
+    $values = array_map("trim", explode(",", $user[$key] ?? ""));
+    return in_array($value, $values, true) ? " checked" : "";
 }
 ?>
 <!DOCTYPE html>
@@ -129,6 +70,7 @@ try {
 
             <nav class="nav-menu">
                 <a class="is-active" href="#inicio">In&iacute;cio</a>
+                <a href="#formulario">Formul&aacute;rio</a>
                 <a href="#jogos">Jogos</a>
                 <a href="#aprendizado">Aprendizado</a>
                 <a href="#rotina">Rotina</a>
@@ -137,7 +79,7 @@ try {
 
             <div class="student-card">
                 <span>Perfil</span>
-                <strong>Aluno</strong>
+                <strong><?php echo h($user["aluno_nome"] ?: "Aluno"); ?></strong>
                 <p>Atividades visuais, previs&iacute;veis e adaptadas.</p>
             </div>
         </aside>
@@ -148,7 +90,7 @@ try {
                     <p class="eyebrow">Painel principal</p>
                     <h1>Jogos e aprendizado educativo</h1>
                 </div>
-                <a class="topbar-button" href="Index.html">Sair</a>
+                <a class="topbar-button" href="auth.php?action=logout">Sair</a>
             </header>
 
             <?php if (!empty($databaseError)) : ?>
@@ -181,6 +123,90 @@ try {
                         <p><span id="progressCount">0</span> atividades conclu&iacute;das</p>
                     </div>
                 </article>
+            </section>
+
+            <section class="section-block" id="formulario" aria-labelledby="form-title">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">Perfil do aluno</p>
+                        <h2 id="form-title">Formul&aacute;rio de adapta&ccedil;&atilde;o</h2>
+                    </div>
+                </div>
+
+                <form class="platform-form" action="auth.php" method="post">
+                    <input type="hidden" name="action" value="update_profile">
+                    <div class="form-group">
+                        <label for="platform-nivel-suporte">1&deg; Qual o n&iacute;vel de suporte do estudante?</label>
+                        <select id="platform-nivel-suporte" name="nivel_suporte">
+                            <option value="">Selecione</option>
+                            <option value="nivel-1"<?php echo selectedValue($user, "nivel_suporte", "nivel-1"); ?>>N&iacute;vel 1 - necessita de pouco apoio</option>
+                            <option value="nivel-2"<?php echo selectedValue($user, "nivel_suporte", "nivel-2"); ?>>N&iacute;vel 2 - necessita de apoio substancial</option>
+                            <option value="nivel-3"<?php echo selectedValue($user, "nivel_suporte", "nivel-3"); ?>>N&iacute;vel 3 - necessita de apoio muito substancial</option>
+                            <option value="nao-informado"<?php echo selectedValue($user, "nivel_suporte", "nao-informado"); ?>>N&atilde;o sei informar</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="platform-sensibilidades">2&deg; O usu&aacute;rio possui sensibilidade a sons altos, anima&ccedil;&otilde;es intensas ou excesso de informa&ccedil;&otilde;es na tela?</label>
+                        <textarea id="platform-sensibilidades" name="sensibilidades" rows="3"><?php echo h($user["sensibilidades"] ?? ""); ?></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="platform-preferencias-visuais">3&deg; Quais cores, temas ou estilos visuais deixam o usu&aacute;rio mais confort&aacute;vel durante o uso da plataforma?</label>
+                        <textarea id="platform-preferencias-visuais" name="preferencias_visuais" rows="3"><?php echo h($user["preferencias_visuais"] ?? ""); ?></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="platform-forma-aprendizado">4&deg; O usu&aacute;rio aprende melhor atrav&eacute;s de imagens, sons, textos, jogos ou atividades pr&aacute;ticas?</label>
+                        <textarea id="platform-forma-aprendizado" name="forma_aprendizado" rows="3"><?php echo h($user["forma_aprendizado"] ?? ""); ?></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="platform-comunicacao">5&deg; O usu&aacute;rio possui dificuldade de comunica&ccedil;&atilde;o verbal? Se sim, quais formas de comunica&ccedil;&atilde;o ele utiliza com mais facilidade?</label>
+                        <textarea id="platform-comunicacao" name="comunicacao" rows="3"><?php echo h($user["comunicacao"] ?? ""); ?></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="platform-hiperfocos">6&deg; Existem hiperfocos, interesses espec&iacute;ficos ou temas favoritos que possam ser usados para melhorar o aprendizado?</label>
+                        <textarea id="platform-hiperfocos" name="hiperfocos" rows="3"><?php echo h($user["hiperfocos"] ?? ""); ?></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="platform-rotina">7&deg; O usu&aacute;rio prefere rotinas bem organizadas e previs&iacute;veis durante as atividades?</label>
+                        <textarea id="platform-rotina" name="rotina" rows="3"><?php echo h($user["rotina"] ?? ""); ?></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="platform-desconfortos">8&deg; Quais situa&ccedil;&otilde;es normalmente causam desconforto, ansiedade ou distra&ccedil;&atilde;o durante o aprendizado?</label>
+                        <textarea id="platform-desconfortos" name="desconfortos" rows="3"><?php echo h($user["desconfortos"] ?? ""); ?></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="platform-autonomia">9&deg; O usu&aacute;rio necessita de apoio constante durante as atividades ou consegue realizar tarefas sozinho?</label>
+                        <textarea id="platform-autonomia" name="autonomia" rows="3"><?php echo h($user["autonomia"] ?? ""); ?></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <span class="form-label">10&deg; Quais habilidades o respons&aacute;vel, professor ou terapeuta deseja desenvolver com maior prioridade?</span>
+                        <div class="check-grid">
+                            <label><input type="checkbox" name="prioridades[]" value="fala"<?php echo checkedValue($user, "prioridades", "fala"); ?>> Fala</label>
+                            <label><input type="checkbox" name="prioridades[]" value="coordenacao"<?php echo checkedValue($user, "prioridades", "coordenacao"); ?>> Coordena&ccedil;&atilde;o</label>
+                            <label><input type="checkbox" name="prioridades[]" value="leitura"<?php echo checkedValue($user, "prioridades", "leitura"); ?>> Leitura</label>
+                            <label><input type="checkbox" name="prioridades[]" value="socializacao"<?php echo checkedValue($user, "prioridades", "socializacao"); ?>> Socializa&ccedil;&atilde;o</label>
+                            <label><input type="checkbox" name="prioridades[]" value="atencao"<?php echo checkedValue($user, "prioridades", "atencao"); ?>> Aten&ccedil;&atilde;o</label>
+                            <label><input type="checkbox" name="prioridades[]" value="autonomia"<?php echo checkedValue($user, "prioridades", "autonomia"); ?>> Autonomia</label>
+                            <label><input type="checkbox" name="prioridades[]" value="cores-numeros-letras"<?php echo checkedValue($user, "prioridades", "cores-numeros-letras"); ?>> Reconhecimento de cores/n&uacute;meros/letras</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="platform-estrategias">11&deg; Existe alguma estrat&eacute;gia, m&eacute;todo ou adapta&ccedil;&atilde;o que j&aacute; funciona bem com o usu&aacute;rio no dia a dia escolar ou terap&ecirc;utico?</label>
+                        <textarea id="platform-estrategias" name="estrategias" rows="3"><?php echo h($user["estrategias"] ?? ""); ?></textarea>
+                    </div>
+
+                    <button class="complete-button form-submit" type="submit">Salvar respostas</button>
+                    <p class="form-status" aria-live="polite"></p>
+                </form>
             </section>
 
             <section class="section-block" id="jogos" aria-labelledby="games-title">

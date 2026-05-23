@@ -16,6 +16,7 @@
 
             <nav class="nav-menu">
                 <a class="is-active" href="#inicio">In&iacute;cio</a>
+                <a href="#formulario">Formul&aacute;rio</a>
                 <a href="#jogos">Jogos</a>
                 <a href="#aprendizado">Aprendizado</a>
                 <a href="#rotina">Rotina</a>
@@ -60,6 +61,89 @@
                         <p><span id="progressCount">0</span> atividades conclu&iacute;das</p>
                     </div>
                 </article>
+            </section>
+
+            <section class="section-block" id="formulario" aria-labelledby="form-title">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">Perfil do aluno</p>
+                        <h2 id="form-title">Formul&aacute;rio de adapta&ccedil;&atilde;o</h2>
+                    </div>
+                </div>
+
+                <form class="platform-form" action="#formulario" method="get" data-local-form>
+                    <div class="form-group">
+                        <label for="platform-nivel-suporte">1&deg; Qual o n&iacute;vel de suporte do estudante?</label>
+                        <select id="platform-nivel-suporte" name="nivel_suporte">
+                            <option value="">Selecione</option>
+                            <option value="nivel-1">N&iacute;vel 1 - necessita de pouco apoio</option>
+                            <option value="nivel-2">N&iacute;vel 2 - necessita de apoio substancial</option>
+                            <option value="nivel-3">N&iacute;vel 3 - necessita de apoio muito substancial</option>
+                            <option value="nao-informado">N&atilde;o sei informar</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="platform-sensibilidades">2&deg; O usu&aacute;rio possui sensibilidade a sons altos, anima&ccedil;&otilde;es intensas ou excesso de informa&ccedil;&otilde;es na tela?</label>
+                        <textarea id="platform-sensibilidades" name="sensibilidades" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="platform-preferencias-visuais">3&deg; Quais cores, temas ou estilos visuais deixam o usu&aacute;rio mais confort&aacute;vel durante o uso da plataforma?</label>
+                        <textarea id="platform-preferencias-visuais" name="preferencias_visuais" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="platform-forma-aprendizado">4&deg; O usu&aacute;rio aprende melhor atrav&eacute;s de imagens, sons, textos, jogos ou atividades pr&aacute;ticas?</label>
+                        <textarea id="platform-forma-aprendizado" name="forma_aprendizado" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="platform-comunicacao">5&deg; O usu&aacute;rio possui dificuldade de comunica&ccedil;&atilde;o verbal? Se sim, quais formas de comunica&ccedil;&atilde;o ele utiliza com mais facilidade?</label>
+                        <textarea id="platform-comunicacao" name="comunicacao" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="platform-hiperfocos">6&deg; Existem hiperfocos, interesses espec&iacute;ficos ou temas favoritos que possam ser usados para melhorar o aprendizado?</label>
+                        <textarea id="platform-hiperfocos" name="hiperfocos" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="platform-rotina">7&deg; O usu&aacute;rio prefere rotinas bem organizadas e previs&iacute;veis durante as atividades?</label>
+                        <textarea id="platform-rotina" name="rotina" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="platform-desconfortos">8&deg; Quais situa&ccedil;&otilde;es normalmente causam desconforto, ansiedade ou distra&ccedil;&atilde;o durante o aprendizado?</label>
+                        <textarea id="platform-desconfortos" name="desconfortos" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="platform-autonomia">9&deg; O usu&aacute;rio necessita de apoio constante durante as atividades ou consegue realizar tarefas sozinho?</label>
+                        <textarea id="platform-autonomia" name="autonomia" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <span class="form-label">10&deg; Quais habilidades o respons&aacute;vel, professor ou terapeuta deseja desenvolver com maior prioridade?</span>
+                        <div class="check-grid">
+                            <label><input type="checkbox" name="prioridades[]" value="fala"> Fala</label>
+                            <label><input type="checkbox" name="prioridades[]" value="coordenacao"> Coordena&ccedil;&atilde;o</label>
+                            <label><input type="checkbox" name="prioridades[]" value="leitura"> Leitura</label>
+                            <label><input type="checkbox" name="prioridades[]" value="socializacao"> Socializa&ccedil;&atilde;o</label>
+                            <label><input type="checkbox" name="prioridades[]" value="atencao"> Aten&ccedil;&atilde;o</label>
+                            <label><input type="checkbox" name="prioridades[]" value="autonomia"> Autonomia</label>
+                            <label><input type="checkbox" name="prioridades[]" value="cores-numeros-letras"> Reconhecimento de cores/n&uacute;meros/letras</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="platform-estrategias">11&deg; Existe alguma estrat&eacute;gia, m&eacute;todo ou adapta&ccedil;&atilde;o que j&aacute; funciona bem com o usu&aacute;rio no dia a dia escolar ou terap&ecirc;utico?</label>
+                        <textarea id="platform-estrategias" name="estrategias" rows="3"></textarea>
+                    </div>
+
+                    <button class="complete-button form-submit" type="submit">Salvar respostas</button>
+                    <p class="form-status" aria-live="polite"></p>
+                </form>
             </section>
 
             <section class="section-block" id="jogos" aria-labelledby="games-title">

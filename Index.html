@@ -27,7 +27,7 @@
 
             <div class="entry-content">
                 <p class="entry-kicker">Incluindo pessoas autistas na educa&ccedil;&atilde;o por meio da tecnologia</p>
-                <h1 id="entry-title">Aprender com apoio, clareza e acolhimento.</h1>
+                <h1 id="entry-title">Inclusão que transforma o aprendizado.</h1>
                 <p class="entry-text">
                     Uma plataforma pensada para pessoas autistas, fam&iacute;lias e profissionais acompanharem o desenvolvimento educacional com organiza&ccedil;&atilde;o, previsibilidade e cuidado.
                 </p>
@@ -108,7 +108,8 @@
                     </div>
                 </div>
 
-                <form class="entry-login-form" action="home.html" method="get">
+                <form class="entry-login-form" action="auth.php" method="post">
+                    <input type="hidden" name="action" value="login">
                     <div class="entry-login-form__group">
                         <label for="cpf">CPF</label>
                         <input
@@ -158,7 +159,8 @@
                     </div>
                 </div>
 
-                <form class="entry-register-form" action="alfabeto.html" method="get">
+                <form class="entry-register-form" action="auth.php" method="post">
+                    <input type="hidden" name="action" value="register">
                     <input class="entry-register-tab-input" type="radio" name="register_tab" id="tab-acesso" checked>
                     <input class="entry-register-tab-input" type="radio" name="register_tab" id="tab-perfil">
 
@@ -236,23 +238,72 @@
                         </div>
 
                         <div class="entry-login-form__group">
-                            <label for="preferencias">Prefer&ecirc;ncias e interesses</label>
-                            <textarea id="preferencias" name="preferencias" rows="3" placeholder="Ex.: temas favoritos, atividades que gosta, formas de incentivo"></textarea>
+                            <label for="nivel-suporte">1&deg; Qual o n&iacute;vel de suporte do estudante?</label>
+                            <select id="nivel-suporte" name="nivel_suporte">
+                                <option value="">Selecione</option>
+                                <option value="nivel-1">N&iacute;vel 1 - necessita de pouco apoio</option>
+                                <option value="nivel-2">N&iacute;vel 2 - necessita de apoio substancial</option>
+                                <option value="nivel-3">N&iacute;vel 3 - necessita de apoio muito substancial</option>
+                                <option value="nao-informado">N&atilde;o sei informar</option>
+                            </select>
                         </div>
 
                         <div class="entry-login-form__group">
-                            <label for="sensibilidades">Sensibilidades sensoriais</label>
-                            <textarea id="sensibilidades" name="sensibilidades" rows="3" placeholder="Ex.: barulhos, luzes, texturas, cheiros ou situa&ccedil;&otilde;es que geram desconforto"></textarea>
+                            <label for="sensibilidades">2&deg; O usu&aacute;rio possui sensibilidade a sons altos, anima&ccedil;&otilde;es intensas ou excesso de informa&ccedil;&otilde;es na tela?</label>
+                            <textarea id="sensibilidades" name="sensibilidades" rows="3" placeholder="Ex.: sons altos, luzes fortes, telas muito movimentadas, muitas informa&ccedil;&otilde;es"></textarea>
                         </div>
 
                         <div class="entry-login-form__group">
-                            <label for="comunicacao">Comunica&ccedil;&atilde;o e apoio</label>
-                            <textarea id="comunicacao" name="comunicacao" rows="3" placeholder="Ex.: como se comunica melhor, sinais de cansa&ccedil;o, estrat&eacute;gias que ajudam"></textarea>
+                            <label for="preferencias-visuais">3&deg; Quais cores, temas ou estilos visuais deixam o usu&aacute;rio mais confort&aacute;vel durante o uso da plataforma?</label>
+                            <textarea id="preferencias-visuais" name="preferencias_visuais" rows="3" placeholder="Ex.: cores suaves, alto contraste, poucos elementos, temas de espa&ccedil;o, m&uacute;sica ou tecnologia"></textarea>
                         </div>
 
                         <div class="entry-login-form__group">
-                            <label for="rotina">Rotina e observa&ccedil;&otilde;es importantes</label>
-                            <textarea id="rotina" name="rotina" rows="3" placeholder="Ex.: rotina escolar, adapta&ccedil;&otilde;es, medos, cuidados ou informa&ccedil;&otilde;es importantes"></textarea>
+                            <label for="forma-aprendizado">4&deg; O usu&aacute;rio aprende melhor atrav&eacute;s de imagens, sons, textos, jogos ou atividades pr&aacute;ticas?</label>
+                            <textarea id="forma-aprendizado" name="forma_aprendizado" rows="3" placeholder="Ex.: imagens, sons, textos curtos, jogos, atividades pr&aacute;ticas"></textarea>
+                        </div>
+
+                        <div class="entry-login-form__group">
+                            <label for="comunicacao">5&deg; O usu&aacute;rio possui dificuldade de comunica&ccedil;&atilde;o verbal? Se sim, quais formas de comunica&ccedil;&atilde;o ele utiliza com mais facilidade?</label>
+                            <textarea id="comunicacao" name="comunicacao" rows="3" placeholder="Ex.: fala, gestos, figuras, escrita, comunica&ccedil;&atilde;o alternativa"></textarea>
+                        </div>
+
+                        <div class="entry-login-form__group">
+                            <label for="hiperfocos">6&deg; Existem hiperfocos, interesses espec&iacute;ficos ou temas favoritos que possam ser usados para melhorar o aprendizado?</label>
+                            <textarea id="hiperfocos" name="hiperfocos" rows="3" placeholder="Ex.: n&uacute;meros, letras, mapas, personagens, tecnologia, m&uacute;sica"></textarea>
+                        </div>
+
+                        <div class="entry-login-form__group">
+                            <label for="rotina">7&deg; O usu&aacute;rio prefere rotinas bem organizadas e previs&iacute;veis durante as atividades?</label>
+                            <textarea id="rotina" name="rotina" rows="3" placeholder="Ex.: precisa de etapas claras, antecipa&ccedil;&atilde;o, quadro visual ou tempo de prepara&ccedil;&atilde;o"></textarea>
+                        </div>
+
+                        <div class="entry-login-form__group">
+                            <label for="desconfortos">8&deg; Quais situa&ccedil;&otilde;es normalmente causam desconforto, ansiedade ou distra&ccedil;&atilde;o durante o aprendizado?</label>
+                            <textarea id="desconfortos" name="desconfortos" rows="3" placeholder="Ex.: barulho, mudan&ccedil;a de rotina, espera, excesso de comandos, telas muito cheias"></textarea>
+                        </div>
+
+                        <div class="entry-login-form__group">
+                            <label for="autonomia">9&deg; O usu&aacute;rio necessita de apoio constante durante as atividades ou consegue realizar tarefas sozinho?</label>
+                            <textarea id="autonomia" name="autonomia" rows="3" placeholder="Ex.: precisa de acompanhamento constante, ajuda parcial ou realiza sozinho"></textarea>
+                        </div>
+
+                        <div class="entry-login-form__group">
+                            <span class="entry-form-label">10&deg; Quais habilidades o respons&aacute;vel, professor ou terapeuta deseja desenvolver com maior prioridade?</span>
+                            <div class="entry-check-grid">
+                                <label><input type="checkbox" name="prioridades[]" value="fala"> Fala</label>
+                                <label><input type="checkbox" name="prioridades[]" value="coordenacao"> Coordena&ccedil;&atilde;o</label>
+                                <label><input type="checkbox" name="prioridades[]" value="leitura"> Leitura</label>
+                                <label><input type="checkbox" name="prioridades[]" value="socializacao"> Socializa&ccedil;&atilde;o</label>
+                                <label><input type="checkbox" name="prioridades[]" value="atencao"> Aten&ccedil;&atilde;o</label>
+                                <label><input type="checkbox" name="prioridades[]" value="autonomia"> Autonomia</label>
+                                <label><input type="checkbox" name="prioridades[]" value="cores-numeros-letras"> Reconhecimento de cores/n&uacute;meros/letras</label>
+                            </div>
+                        </div>
+
+                        <div class="entry-login-form__group">
+                            <label for="estrategias">11&deg; Existe alguma estrat&eacute;gia, m&eacute;todo ou adapta&ccedil;&atilde;o que j&aacute; funciona bem com o usu&aacute;rio no dia a dia escolar ou terap&ecirc;utico?</label>
+                            <textarea id="estrategias" name="estrategias" rows="3" placeholder="Ex.: refor&ccedil;o positivo, pausas, rotina visual, PECS, ABA, instru&ccedil;&otilde;es curtas"></textarea>
                         </div>
                     </fieldset>
 
@@ -264,5 +315,6 @@
             </div>
         </section>
     </main>
+    <script src="cadastro.js"></script>
 </body>
 </html>
