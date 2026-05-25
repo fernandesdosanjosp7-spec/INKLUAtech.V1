@@ -8,7 +8,7 @@ const gameCards = document.querySelectorAll("[data-activity]");
 const platformViews = document.querySelectorAll("[data-view]");
 const navLinks = document.querySelectorAll(".nav-menu a[href^='#']");
 
-const availableViews = ["inicio", "formulario", "jogos", "aprendizado", "rotina", "apoio"];
+const availableViews = ["inicio", "formulario", "relatorio", "jogos", "aprendizado", "rotina", "apoio"];
 
 const showPlatformView = (viewName = "inicio") => {
     const nextView = availableViews.includes(viewName) ? viewName : "inicio";
@@ -426,6 +426,28 @@ const fillFormWithSavedAnswers = (form, answers) => {
     });
 };
 
+const formatReportValue = (value) => {
+    const values = Array.isArray(value) ? value : String(value || "").split(",");
+    const cleanValues = values
+        .map((item) => item.trim().replace(/-/g, " "))
+        .filter(Boolean);
+
+    return cleanValues.length ? cleanValues.join(", ") : "";
+};
+
+const updateReportFields = (answers) => {
+    document.querySelectorAll("[data-report-field]").forEach((field) => {
+        const key = field.dataset.reportField;
+        const savedValue = key ? formatReportValue(answers[key]) : "";
+
+        if (savedValue) {
+            field.textContent = savedValue;
+        }
+    });
+};
+
+updateReportFields(savedFormAnswers);
+
 document.querySelectorAll(".platform-form").forEach((form) => {
     if (form.hasAttribute("data-local-form")) {
         fillFormWithSavedAnswers(form, savedFormAnswers);
@@ -441,6 +463,7 @@ document.querySelectorAll(".platform-form").forEach((form) => {
         }
 
         event.preventDefault();
+        updateReportFields(collectFormAnswers(form));
 
         const status = form.querySelector(".form-status");
 

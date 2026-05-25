@@ -115,6 +115,13 @@ const selectAnswer = (button) => {
         button.classList.add("is-correct");
         emotionFeedback.textContent = `Muito bem! Essa situa\u00e7\u00e3o combina com ${correctEmotion.label.toLowerCase()}.`;
         speak(`Muito bem. ${correctEmotion.label}.`);
+        window.InkluaGameProgress?.record("emocoes", {
+            title: "Jogo das Emoções",
+            skill: "Comunicação",
+            item: round.situation,
+            correct: true,
+            totalItems: rounds.length
+        });
         canContinue = true;
         nextEmotion.disabled = false;
         return;
@@ -123,6 +130,13 @@ const selectAnswer = (button) => {
     button.classList.add("is-wrong");
     emotionFeedback.textContent = `Boa tentativa. ${round.hint}`;
     speak(round.hint);
+    window.InkluaGameProgress?.record("emocoes", {
+        title: "Jogo das Emoções",
+        skill: "Comunicação",
+        item: `${round.situation}:${selectedEmotion.id}`,
+        correct: false,
+        totalItems: rounds.length
+    });
 };
 
 const finishGame = () => {
@@ -133,6 +147,13 @@ const finishGame = () => {
     restartEmotion.hidden = false;
     emotionCheckin.hidden = false;
     speak("Atividade conclu\u00edda. Como voc\u00ea se sente hoje?");
+    window.InkluaGameProgress?.record("emocoes", {
+        title: "Jogo das Emoções",
+        skill: "Comunicação",
+        item: "finalizado",
+        completed: true,
+        totalItems: rounds.length
+    });
 };
 
 const goToNextRound = () => {
@@ -186,6 +207,14 @@ checkinOptions.addEventListener("click", (event) => {
     button.classList.add("is-selected");
     checkinFeedback.textContent = `Entendi. Hoje voc\u00ea escolheu: ${selectedEmotion.label}.`;
     speak(`Hoje voc\u00ea se sente ${selectedEmotion.phrase}.`);
+    window.InkluaGameProgress?.record("checkin-emocional", {
+        title: "Check-in emocional",
+        skill: "Interação social",
+        item: selectedEmotion.label,
+        correct: true,
+        completed: true,
+        totalItems: 1
+    });
 });
 
 nextEmotion.addEventListener("click", goToNextRound);

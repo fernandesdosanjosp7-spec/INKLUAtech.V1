@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INKLUA Tech | Relat&oacute;rio Educacional</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="relatorio.css">
+</head>
+<body>
+    <main class="report-page">
+        <div class="soft-shape soft-shape--one" aria-hidden="true"></div>
+        <div class="soft-shape soft-shape--two" aria-hidden="true"></div>
+
+        <header class="report-header">
+            <a class="brand" href="home.php" aria-label="Voltar para o dashboard INKLUA Tech">
+                <img src="assets/ink-logo.png" alt="Logo INKLUA Tech">
+                <span>INKLUA Tech</span>
+            </a>
+
+            <div class="report-title">
+                <p>Relat&oacute;rio Educacional</p>
+                <h1>Acompanhamento de desenvolvimento e progresso do aluno</h1>
+            </div>
+        </header>
+
+        <section class="student-card" aria-labelledby="student-name">
+            <div class="student-photo" aria-label="Foto do aluno">
+                <span>LA</span>
+            </div>
+
+            <div class="student-main">
+                <p class="eyebrow">Perfil acompanhado</p>
+                <h2 id="student-name">Lucas Andrade</h2>
+                <p>Relat&oacute;rio pedag&oacute;gico com indicadores de evolu&ccedil;&atilde;o, comportamento e participa&ccedil;&atilde;o nas atividades.</p>
+            </div>
+
+            <dl class="student-info">
+                <div>
+                    <dt>Idade</dt>
+                    <dd>8 anos</dd>
+                </div>
+                <div>
+                    <dt>S&eacute;rie</dt>
+                    <dd>3&ordm; ano</dd>
+                </div>
+                <div>
+                    <dt>N&iacute;vel de suporte</dt>
+                    <dd>N&iacute;vel 1</dd>
+                </div>
+                <div>
+                    <dt>Respons&aacute;vel</dt>
+                    <dd>Mariana Andrade</dd>
+                </div>
+                <div>
+                    <dt>Data do relat&oacute;rio</dt>
+                    <dd>25/05/2026</dd>
+                </div>
+            </dl>
+        </section>
+
+        <section class="section-block" aria-labelledby="evolution-title">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Evolu&ccedil;&atilde;o</p>
+                    <h2 id="evolution-title">Indicadores de desenvolvimento</h2>
+                </div>
+                <span class="status-pill">Atualizado nesta semana</span>
+            </div>
+
+            <div class="evolution-grid" id="evolutionGrid"></div>
+        </section>
+
+        <section class="charts-grid" aria-label="Gr&aacute;ficos de progresso">
+            <article class="chart-card">
+                <div class="chart-heading">
+                    <h2>Evolu&ccedil;&atilde;o semanal</h2>
+                    <span>Linha</span>
+                </div>
+                <canvas id="weeklyChart" aria-label="Gr&aacute;fico de linha da evolu&ccedil;&atilde;o semanal"></canvas>
+            </article>
+
+            <article class="chart-card">
+                <div class="chart-heading">
+                    <h2>Atividades conclu&iacute;das</h2>
+                    <span>Pizza</span>
+                </div>
+                <canvas id="activitiesChart" aria-label="Gr&aacute;fico de pizza das atividades conclu&iacute;das"></canvas>
+            </article>
+
+            <article class="chart-card chart-card--wide">
+                <div class="chart-heading">
+                    <h2>Desempenho por habilidade</h2>
+                    <span>Barras</span>
+                </div>
+                <canvas id="skillsChart" aria-label="Gr&aacute;fico de barras do desempenho por habilidade"></canvas>
+            </article>
+        </section>
+
+        <section class="section-block games-report" aria-labelledby="games-report-title">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Dados dos jogos</p>
+                    <h2 id="games-report-title">Atividades registradas no relat&oacute;rio</h2>
+                </div>
+                <span class="status-pill" id="gamesReportStatus">Sincronizado com os jogos</span>
+            </div>
+            <div class="games-report-grid" id="gamesReportGrid"></div>
+        </section>
+
+        <section class="two-column">
+            <article class="section-block behavior-card" aria-labelledby="behavior-title">
+                <p class="eyebrow">Comportamento</p>
+                <h2 id="behavior-title">Registro observado</h2>
+                <div class="tag-list" aria-label="Tags de comportamento">
+                    <span class="tag tag--blue">Calmo</span>
+                    <span class="tag tag--green">Focado</span>
+                    <span class="tag tag--purple">Interativo</span>
+                    <span class="tag tag--yellow">Dificuldade sensorial</span>
+                    <span class="tag tag--pink">Comunica&ccedil;&atilde;o ativa</span>
+                </div>
+            </article>
+
+            <article class="section-block ai-card" aria-labelledby="ai-title">
+                <div class="ai-badge" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" role="img">
+                        <path d="M12 3l1.7 4.6L18 9.4l-4.3 1.8L12 16l-1.7-4.8L6 9.4l4.3-1.8L12 3z"></path>
+                        <path d="M18.5 14l.8 2.1 2.1.9-2.1.9-.8 2.1-.8-2.1-2.1-.9 2.1-.9.8-2.1z"></path>
+                    </svg>
+                </div>
+                <p class="eyebrow">An&aacute;lise pedag&oacute;gica inteligente</p>
+                <h2 id="ai-title">Relat&oacute;rio autom&aacute;tico</h2>
+                <p>
+                    O aluno apresentou melhora significativa nas atividades visuais e maior intera&ccedil;&atilde;o durante as tarefas educativas. Recomenda-se manter atividades curtas, refor&ccedil;o positivo e apoio visual nas pr&oacute;ximas semanas.
+                </p>
+            </article>
+        </section>
+
+        <section class="section-block teacher-notes" aria-labelledby="notes-title">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Observa&ccedil;&otilde;es do professor</p>
+                    <h2 id="notes-title">Registro pedag&oacute;gico</h2>
+                </div>
+            </div>
+            <textarea id="teacherNotes" aria-label="Campo de observa&ccedil;&otilde;es do professor">Lucas demonstrou boa participa&ccedil;&atilde;o nas atividades com imagens e cores. Durante a rotina visual, respondeu melhor quando recebeu instru&ccedil;&otilde;es curtas e previs&iacute;veis. Houve melhora na comunica&ccedil;&atilde;o ativa, principalmente ao escolher atividades e expressar prefer&ecirc;ncias.</textarea>
+        </section>
+
+        <section class="action-bar" aria-label="A&ccedil;&otilde;es do relat&oacute;rio">
+            <button class="action-button action-button--primary" id="pdfButton" type="button">
+                <span aria-hidden="true">↓</span>
+                Gerar PDF
+            </button>
+            <button class="action-button" id="shareButton" type="button">
+                <span aria-hidden="true">↗</span>
+                Compartilhar relat&oacute;rio
+            </button>
+            <button class="action-button" id="exportButton" type="button">
+                <span aria-hidden="true">⇩</span>
+                Exportar dados
+            </button>
+            <a class="action-button action-button--ghost" href="home.php">
+                <span aria-hidden="true">←</span>
+                Voltar ao dashboard
+            </a>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="relatorio.js"></script>
+</body>
+</html>

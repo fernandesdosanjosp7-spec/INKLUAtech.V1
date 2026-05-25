@@ -57,5 +57,12 @@ alphabetButtons.forEach((button) => {
         }
 
         speakLetter(letter);
+        window.InkluaGameProgress?.record("alfabeto", {
+            title: "Alfabeto Falado",
+            skill: "Alfabetização",
+            item: letter,
+            correct: true,
+            totalItems: 26
+        });
     });
 });

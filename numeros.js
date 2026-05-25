@@ -27,5 +27,12 @@ numberButtons.forEach((button) => {
         }
 
         speakNumber(number);
+        window.InkluaGameProgress?.record("numeros", {
+            title: "Números Falados",
+            skill: "Atenção e foco",
+            item: number,
+            correct: true,
+            totalItems: 11
+        });
     });
 });

@@ -31,5 +31,12 @@ shapeButtons.forEach((button) => {
         }
 
         speakShape(shapeName);
+        window.InkluaGameProgress?.record("formas", {
+            title: "Formas Faladas",
+            skill: "Coordenação motora",
+            item: shapeName,
+            correct: true,
+            totalItems: 6
+        });
     });
 });

@@ -209,7 +209,8 @@ button {
 
 .overview-grid,
 .game-grid,
-.learning-list {
+.learning-list,
+.report-summary {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1rem;
@@ -274,6 +275,7 @@ button {
 
 .overview-card,
 .game-card,
+.report-card,
 .section-block,
 .activity-board {
     border: 1px solid var(--line);
@@ -282,7 +284,8 @@ button {
     box-shadow: 0 14px 38px rgba(47, 73, 98, 0.08);
 }
 
-.overview-card {
+.overview-card,
+.report-card {
     display: flex;
     align-items: center;
     gap: 0.85rem;
@@ -290,6 +293,7 @@ button {
 }
 
 .overview-card strong,
+.report-card strong,
 .learning-list strong {
     display: block;
     margin-bottom: 0.25rem;
@@ -297,6 +301,7 @@ button {
 
 .overview-card p,
 .game-card p,
+.report-card p,
 .learning-list p {
     margin: 0;
     color: var(--muted);
@@ -321,6 +326,117 @@ button {
 
 .overview-icon--yellow {
     background: rgba(255, 226, 122, 0.34);
+}
+
+.report-summary,
+.report-grid,
+.report-panel--wide {
+    margin-top: 1rem;
+}
+
+.report-card__number {
+    width: 3rem;
+    height: 3rem;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    border-radius: 0.9rem;
+    color: var(--primary-dark);
+    background: rgba(100, 181, 255, 0.18);
+    font-size: 1.35rem;
+    font-weight: 950;
+}
+
+.report-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1rem;
+}
+
+.report-panel {
+    padding: 1rem;
+    border: 1px solid var(--line);
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.62);
+}
+
+.report-panel h3 {
+    margin: 0 0 1rem;
+    font-size: 1rem;
+}
+
+.skill-progress {
+    display: grid;
+    gap: 0.45rem;
+    margin-top: 0.85rem;
+}
+
+.skill-progress__row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    color: var(--text);
+    font-weight: 850;
+}
+
+.skill-progress__row strong {
+    color: var(--primary-dark);
+}
+
+.skill-progress__bar {
+    height: 0.72rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(112, 139, 166, 0.18);
+}
+
+.skill-progress__bar span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--blue), var(--mint));
+}
+
+.report-details {
+    display: grid;
+    gap: 0.85rem;
+    margin: 0;
+}
+
+.report-details div {
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--line);
+}
+
+.report-details div:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+}
+
+.report-details dt {
+    color: var(--primary-dark);
+    font-weight: 900;
+}
+
+.report-details dd {
+    margin: 0.25rem 0 0;
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+.report-timeline {
+    display: grid;
+    gap: 0.7rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.report-timeline li {
+    padding: 0.85rem 1rem;
+    border-radius: 0.85rem;
+    background: rgba(216, 194, 255, 0.2);
+    line-height: 1.5;
 }
 
 .section-block,
@@ -1268,7 +1384,7 @@ button {
     }
 
     .nav-menu {
-        grid-template-columns: repeat(6, minmax(0, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
     }
 
     .student-card {
@@ -1280,6 +1396,8 @@ button {
     .overview-grid,
     .game-grid,
     .learning-list,
+    .report-summary,
+    .report-grid,
     .two-column,
     .nav-menu,
     .check-grid {

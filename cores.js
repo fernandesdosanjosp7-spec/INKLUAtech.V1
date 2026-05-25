@@ -31,5 +31,12 @@ colorButtons.forEach((button) => {
         }
 
         speakColor(colorName);
+        window.InkluaGameProgress?.record("cores", {
+            title: "Jogo das Cores",
+            skill: "Reconhecimento de cores",
+            item: colorName,
+            correct: true,
+            totalItems: 8
+        });
     });
 });

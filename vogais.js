@@ -35,5 +35,12 @@ vowelButtons.forEach((button) => {
         }
 
         speakVowel(letter);
+        window.InkluaGameProgress?.record("vogais", {
+            title: "Jogo das Vogais",
+            skill: "Alfabetização",
+            item: letter,
+            correct: true,
+            totalItems: 5
+        });
     });
 });
