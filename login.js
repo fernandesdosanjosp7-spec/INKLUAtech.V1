@@ -16,17 +16,18 @@ const clearErrorState = () => {
 };
 
 loginForm.addEventListener("submit", (event) => {
-    event.preventDefault();
     clearErrorState();
 
     const emptyFields = [cpfInput, passwordInput].filter((field) => !field.value.trim());
 
     if (emptyFields.length > 0) {
+        event.preventDefault();
         showError("Preencha o CPF e a senha para continuar.", emptyFields);
         return;
     }
 
-    window.location.href = "Index.html";
+    event.preventDefault();
+    window.location.href = "home.html";
 });
 
 [cpfInput, passwordInput].forEach((field) => {

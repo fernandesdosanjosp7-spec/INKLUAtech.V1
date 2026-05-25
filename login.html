@@ -45,7 +45,8 @@
                 </div>
             </div>
 
-            <form class="login-form" id="loginForm" novalidate>
+            <form class="login-form" id="loginForm" action="auth.php" method="post" novalidate>
+                <input type="hidden" name="action" value="login">
                 <div class="login-form__group">
                     <label for="cpf">CPF</label>
                     <input
@@ -84,7 +85,7 @@
             </form>
 
             <div class="login-links" aria-label="Links de acesso">
-                <a href="#" class="login-link">Criar conta</a>
+                <a href="Index.html#cadastro" class="login-link">Criar conta</a>
                 <a href="#" class="login-link">Esqueci minha senha</a>
             </div>
         </section>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INKLUAtech | Formas Faladas</title>
+    <link rel="stylesheet" href="home.css">
+</head>
+<body class="shape-page">
+    <main class="shape-shell">
+        <header class="shape-topbar">
+            <a class="brand" href="home.html">
+                <img src="assets/ink-logo.png" alt="Logo Inklua Tech">
+                <span>Inklua Tech</span>
+            </a>
+            <a class="topbar-button" href="home.html#jogos">Voltar aos jogos</a>
+        </header>
+
+        <section class="shape-focus" aria-labelledby="shape-title">
+            <div class="number-intro">
+                <p class="eyebrow">Jogo educativo</p>
+                <h1 id="shape-title">Formas Faladas</h1>
+                <p>Toque em uma forma geom&eacute;trica para ouvir seu nome em voz alta.</p>
+            </div>
+
+            <div class="shape-game shape-game--standalone">
+                <div class="shape-display" id="shapeDisplay" aria-live="polite">
+                    <span class="shape-preview shape-preview--triangle"></span>
+                    <strong>tri&acirc;ngulo</strong>
+                </div>
+
+                <div class="shape-grid" aria-label="Formas geom&eacute;tricas">
+                    <button class="shape-button" type="button" data-shape-name="tri&acirc;ngulo" data-shape-class="triangle">
+                        <span class="shape-preview shape-preview--triangle"></span>
+                        <span>tri&acirc;ngulo</span>
+                    </button>
+                    <button class="shape-button" type="button" data-shape-name="quadrado" data-shape-class="square">
+                        <span class="shape-preview shape-preview--square"></span>
+                        <span>quadrado</span>
+                    </button>
+                    <button class="shape-button" type="button" data-shape-name="c&iacute;rculo" data-shape-class="circle">
+                        <span class="shape-preview shape-preview--circle"></span>
+                        <span>c&iacute;rculo</span>
+                    </button>
+                    <button class="shape-button" type="button" data-shape-name="ret&acirc;ngulo" data-shape-class="rectangle">
+                        <span class="shape-preview shape-preview--rectangle"></span>
+                        <span>ret&acirc;ngulo</span>
+                    </button>
+                    <button class="shape-button" type="button" data-shape-name="estrela" data-shape-class="star">
+                        <span class="shape-preview shape-preview--star"></span>
+                        <span>estrela</span>
+                    </button>
+                    <button class="shape-button" type="button" data-shape-name="cora&ccedil;&atilde;o" data-shape-class="heart">
+                        <span class="shape-preview shape-preview--heart"></span>
+                        <span>cora&ccedil;&atilde;o</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="formas.js"></script>
+</body>
+</html>
