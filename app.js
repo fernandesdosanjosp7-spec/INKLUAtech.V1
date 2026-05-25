@@ -2,6 +2,8 @@ const activityTitle = document.getElementById("activityTitle");
 const activityPanel = document.getElementById("activityPanel");
 const completeActivity = document.getElementById("completeActivity");
 const progressCount = document.getElementById("progressCount");
+const welcomeGreeting = document.getElementById("welcomeGreeting");
+const welcomeName = document.getElementById("welcomeName");
 const gameCards = document.querySelectorAll("[data-activity]");
 const platformViews = document.querySelectorAll("[data-view]");
 const navLinks = document.querySelectorAll(".nav-menu a[href^='#']");
@@ -230,7 +232,7 @@ const speakLetter = (letter) => {
     window.speechSynthesis.cancel();
 
     const letterName = letterNames[letter] || letter;
-    const utterance = new SpeechSynthesisUtterance(`Letra ${letterName}.`);
+    const utterance = new SpeechSynthesisUtterance(`${letterName}.`);
     utterance.lang = "pt-BR";
     utterance.rate = 0.82;
     utterance.pitch = 1;
@@ -244,7 +246,7 @@ const speakNumber = (number) => {
 
     window.speechSynthesis.cancel();
 
-    const utterance = new SpeechSynthesisUtterance(`N\u00famero ${number}`);
+    const utterance = new SpeechSynthesisUtterance(String(number));
     utterance.lang = "pt-BR";
     utterance.rate = 0.82;
     utterance.pitch = 1;
@@ -258,7 +260,7 @@ const speakColor = (colorName) => {
 
     window.speechSynthesis.cancel();
 
-    const utterance = new SpeechSynthesisUtterance(`Cor ${colorName}.`);
+    const utterance = new SpeechSynthesisUtterance(`${colorName}.`);
     utterance.lang = "pt-BR";
     utterance.rate = 0.82;
     utterance.pitch = 1;
@@ -380,6 +382,24 @@ const getSavedFormAnswers = () => {
     }
 };
 
+const savedFormAnswers = getSavedFormAnswers();
+
+if (welcomeName && savedFormAnswers.aluno_nome) {
+    welcomeName.textContent = savedFormAnswers.aluno_nome;
+}
+
+if (welcomeGreeting) {
+    const currentHour = new Date().getHours();
+
+    if (currentHour < 12) {
+        welcomeGreeting.textContent = "Bom dia";
+    } else if (currentHour < 18) {
+        welcomeGreeting.textContent = "Boa tarde";
+    } else {
+        welcomeGreeting.textContent = "Boa noite";
+    }
+}
+
 const fillFormWithSavedAnswers = (form, answers) => {
     form.querySelectorAll("[name]").forEach((field) => {
         const key = field.name.replace("[]", "");
@@ -408,7 +428,7 @@ const fillFormWithSavedAnswers = (form, answers) => {
 
 document.querySelectorAll(".platform-form").forEach((form) => {
     if (form.hasAttribute("data-local-form")) {
-        fillFormWithSavedAnswers(form, getSavedFormAnswers());
+        fillFormWithSavedAnswers(form, savedFormAnswers);
     }
 
     form.addEventListener("submit", (event) => {

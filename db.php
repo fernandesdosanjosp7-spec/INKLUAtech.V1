@@ -43,7 +43,17 @@ function ensureSchema(PDO $pdo): void
             desconfortos TEXT,
             autonomia TEXT,
             prioridades TEXT,
-            estrategias TEXT
+            estrategias TEXT,
+            comunicacao_melhor TEXT,
+            compreensao_melhor TEXT,
+            conteudos_reconhecidos TEXT,
+            atividade_funciona TEXT,
+            sensibilidades_importantes TEXT,
+            elementos_atencao TEXT,
+            adaptacao_rotina TEXT,
+            ajuda_dificuldade TEXT,
+            recursos_uteis TEXT,
+            observacoes_usuario TEXT
         )
     ");
 
@@ -70,7 +80,17 @@ function ensureSchema(PDO $pdo): void
         "desconfortos" => "TEXT",
         "autonomia" => "TEXT",
         "prioridades" => "TEXT",
-        "estrategias" => "TEXT"
+        "estrategias" => "TEXT",
+        "comunicacao_melhor" => "TEXT",
+        "compreensao_melhor" => "TEXT",
+        "conteudos_reconhecidos" => "TEXT",
+        "atividade_funciona" => "TEXT",
+        "sensibilidades_importantes" => "TEXT",
+        "elementos_atencao" => "TEXT",
+        "adaptacao_rotina" => "TEXT",
+        "ajuda_dificuldade" => "TEXT",
+        "recursos_uteis" => "TEXT",
+        "observacoes_usuario" => "TEXT"
     ];
 
     foreach ($requiredColumns as $column => $type) {
@@ -87,11 +107,15 @@ function normalizeCpf(string $cpf): string
 
 function collectProfileData(array $source): array
 {
-    $prioridades = $source["prioridades"] ?? [];
+    $collectList = static function (string $key) use ($source): string {
+        $value = $source[$key] ?? [];
 
-    if (is_array($prioridades)) {
-        $prioridades = implode(", ", $prioridades);
-    }
+        if (is_array($value)) {
+            return implode(", ", $value);
+        }
+
+        return $value;
+    };
 
     return [
         "nivel_suporte" => $source["nivel_suporte"] ?? "",
@@ -103,7 +127,17 @@ function collectProfileData(array $source): array
         "rotina" => $source["rotina"] ?? "",
         "desconfortos" => $source["desconfortos"] ?? "",
         "autonomia" => $source["autonomia"] ?? "",
-        "prioridades" => $prioridades,
-        "estrategias" => $source["estrategias"] ?? ""
+        "prioridades" => $collectList("prioridades"),
+        "estrategias" => $source["estrategias"] ?? "",
+        "comunicacao_melhor" => $collectList("comunicacao_melhor"),
+        "compreensao_melhor" => $collectList("compreensao_melhor"),
+        "conteudos_reconhecidos" => $collectList("conteudos_reconhecidos"),
+        "atividade_funciona" => $collectList("atividade_funciona"),
+        "sensibilidades_importantes" => $collectList("sensibilidades_importantes"),
+        "elementos_atencao" => $collectList("elementos_atencao"),
+        "adaptacao_rotina" => $source["adaptacao_rotina"] ?? "",
+        "ajuda_dificuldade" => $collectList("ajuda_dificuldade"),
+        "recursos_uteis" => $collectList("recursos_uteis"),
+        "observacoes_usuario" => $source["observacoes_usuario"] ?? ""
     ];
 }

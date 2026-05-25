@@ -8,7 +8,7 @@ const speakNumber = (number) => {
 
     window.speechSynthesis.cancel();
 
-    const utterance = new SpeechSynthesisUtterance(`N\u00famero ${number}`);
+    const utterance = new SpeechSynthesisUtterance(String(number));
     utterance.lang = "pt-BR";
     utterance.rate = 0.82;
     utterance.pitch = 1;

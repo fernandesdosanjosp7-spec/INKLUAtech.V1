@@ -56,7 +56,17 @@ try {
                 desconfortos,
                 autonomia,
                 prioridades,
-                estrategias
+                estrategias,
+                comunicacao_melhor,
+                compreensao_melhor,
+                conteudos_reconhecidos,
+                atividade_funciona,
+                sensibilidades_importantes,
+                elementos_atencao,
+                adaptacao_rotina,
+                ajuda_dificuldade,
+                recursos_uteis,
+                observacoes_usuario
             ) VALUES (
                 :nome,
                 :cpf,
@@ -76,7 +86,17 @@ try {
                 :desconfortos,
                 :autonomia,
                 :prioridades,
-                :estrategias
+                :estrategias,
+                :comunicacao_melhor,
+                :compreensao_melhor,
+                :conteudos_reconhecidos,
+                :atividade_funciona,
+                :sensibilidades_importantes,
+                :elementos_atencao,
+                :adaptacao_rotina,
+                :ajuda_dificuldade,
+                :recursos_uteis,
+                :observacoes_usuario
             )
         ");
 
@@ -99,7 +119,17 @@ try {
             ":desconfortos" => $profile["desconfortos"],
             ":autonomia" => $profile["autonomia"],
             ":prioridades" => $profile["prioridades"],
-            ":estrategias" => $profile["estrategias"]
+            ":estrategias" => $profile["estrategias"],
+            ":comunicacao_melhor" => $profile["comunicacao_melhor"],
+            ":compreensao_melhor" => $profile["compreensao_melhor"],
+            ":conteudos_reconhecidos" => $profile["conteudos_reconhecidos"],
+            ":atividade_funciona" => $profile["atividade_funciona"],
+            ":sensibilidades_importantes" => $profile["sensibilidades_importantes"],
+            ":elementos_atencao" => $profile["elementos_atencao"],
+            ":adaptacao_rotina" => $profile["adaptacao_rotina"],
+            ":ajuda_dificuldade" => $profile["ajuda_dificuldade"],
+            ":recursos_uteis" => $profile["recursos_uteis"],
+            ":observacoes_usuario" => $profile["observacoes_usuario"]
         ]);
 
         $_SESSION["user_id"] = (int) $pdo->lastInsertId();
@@ -155,7 +185,17 @@ try {
                 desconfortos = :desconfortos,
                 autonomia = :autonomia,
                 prioridades = :prioridades,
-                estrategias = :estrategias
+                estrategias = :estrategias,
+                comunicacao_melhor = :comunicacao_melhor,
+                compreensao_melhor = :compreensao_melhor,
+                conteudos_reconhecidos = :conteudos_reconhecidos,
+                atividade_funciona = :atividade_funciona,
+                sensibilidades_importantes = :sensibilidades_importantes,
+                elementos_atencao = :elementos_atencao,
+                adaptacao_rotina = :adaptacao_rotina,
+                ajuda_dificuldade = :ajuda_dificuldade,
+                recursos_uteis = :recursos_uteis,
+                observacoes_usuario = :observacoes_usuario
             WHERE id = :id
         ");
 
@@ -171,6 +211,16 @@ try {
             ":autonomia" => $profile["autonomia"],
             ":prioridades" => $profile["prioridades"],
             ":estrategias" => $profile["estrategias"],
+            ":comunicacao_melhor" => $profile["comunicacao_melhor"],
+            ":compreensao_melhor" => $profile["compreensao_melhor"],
+            ":conteudos_reconhecidos" => $profile["conteudos_reconhecidos"],
+            ":atividade_funciona" => $profile["atividade_funciona"],
+            ":sensibilidades_importantes" => $profile["sensibilidades_importantes"],
+            ":elementos_atencao" => $profile["elementos_atencao"],
+            ":adaptacao_rotina" => $profile["adaptacao_rotina"],
+            ":ajuda_dificuldade" => $profile["ajuda_dificuldade"],
+            ":recursos_uteis" => $profile["recursos_uteis"],
+            ":observacoes_usuario" => $profile["observacoes_usuario"],
             ":id" => $_SESSION["user_id"]
         ]);
 
