@@ -28,35 +28,35 @@
 
         <section class="student-card" aria-labelledby="student-name">
             <div class="student-photo" aria-label="Foto do aluno">
-                <span>LA</span>
+                <span id="studentInitials">LA</span>
             </div>
 
             <div class="student-main">
                 <p class="eyebrow">Perfil acompanhado</p>
                 <h2 id="student-name">Lucas Andrade</h2>
-                <p>Relat&oacute;rio pedag&oacute;gico com indicadores de evolu&ccedil;&atilde;o, comportamento e participa&ccedil;&atilde;o nas atividades.</p>
+                <p id="studentSummary">Relat&oacute;rio pedag&oacute;gico com indicadores de evolu&ccedil;&atilde;o, comportamento e participa&ccedil;&atilde;o nas atividades.</p>
             </div>
 
             <dl class="student-info">
                 <div>
                     <dt>Idade</dt>
-                    <dd>8 anos</dd>
+                    <dd id="studentAge">8 anos</dd>
                 </div>
                 <div>
                     <dt>S&eacute;rie</dt>
-                    <dd>3&ordm; ano</dd>
+                    <dd id="studentGrade">N&atilde;o informado</dd>
                 </div>
                 <div>
                     <dt>N&iacute;vel de suporte</dt>
-                    <dd>N&iacute;vel 1</dd>
+                    <dd id="studentSupport">N&iacute;vel 1</dd>
                 </div>
                 <div>
                     <dt>Respons&aacute;vel</dt>
-                    <dd>Mariana Andrade</dd>
+                    <dd id="studentGuardian">Mariana Andrade</dd>
                 </div>
                 <div>
                     <dt>Data do relat&oacute;rio</dt>
-                    <dd>25/05/2026</dd>
+                    <dd id="reportDate">25/05/2026</dd>
                 </div>
             </dl>
         </section>
@@ -114,7 +114,7 @@
             <article class="section-block behavior-card" aria-labelledby="behavior-title">
                 <p class="eyebrow">Comportamento</p>
                 <h2 id="behavior-title">Registro observado</h2>
-                <div class="tag-list" aria-label="Tags de comportamento">
+                <div class="tag-list" id="behaviorTags" aria-label="Tags de comportamento">
                     <span class="tag tag--blue">Calmo</span>
                     <span class="tag tag--green">Focado</span>
                     <span class="tag tag--purple">Interativo</span>
@@ -132,7 +132,7 @@
                 </div>
                 <p class="eyebrow">An&aacute;lise pedag&oacute;gica inteligente</p>
                 <h2 id="ai-title">Relat&oacute;rio autom&aacute;tico</h2>
-                <p>
+                <p id="automaticReportText">
                     O aluno apresentou melhora significativa nas atividades visuais e maior intera&ccedil;&atilde;o durante as tarefas educativas. Recomenda-se manter atividades curtas, refor&ccedil;o positivo e apoio visual nas pr&oacute;ximas semanas.
                 </p>
             </article>

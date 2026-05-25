@@ -19,6 +19,140 @@ const gameProgress = readGameProgress();
 const games = Object.values(gameProgress.games || {});
 const sessions = gameProgress.sessions || [];
 
+const readSavedProfile = () => {
+    try {
+        return JSON.parse(localStorage.getItem("inklua_formulario_adaptacao")) || {};
+    } catch (error) {
+        return {};
+    }
+};
+
+const savedProfile = readSavedProfile();
+const serverProfile = window.InkluaStudentProfile || {};
+
+const firstFilled = (...values) => values.find((value) => String(value || "").trim() !== "") || "";
+
+const normalizeList = (value) => {
+    if (Array.isArray(value)) {
+        return value.filter(Boolean);
+    }
+
+    return String(value || "")
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean);
+};
+
+const formatList = (value) => normalizeList(value)
+    .map((item) => item.replace(/-/g, " "))
+    .join(", ");
+
+const supportLabels = {
+    "nivel-1": "Nivel 1 - necessita de pouco apoio",
+    "nivel-2": "Nivel 2 - necessita de apoio substancial",
+    "nivel-3": "Nivel 3 - necessita de apoio muito substancial",
+    "nao-informado": "Nao informado"
+};
+
+const studentProfile = {
+    name: firstFilled(serverProfile.aluno_nome, savedProfile.aluno_nome, "Aluno"),
+    age: firstFilled(serverProfile.aluno_idade, savedProfile.aluno_idade),
+    grade: firstFilled(serverProfile.serie, savedProfile.serie, "Nao informado"),
+    supportLevel: supportLabels[firstFilled(serverProfile.nivel_suporte, savedProfile.nivel_suporte)] || firstFilled(serverProfile.nivel_suporte, savedProfile.nivel_suporte, "Nao informado"),
+    guardian: firstFilled(serverProfile.responsavel_nome, savedProfile.responsavel_nome, "Responsavel nao informado"),
+    reportDate: firstFilled(serverProfile.report_date, new Date().toLocaleDateString("pt-BR")),
+    communication: firstFilled(serverProfile.comunicacao_melhor, savedProfile.comunicacao_melhor, serverProfile.comunicacao, savedProfile.comunicacao),
+    learningStyle: firstFilled(serverProfile.atividade_funciona, savedProfile.atividade_funciona, serverProfile.forma_aprendizado, savedProfile.forma_aprendizado),
+    recognizedContent: firstFilled(serverProfile.conteudos_reconhecidos, savedProfile.conteudos_reconhecidos),
+    sensitivities: firstFilled(serverProfile.sensibilidades_importantes, savedProfile.sensibilidades_importantes, serverProfile.sensibilidades, savedProfile.sensibilidades),
+    attentionElements: firstFilled(serverProfile.elementos_atencao, savedProfile.elementos_atencao),
+    priorities: firstFilled(serverProfile.prioridades, savedProfile.prioridades),
+    strategies: firstFilled(serverProfile.estrategias, savedProfile.estrategias),
+    routine: firstFilled(serverProfile.rotina, savedProfile.rotina),
+    autonomy: firstFilled(serverProfile.autonomia, savedProfile.autonomia),
+    observations: firstFilled(serverProfile.observacoes_usuario, savedProfile.observacoes_usuario)
+};
+
+const getInitials = (name) => {
+    const parts = String(name || "Aluno").trim().split(/\s+/).filter(Boolean);
+    return parts.slice(0, 2).map((part) => part[0]).join("").toUpperCase() || "AL";
+};
+
+const setText = (id, value) => {
+    const element = document.getElementById(id);
+
+    if (element && value) {
+        element.textContent = value;
+    }
+};
+
+const renderStudentProfile = () => {
+    setText("studentInitials", getInitials(studentProfile.name));
+    setText("student-name", studentProfile.name);
+    setText("studentAge", studentProfile.age ? `${studentProfile.age} anos` : "Nao informado");
+    setText("studentGrade", studentProfile.grade);
+    setText("studentSupport", studentProfile.supportLevel);
+    setText("studentGuardian", studentProfile.guardian);
+    setText("reportDate", studentProfile.reportDate);
+
+    const studentSummary = document.getElementById("studentSummary");
+    if (studentSummary) {
+        const learningText = formatList(studentProfile.learningStyle) || "atividades visuais e jogos educativos";
+        studentSummary.textContent = `Relatorio pedagogico de ${studentProfile.name}, com acompanhamento de ${learningText} e indicadores de desenvolvimento dentro da plataforma.`;
+    }
+
+    const teacherNotes = document.getElementById("teacherNotes");
+    if (teacherNotes) {
+        const notes = [
+            studentProfile.observations,
+            studentProfile.strategies ? `Estrategias que ajudam: ${studentProfile.strategies}.` : "",
+            studentProfile.routine ? `Rotina: ${studentProfile.routine}.` : "",
+            studentProfile.autonomy ? `Autonomia: ${studentProfile.autonomy}.` : ""
+        ].filter(Boolean).join("\n\n");
+
+        if (notes) {
+            teacherNotes.value = notes;
+        }
+    }
+};
+
+const renderBehaviorTags = () => {
+    const tagList = document.getElementById("behaviorTags");
+
+    if (!tagList) {
+        return;
+    }
+
+    const profileTags = [
+        ...normalizeList(studentProfile.learningStyle).slice(0, 2),
+        ...normalizeList(studentProfile.attentionElements).slice(0, 2),
+        ...normalizeList(studentProfile.sensitivities).slice(0, 2),
+        ...normalizeList(studentProfile.communication).slice(0, 2)
+    ];
+
+    const tags = profileTags.length ? profileTags : ["Calmo", "Focado", "Interativo", "Dificuldade sensorial", "Comunicacao ativa"];
+    const classes = ["tag--blue", "tag--green", "tag--purple", "tag--yellow", "tag--pink"];
+
+    tagList.innerHTML = tags.slice(0, 6).map((tag, index) => `
+        <span class="tag ${classes[index % classes.length]}">${tag.replace(/-/g, " ")}</span>
+    `).join("");
+};
+
+const renderAutomaticReport = () => {
+    const automaticReportText = document.getElementById("automaticReportText");
+
+    if (!automaticReportText) {
+        return;
+    }
+
+    const priorities = formatList(studentProfile.priorities) || "as habilidades prioritarias";
+    const learningStyle = formatList(studentProfile.learningStyle) || "atividades visuais e jogos educativos";
+    const sensitivities = formatList(studentProfile.sensitivities);
+    const strategies = studentProfile.strategies || "manter instrucoes curtas, reforco positivo e previsibilidade";
+
+    automaticReportText.textContent = `${studentProfile.name} apresenta acompanhamento direcionado para ${priorities}. O perfil indica melhor resposta a ${learningStyle}. ${sensitivities ? `Atencao especial para ${sensitivities}. ` : ""}Recomenda-se ${strategies}.`;
+};
+
 const getSkillScore = (skillName) => {
     const relatedGames = games.filter((game) => game.skill === skillName);
 
@@ -99,6 +233,20 @@ const reportData = {
     ]
 };
 
+reportData.student = {
+    name: studentProfile.name,
+    age: studentProfile.age,
+    grade: studentProfile.grade,
+    supportLevel: studentProfile.supportLevel,
+    guardian: studentProfile.guardian,
+    date: studentProfile.reportDate,
+    characteristics: studentProfile
+};
+
+renderStudentProfile();
+renderBehaviorTags();
+renderAutomaticReport();
+
 const icons = {
     message: `
         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -166,7 +314,7 @@ if (gamesReportGrid) {
     if (games.length) {
         gamesReportGrid.innerHTML = games.map((game) => {
             const totalItems = Math.max(Number(game.totalItems) || 1, 1);
-            const explored = game.items?.length || 0;
+            const explored = Math.min(game.items?.length || 0, totalItems);
             const accuracyTotal = (game.correct || 0) + (game.wrong || 0);
             const accuracy = accuracyTotal ? Math.round(((game.correct || 0) / accuracyTotal) * 100) : 100;
 
@@ -190,7 +338,7 @@ if (gamesReportGrid) {
         gamesReportGrid.innerHTML = `
             <article class="game-report-card">
                 <strong>Nenhum jogo registrado ainda</strong>
-                <p>Ao jogar cores, formas, letras, numeros, rotina ou emocoes, os dados aparecerao automaticamente neste relatorio.</p>
+                <p>Ao jogar cores, formas, letras, silabas, numeros, rotina ou emocoes, os dados aparecerao automaticamente neste relatorio.</p>
                 <div class="game-report-card__meta">
                     <span>Aguardando atividades</span>
                 </div>

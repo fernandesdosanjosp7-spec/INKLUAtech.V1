@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INKLUAtech | Jogo das S&iacute;labas</title>
+    <link rel="stylesheet" href="home.css">
+</head>
+<body class="simple-game-page syllable-page">
+    <main class="simple-game-shell">
+        <header class="simple-game-topbar">
+            <a class="brand" href="home.html">
+                <img src="assets/ink-logo.png" alt="Logo Inklua Tech">
+                <span>Inklua Tech</span>
+            </a>
+            <a class="topbar-button" href="home.html#jogos">Voltar aos jogos</a>
+        </header>
+
+        <section class="simple-game-focus syllable-focus" aria-labelledby="syllable-title">
+            <div class="syllable-intro">
+                <p class="eyebrow">Jogo educativo</p>
+                <h1 id="syllable-title">Jogo das S&iacute;labas</h1>
+                <p>Observe as letras na plaquinha e escolha qual som elas formam juntas.</p>
+            </div>
+
+            <div class="syllable-progress" aria-label="Progresso do jogo">
+                <span id="syllableStep">1</span>
+                <span>de</span>
+                <span id="syllableTotal">5</span>
+            </div>
+
+            <article class="syllable-scene" aria-live="polite">
+                <div class="syllable-boy" aria-hidden="true">
+                    <span class="syllable-boy__hair"></span>
+                    <span class="syllable-boy__head"></span>
+                    <span class="syllable-boy__body"></span>
+                    <span class="syllable-boy__arm syllable-boy__arm--left"></span>
+                    <span class="syllable-boy__arm syllable-boy__arm--right"></span>
+                </div>
+                <div class="syllable-board">
+                    <span id="syllableLetters">A + I</span>
+                </div>
+            </article>
+
+            <div class="syllable-question">
+                <p class="eyebrow">Qual s&iacute;laba forma?</p>
+                <h2 id="syllableQuestion">A + I forma...</h2>
+            </div>
+
+            <div class="choice-row syllable-options" id="syllableOptions" aria-label="Op&ccedil;&otilde;es de s&iacute;laba"></div>
+
+            <p class="game-feedback" id="syllableFeedback" aria-live="polite"></p>
+
+            <div class="syllable-actions">
+                <button class="complete-button" id="nextSyllable" type="button" disabled>Pr&oacute;xima</button>
+                <button class="topbar-button" id="restartSyllable" type="button" hidden>Jogar novamente</button>
+            </div>
+
+            <section class="syllable-info" aria-labelledby="syllable-info-title">
+                <h2 id="syllable-info-title">Informa&ccedil;&otilde;es da atividade</h2>
+                <ul>
+                    <li>Trabalha alfabetiza&ccedil;&atilde;o inicial e combina&ccedil;&atilde;o de sons.</li>
+                    <li>Estimula aten&ccedil;&atilde;o visual, escuta e escolha entre alternativas.</li>
+                    <li>Os acertos e tentativas entram automaticamente no relat&oacute;rio educacional.</li>
+                </ul>
+            </section>
+        </section>
+    </main>
+
+    <script src="game-progress.js"></script>
+    <script src="silabas.js"></script>
+</body>
+</html>

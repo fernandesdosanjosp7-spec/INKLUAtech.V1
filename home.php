@@ -82,7 +82,7 @@ function reportValue(array $user, string $key, string $fallback): string
             <nav class="nav-menu">
                 <a class="is-active" href="#inicio">In&iacute;cio</a>
                 <a href="#formulario">Formul&aacute;rio</a>
-                <a href="relatorio.html">Relat&oacute;rio</a>
+                <a href="relatorio.php">Relat&oacute;rio</a>
                 <a href="#jogos">Jogos</a>
                 <a href="#aprendizado">Aprendizado</a>
                 <a href="#rotina">Rotina</a>
@@ -130,7 +130,7 @@ function reportValue(array $user, string $key, string $fallback): string
                     <span class="overview-icon overview-icon--blue">1</span>
                     <div>
                         <strong>Atividades de hoje</strong>
-                        <p>7 jogos recomendados</p>
+                        <p>8 jogos recomendados</p>
                     </div>
                 </article>
                 <article class="overview-card">
@@ -339,10 +339,10 @@ function reportValue(array $user, string $key, string $fallback): string
 
                 <div class="report-summary">
                     <article class="report-card">
-                        <span class="report-card__number">7</span>
+                        <span class="report-card__number">8</span>
                         <div>
                             <strong>Jogos educativos</strong>
-                            <p>Emo&ccedil;&otilde;es, rotina, cores, formas, alfabeto, vogais e n&uacute;meros.</p>
+                            <p>Emo&ccedil;&otilde;es, rotina, cores, formas, alfabeto, vogais, s&iacute;labas e n&uacute;meros.</p>
                         </div>
                     </article>
                     <article class="report-card">
@@ -409,7 +409,7 @@ function reportValue(array $user, string $key, string $fallback): string
                 <article class="report-panel report-panel--wide">
                     <h3>Como acompanhar dentro da plataforma</h3>
                     <ul class="report-timeline">
-                        <li><strong>Jogos:</strong> observe interesse, autonomia e reconhecimento em emo&ccedil;&otilde;es, cores, formas, letras, vogais e n&uacute;meros.</li>
+                        <li><strong>Jogos:</strong> observe interesse, autonomia e reconhecimento em emo&ccedil;&otilde;es, cores, formas, letras, vogais, s&iacute;labas e n&uacute;meros.</li>
                         <li><strong>Aprendizado:</strong> use as trilhas de comunica&ccedil;&atilde;o alternativa, matem&aacute;tica visual e leitura com imagens para refor&ccedil;ar habilidades.</li>
                         <li><strong>Rotina e apoio:</strong> compare o desempenho com as prefer&ecirc;ncias, sensibilidades e estrat&eacute;gias registradas no formul&aacute;rio.</li>
                     </ul>
@@ -471,6 +471,14 @@ function reportValue(array $user, string $key, string $fallback): string
                         <h3><span class="card-icon card-icon--vowels" aria-hidden="true"></span>Jogo das Vogais</h3>
                         <p>Toque em uma vogal para ouvir qual letra &eacute;.</p>
                         <a class="game-button" href="vogais.html">Jogar</a>
+                    </article>
+
+                    <article class="game-card">
+                        <span class="game-visual game-visual--syllables" aria-hidden="true">A+I</span>
+                        <span class="game-badge game-badge--pink">S&iacute;labas</span>
+                        <h3><span class="card-icon card-icon--letters" aria-hidden="true"></span>Jogo das S&iacute;labas</h3>
+                        <p>Veja as letras na plaquinha e escolha qual som elas formam.</p>
+                        <a class="game-button" href="silabas.html">Jogar</a>
                     </article>
 
                     <article class="game-card">

@@ -40,7 +40,7 @@
         currentGame.interactions += 1;
         currentGame.lastPlayed = new Date().toISOString();
 
-        if (payload.item && payload.correct !== false) {
+        if (payload.item && payload.correct !== false && payload.item !== "finalizado") {
             currentGame.items = uniqueValues([...currentGame.items, String(payload.item)]);
         }
 
