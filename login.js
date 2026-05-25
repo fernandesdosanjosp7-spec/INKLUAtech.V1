@@ -23,7 +23,11 @@ loginForm.addEventListener("submit", (event) => {
     if (emptyFields.length > 0) {
         event.preventDefault();
         showError("Preencha o CPF e a senha para continuar.", emptyFields);
+        return;
     }
+
+    event.preventDefault();
+    window.location.href = "home.html";
 });
 
 [cpfInput, passwordInput].forEach((field) => {

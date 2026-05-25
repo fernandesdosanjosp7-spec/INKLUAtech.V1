@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INKLUAtech | Jogo das Emo&ccedil;&otilde;es</title>
+    <link rel="stylesheet" href="home.css">
+</head>
+<body class="simple-game-page">
+    <main class="simple-game-shell">
+        <header class="simple-game-topbar">
+            <a class="brand" href="home.html">
+                <img src="assets/ink-logo.png" alt="Logo Inklua Tech">
+                <span>Inklua Tech</span>
+            </a>
+            <a class="topbar-button" href="home.html#jogos">Voltar aos jogos</a>
+        </header>
+
+        <section class="simple-game-focus section-block" aria-labelledby="emotion-title">
+            <p class="eyebrow">Jogo educativo</p>
+            <h1 id="emotion-title">Jogo das Emo&ccedil;&otilde;es</h1>
+            <p>Uma pessoa chegou em um lugar com muito barulho. Como ela pode estar se sentindo?</p>
+
+            <div class="choice-row simple-choice-row" aria-label="Op&ccedil;&otilde;es de resposta">
+                <button type="button">Feliz</button>
+                <button type="button" data-correct="true">Assustado</button>
+                <button type="button">Com sono</button>
+                <button type="button">Com fome</button>
+            </div>
+
+            <p class="game-feedback" aria-live="polite"></p>
+        </section>
+    </main>
+
+    <script src="jogo-escolha.js"></script>
+</body>
+</html>

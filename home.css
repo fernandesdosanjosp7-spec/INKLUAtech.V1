@@ -140,6 +140,22 @@ button {
     padding: clamp(1rem, 3vw, 2rem);
 }
 
+.platform-view.is-active-view {
+    animation: view-enter 180ms ease;
+}
+
+@keyframes view-enter {
+    from {
+        opacity: 0;
+        transform: translateY(0.4rem);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .topbar {
     display: flex;
     align-items: center;
@@ -427,7 +443,9 @@ button {
 }
 
 .alphabet-game,
-.number-game {
+.number-game,
+.color-game,
+.shape-game {
     display: grid;
     gap: 1rem;
 }
@@ -454,6 +472,184 @@ button {
     gap: 0.65rem;
 }
 
+.color-display {
+    min-height: 6rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 1rem;
+    color: var(--primary-dark);
+    background: rgba(255, 255, 255, 0.68);
+    font-size: clamp(1.5rem, 5vw, 2.5rem);
+    font-weight: 900;
+}
+
+.color-display__swatch {
+    width: clamp(3.5rem, 12vw, 5rem);
+    aspect-ratio: 1;
+    border: 2px solid rgba(33, 54, 77, 0.16);
+    border-radius: 1rem;
+    background: var(--color-swatch);
+    box-shadow: 0 12px 24px rgba(47, 73, 98, 0.12);
+}
+
+.color-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+.color-button {
+    min-height: 6.8rem;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: 0.55rem;
+    border: 1px solid rgba(53, 121, 215, 0.18);
+    border-radius: 0.9rem;
+    color: var(--primary-dark);
+    background: #ffffff;
+    font-size: 0.98rem;
+    font-weight: 900;
+    text-transform: capitalize;
+    cursor: pointer;
+    box-shadow: 0 8px 18px rgba(47, 73, 98, 0.06);
+}
+
+.color-button__swatch {
+    width: 3.1rem;
+    aspect-ratio: 1;
+    border: 2px solid rgba(33, 54, 77, 0.16);
+    border-radius: 0.85rem;
+    background: var(--color-swatch);
+}
+
+.color-button:hover,
+.color-button.is-selected {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(53, 121, 215, 0.14), 0 10px 24px rgba(47, 73, 98, 0.1);
+    transform: translateY(-1px);
+}
+
+.shape-display {
+    min-height: 7rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 1rem;
+    color: var(--primary-dark);
+    background: rgba(255, 255, 255, 0.68);
+    font-size: clamp(1.5rem, 5vw, 2.5rem);
+    font-weight: 900;
+}
+
+.shape-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+.shape-button {
+    min-height: 7.2rem;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: 0.55rem;
+    border: 1px solid rgba(53, 121, 215, 0.18);
+    border-radius: 0.9rem;
+    color: var(--primary-dark);
+    background: #ffffff;
+    font-size: 0.98rem;
+    font-weight: 900;
+    text-transform: capitalize;
+    cursor: pointer;
+    box-shadow: 0 8px 18px rgba(47, 73, 98, 0.06);
+}
+
+.shape-button:hover,
+.shape-button.is-selected {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(53, 121, 215, 0.14), 0 10px 24px rgba(47, 73, 98, 0.1);
+    transform: translateY(-1px);
+}
+
+.shape-preview {
+    width: 3.3rem;
+    height: 3.3rem;
+    display: block;
+    background: linear-gradient(135deg, var(--primary), #7b43f0);
+    filter: drop-shadow(0 10px 16px rgba(47, 73, 98, 0.14));
+}
+
+.shape-display .shape-preview {
+    width: clamp(4rem, 13vw, 5.6rem);
+    height: clamp(4rem, 13vw, 5.6rem);
+}
+
+.shape-preview--triangle {
+    width: 0;
+    height: 0;
+    border-left: 1.8rem solid transparent;
+    border-right: 1.8rem solid transparent;
+    border-bottom: 3.2rem solid #f6c65b;
+    background: transparent;
+}
+
+.shape-display .shape-preview--triangle {
+    width: 0;
+    height: 0;
+    border-left-width: clamp(2.2rem, 6vw, 3rem);
+    border-right-width: clamp(2.2rem, 6vw, 3rem);
+    border-bottom-width: clamp(4rem, 12vw, 5.4rem);
+}
+
+.shape-preview--square {
+    background: #2f80ed;
+}
+
+.shape-preview--circle {
+    border-radius: 50%;
+    background: #eb5757;
+}
+
+.shape-preview--rectangle {
+    width: 4.4rem;
+    background: #27ae60;
+}
+
+.shape-preview--star {
+    background: #f6c65b;
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 56%, 80% 94%, 50% 72%, 20% 94%, 32% 56%, 2% 35%, 39% 35%);
+}
+
+.shape-preview--heart {
+    position: relative;
+    background: #ff8fa3;
+    transform: rotate(-45deg) scale(0.82);
+}
+
+.shape-preview--heart::before,
+.shape-preview--heart::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: inherit;
+}
+
+.shape-preview--heart::before {
+    top: -50%;
+    left: 0;
+}
+
+.shape-preview--heart::after {
+    top: 0;
+    right: -50%;
+}
+
 .alphabet-letter,
 .number-button {
     aspect-ratio: 1;
@@ -477,12 +673,18 @@ button {
 }
 
 .alphabet-page,
-.number-page {
+.number-page,
+.color-page,
+.shape-page,
+.simple-game-page {
     min-height: 100vh;
 }
 
 .alphabet-shell,
-.number-shell {
+.number-shell,
+.color-shell,
+.shape-shell,
+.simple-game-shell {
     width: min(100% - 2rem, 72rem);
     min-height: 100vh;
     display: grid;
@@ -493,7 +695,10 @@ button {
 }
 
 .alphabet-topbar,
-.number-topbar {
+.number-topbar,
+.color-topbar,
+.shape-topbar,
+.simple-game-topbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -501,7 +706,10 @@ button {
 }
 
 .alphabet-focus,
-.number-focus {
+.number-focus,
+.color-focus,
+.shape-focus,
+.simple-game-focus {
     display: grid;
     gap: 1.2rem;
     padding: clamp(1rem, 3vw, 2rem);
@@ -538,6 +746,25 @@ button {
 
 .number-game--standalone .number-grid {
     grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.color-game--standalone .color-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.shape-game--standalone .shape-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.simple-choice-row {
+    margin-top: 1rem;
+}
+
+.game-feedback {
+    min-height: 1.6rem;
+    margin: 0;
+    color: var(--primary-dark);
+    font-weight: 850;
 }
 
 .learning-list article {
@@ -599,7 +826,9 @@ button {
     }
 
     .alphabet-grid,
-    .number-grid {
+    .number-grid,
+    .color-grid,
+    .shape-grid {
         grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 
@@ -607,7 +836,10 @@ button {
     .section-heading,
     .activity-board__header,
     .alphabet-topbar,
-    .number-topbar {
+    .number-topbar,
+    .color-topbar,
+    .shape-topbar,
+    .simple-game-topbar {
         align-items: stretch;
         flex-direction: column;
     }
@@ -618,7 +850,16 @@ button {
     }
 
     .alphabet-game--standalone .alphabet-grid,
-    .number-game--standalone .number-grid {
+    .number-game--standalone .number-grid,
+    .color-game--standalone .color-grid,
+    .shape-game--standalone .shape-grid {
         grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 32rem) {
+    .color-grid,
+    .shape-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }

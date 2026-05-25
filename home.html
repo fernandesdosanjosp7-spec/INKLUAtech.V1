@@ -31,7 +31,7 @@
         </aside>
 
         <section class="platform-content">
-            <header class="topbar" id="inicio">
+            <header class="topbar">
                 <div>
                     <p class="eyebrow">Painel principal</p>
                     <h1>Jogos e aprendizado educativo</h1>
@@ -39,7 +39,7 @@
                 <a class="topbar-button" href="Index.html">Sair</a>
             </header>
 
-            <section class="overview-grid" aria-label="Resumo do dia">
+            <section class="overview-grid platform-view is-active-view" id="inicio" data-view="inicio" aria-label="Resumo do dia">
                 <article class="overview-card">
                     <span class="overview-icon overview-icon--blue">1</span>
                     <div>
@@ -63,7 +63,7 @@
                 </article>
             </section>
 
-            <section class="section-block" id="formulario" aria-labelledby="form-title">
+            <section class="section-block platform-view" id="formulario" data-view="formulario" aria-labelledby="form-title">
                 <div class="section-heading">
                     <div>
                         <p class="eyebrow">Perfil do aluno</p>
@@ -146,7 +146,7 @@
                 </form>
             </section>
 
-            <section class="section-block" id="jogos" aria-labelledby="games-title">
+            <section class="section-block platform-view" id="jogos" data-view="jogos" aria-labelledby="games-title">
                 <div class="section-heading">
                     <div>
                         <p class="eyebrow">Jogos educativos</p>
@@ -155,35 +155,42 @@
                 </div>
 
                 <div class="game-grid">
-                    <article class="game-card" data-activity="emocoes">
+                    <article class="game-card">
                         <span class="game-badge">Emo&ccedil;&otilde;es</span>
                         <h3>Jogo das Emo&ccedil;&otilde;es</h3>
                         <p>Associe express&otilde;es, sentimentos e situa&ccedil;&otilde;es do cotidiano.</p>
-                        <button class="game-button" type="button">Iniciar</button>
+                        <a class="game-button" href="emocoes.html">Jogar</a>
                     </article>
 
-                    <article class="game-card" data-activity="rotina">
+                    <article class="game-card">
                         <span class="game-badge game-badge--mint">Rotina</span>
                         <h3>Sequ&ecirc;ncia da Rotina</h3>
                         <p>Organize passos como chegada, atividade, pausa e finaliza&ccedil;&atilde;o.</p>
-                        <button class="game-button" type="button">Iniciar</button>
+                        <a class="game-button" href="rotina-jogo.html">Jogar</a>
                     </article>
 
-                    <article class="game-card" data-activity="formas">
+                    <article class="game-card">
                         <span class="game-badge game-badge--yellow">Percep&ccedil;&atilde;o</span>
-                        <h3>Cores e Formas</h3>
-                        <p>Reconhe&ccedil;a padr&otilde;es visuais com instru&ccedil;&otilde;es simples.</p>
-                        <button class="game-button" type="button">Iniciar</button>
+                        <h3>Jogo das Cores</h3>
+                        <p>Toque em uma cor para ouvir seu nome em voz alta.</p>
+                        <a class="game-button" href="cores.html">Jogar</a>
                     </article>
 
-                    <article class="game-card" data-activity="alfabeto">
+                    <article class="game-card">
+                        <span class="game-badge game-badge--yellow">Formas</span>
+                        <h3>Formas Faladas</h3>
+                        <p>Toque em uma forma geom&eacute;trica para ouvir seu nome.</p>
+                        <a class="game-button" href="formas.html">Jogar</a>
+                    </article>
+
+                    <article class="game-card">
                         <span class="game-badge game-badge--pink">Letras</span>
                         <h3>Alfabeto Falado</h3>
                         <p>Toque em uma letra para ouvir seu nome em voz alta.</p>
                         <a class="game-button" href="alfabeto.html">Jogar</a>
                     </article>
 
-                    <article class="game-card" data-activity="numeros">
+                    <article class="game-card">
                         <span class="game-badge game-badge--mint">N&uacute;meros</span>
                         <h3>N&uacute;meros Falados</h3>
                         <p>Toque em um n&uacute;mero de 0 a 10 para ouvir qual n&uacute;mero &eacute;.</p>
@@ -192,21 +199,7 @@
                 </div>
             </section>
 
-            <section class="activity-board" aria-live="polite">
-                <div class="activity-board__header">
-                    <div>
-                        <p class="eyebrow">Atividade aberta</p>
-                        <h2 id="activityTitle">Selecione um jogo</h2>
-                    </div>
-                    <button class="complete-button" id="completeActivity" type="button" disabled>Concluir atividade</button>
-                </div>
-
-                <div class="activity-panel" id="activityPanel">
-                    <p>Ao iniciar um jogo, as instru&ccedil;&otilde;es aparecem aqui com uma experi&ecirc;ncia simples e previs&iacute;vel.</p>
-                </div>
-            </section>
-
-            <section class="section-block" id="aprendizado" aria-labelledby="learning-title">
+            <section class="section-block platform-view" id="aprendizado" data-view="aprendizado" aria-labelledby="learning-title">
                 <p class="eyebrow">Aprendizado</p>
                 <h2 id="learning-title">Trilhas educativas</h2>
                 <div class="learning-list">
@@ -225,8 +218,7 @@
                 </div>
             </section>
 
-            <section class="two-column">
-                <article class="section-block" id="rotina">
+                <article class="section-block platform-view" id="rotina" data-view="rotina">
                     <p class="eyebrow">Rotina</p>
                     <h2>Meu dia</h2>
                     <ol class="routine-list">
@@ -237,14 +229,13 @@
                     </ol>
                 </article>
 
-                <article class="section-block" id="apoio">
+                <article class="section-block platform-view" id="apoio" data-view="apoio">
                     <p class="eyebrow">Apoio</p>
                     <h2>Prefer&ecirc;ncias do aluno</h2>
                     <p class="support-text">
                         Use as informa&ccedil;&otilde;es do cadastro para adaptar atividades, reduzir sobrecarga sensorial e registrar estrat&eacute;gias que ajudam.
                     </p>
                 </article>
-            </section>
         </section>
     </main>
 
