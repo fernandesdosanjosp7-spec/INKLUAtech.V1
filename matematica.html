@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INKLUAtech | Matem&aacute;tica Visual</title>
+    <link rel="stylesheet" href="home.css">
+</head>
+<body class="math-page">
+    <main class="math-shell">
+        <header class="math-topbar">
+            <a class="brand" href="home.html">
+                <img src="assets/ink-logo.png" alt="Logo Inklua Tech">
+                <span>Inklua Tech</span>
+            </a>
+            <a class="topbar-button" href="home.html#jogos">Voltar aos jogos</a>
+        </header>
+
+        <section class="math-focus" aria-labelledby="math-title">
+            <div class="math-intro">
+                <p class="eyebrow">Jogo adaptativo</p>
+                <h1 id="math-title">Matem&aacute;tica Visual</h1>
+                <p>Resolva atividades curtas com apoio visual, voz suave opcional e fases que avan&ccedil;am no ritmo do aluno.</p>
+            </div>
+
+            <div class="math-layout">
+                <section class="math-game-card" aria-labelledby="math-question-title">
+                    <div class="math-status-row">
+                        <div class="math-guide" aria-live="polite">
+                            <span class="math-guide__avatar" aria-hidden="true">IA</span>
+                            <div>
+                                <span>Guia</span>
+                                <strong id="guideMessage">Vamos com calma. Observe os objetos e escolha a resposta.</strong>
+                            </div>
+                        </div>
+                        <div class="math-stars" id="mathStars" aria-label="Estrelas conquistadas">☆ ☆ ☆</div>
+                    </div>
+
+                    <div class="math-progress" aria-label="Progresso da fase">
+                        <span id="mathProgressBar"></span>
+                    </div>
+
+                    <div class="math-question">
+                        <span class="math-pill" id="mathModeLabel">Contagem</span>
+                        <h2 id="math-question-title">Quantos objetos aparecem?</h2>
+                        <p id="mathExpression" aria-live="polite">Conte os objetos.</p>
+                    </div>
+
+                    <div class="math-visual-scene" id="visualScene" aria-label="Representa&ccedil;&atilde;o visual da opera&ccedil;&atilde;o"></div>
+
+                    <div class="math-options" id="mathOptions" aria-label="Op&ccedil;&otilde;es de resposta"></div>
+
+                    <p class="game-feedback" id="mathFeedback" aria-live="polite"></p>
+
+                    <div class="math-action-row">
+                        <button class="math-soft-button" id="helpButton" type="button">Ajuda visual</button>
+                        <button class="math-soft-button" id="repeatButton" type="button">Ouvir de novo</button>
+                        <button class="math-soft-button" id="nextButton" type="button">Pr&oacute;xima atividade</button>
+                    </div>
+                </section>
+
+                <aside class="math-side-panel" aria-label="Personaliza&ccedil;&atilde;o e acompanhamento">
+                    <section>
+                        <h2>Prefer&ecirc;ncias</h2>
+                        <label for="themeSelect">Tema</label>
+                        <select id="themeSelect">
+                            <option value="natureza">Natureza</option>
+                            <option value="espaco">Espa&ccedil;o</option>
+                            <option value="animais">Animais</option>
+                            <option value="dinossauros">Dinossauros</option>
+                            <option value="carros">Carros</option>
+                            <option value="tecnologia">Tecnologia</option>
+                        </select>
+
+                        <label for="colorSelect">Cores da interface</label>
+                        <select id="colorSelect">
+                            <option value="calma">Suave azul e verde</option>
+                            <option value="quente">Suave amarelo e rosa</option>
+                            <option value="contraste">Contraste confort&aacute;vel</option>
+                        </select>
+
+                        <label for="stimulusSelect">Est&iacute;mulo visual</label>
+                        <select id="stimulusSelect">
+                            <option value="baixo">Baixo</option>
+                            <option value="medio">M&eacute;dio</option>
+                        </select>
+
+                        <div class="math-toggle-row">
+                            <label><input type="checkbox" id="soundToggle" checked> Sons suaves</label>
+                            <label><input type="checkbox" id="voiceToggle" checked> Narra&ccedil;&atilde;o</label>
+                        </div>
+
+                        <label for="volumeControl">Volume</label>
+                        <input id="volumeControl" type="range" min="0" max="1" step="0.1" value="0.6">
+                    </section>
+
+                    <section>
+                        <h2>Painel de acompanhamento</h2>
+                        <div class="math-report-grid">
+                            <div><span>Fase</span><strong id="panelLevel">1</strong></div>
+                            <div><span>Acertos</span><strong id="panelCorrect">0</strong></div>
+                            <div><span>Erros</span><strong id="panelWrong">0</strong></div>
+                            <div><span>Taxa de acerto</span><strong id="panelAccuracy">0%</strong></div>
+                            <div><span>Tempo m&eacute;dio</span><strong id="panelTime">0s</strong></div>
+                            <div><span>Dificuldade</span><strong id="panelDifficulty">Inicial</strong></div>
+                            <div><span>Medalha</span><strong id="panelMedal">Inicio</strong></div>
+                        </div>
+                        <p class="math-difficulty-note" id="difficultyNote">O jogo reduz ou aumenta a dificuldade conforme as respostas.</p>
+                    </section>
+                </aside>
+            </div>
+        </section>
+    </main>
+
+    <script src="game-progress.js"></script>
+    <script src="matematica.js"></script>
+</body>
+</html>

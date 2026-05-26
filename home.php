@@ -140,7 +140,7 @@ function reportValue(array $user, string $key, string $fallback): string
                     <span class="overview-icon overview-icon--blue">1</span>
                     <div>
                         <strong>Atividades de hoje</strong>
-                        <p>8 jogos recomendados</p>
+                        <p>9 jogos recomendados</p>
                     </div>
                 </article>
                 <article class="overview-card">
@@ -353,7 +353,7 @@ function reportValue(array $user, string $key, string $fallback): string
                         <span class="report-card__number">8</span>
                         <div>
                             <strong>Jogos educativos</strong>
-                            <p>Emo&ccedil;&otilde;es, rotina, cores, formas, alfabeto, vogais, s&iacute;labas e n&uacute;meros.</p>
+                            <p>Emo&ccedil;&otilde;es, rotina, cores, formas, alfabeto, vogais, s&iacute;labas, n&uacute;meros e matem&aacute;tica.</p>
                         </div>
                     </article>
                     <article class="report-card">
@@ -466,7 +466,7 @@ function reportValue(array $user, string $key, string $fallback): string
                 <article class="report-panel report-panel--wide">
                     <h3>Como acompanhar dentro da plataforma</h3>
                     <ul class="report-timeline">
-                        <li><strong>Jogos:</strong> observe interesse, autonomia e reconhecimento em emo&ccedil;&otilde;es, cores, formas, letras, vogais, s&iacute;labas e n&uacute;meros.</li>
+                        <li><strong>Jogos:</strong> observe interesse, autonomia e reconhecimento em emo&ccedil;&otilde;es, cores, formas, letras, vogais, s&iacute;labas, n&uacute;meros e matem&aacute;tica.</li>
                         <li><strong>Aprendizado:</strong> use as trilhas de comunica&ccedil;&atilde;o alternativa, matem&aacute;tica visual e leitura com imagens para refor&ccedil;ar habilidades.</li>
                         <li><strong>Rotina e apoio:</strong> compare o desempenho com as prefer&ecirc;ncias, sensibilidades e estrat&eacute;gias registradas no formul&aacute;rio.</li>
                     </ul>
@@ -544,6 +544,14 @@ function reportValue(array $user, string $key, string $fallback): string
                         <h3><span class="card-icon card-icon--numbers" aria-hidden="true"></span>N&uacute;meros Falados</h3>
                         <p>Toque em um n&uacute;mero de 0 a 10 para ouvir qual n&uacute;mero &eacute;.</p>
                         <a class="game-button" href="numeros.html">Jogar</a>
+                    </article>
+
+                    <article class="game-card">
+                        <span class="game-visual game-visual--math" aria-hidden="true">2+3</span>
+                        <span class="game-badge game-badge--mint">Matem&aacute;tica</span>
+                        <h3><span class="card-icon card-icon--math" aria-hidden="true"></span>Matem&aacute;tica Visual</h3>
+                        <p>Resolva contagem, opera&ccedil;&otilde;es e sequ&ecirc;ncias com apoio visual adaptativo.</p>
+                        <a class="game-button" href="matematica.html">Jogar</a>
                     </article>
                 </div>
             </section>

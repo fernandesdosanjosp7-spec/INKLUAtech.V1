@@ -217,6 +217,12 @@
             progressInLevel: levelState.progressInLevel,
             correctToNextLevel: levelState.correctToNextLevel,
             levelUps: Math.max(Number(localGame.levelUps) || 0, Number(serverGame.levelUps) || 0),
+            averageResponseMs: Math.max(Number(localGame.averageResponseMs) || 0, Number(serverGame.averageResponseMs) || 0),
+            responseCount: Math.max(Number(localGame.responseCount) || 0, Number(serverGame.responseCount) || 0),
+            difficulty: localGame.difficulty || serverGame.difficulty || "",
+            modes: uniqueValues([...(localGame.modes || []), ...(serverGame.modes || [])]),
+            wrongItems: uniqueValues([...(localGame.wrongItems || []), ...(serverGame.wrongItems || [])]),
+            helpUsed: Math.max(Number(localGame.helpUsed) || 0, Number(serverGame.helpUsed) || 0),
             lastPlayed: [localGame.lastPlayed, serverGame.lastPlayed].filter(Boolean).sort().pop() || null,
             lastLevelUp: [localGame.lastLevelUp, serverGame.lastLevelUp].filter(Boolean).sort().pop() || null
         };
@@ -404,6 +410,12 @@
             levelUps: 0,
             completed: false,
             items: [],
+            modes: [],
+            wrongItems: [],
+            responseCount: 0,
+            averageResponseMs: 0,
+            helpUsed: 0,
+            difficulty: "",
             totalItems: payload.totalItems || 1,
             lastPlayed: null
         };
@@ -411,6 +423,8 @@
         currentGame.title = payload.title || currentGame.title;
         currentGame.skill = payload.skill || currentGame.skill;
         currentGame.totalItems = payload.totalItems || currentGame.totalItems;
+        currentGame.difficulty = payload.difficulty || currentGame.difficulty;
+        currentGame.modes = uniqueValues([...(currentGame.modes || []), payload.mode]);
         currentGame.interactions += 1;
         currentGame.lastPlayed = new Date().toISOString();
 
@@ -426,6 +440,20 @@
 
         if (payload.correct === false) {
             currentGame.wrong += 1;
+            currentGame.wrongItems = uniqueValues([...(currentGame.wrongItems || []), payload.item ? String(payload.item) : ""]);
+        }
+
+        if (payload.helpUsed) {
+            currentGame.helpUsed = (Number(currentGame.helpUsed) || 0) + 1;
+        }
+
+        if (Number(payload.responseTimeMs) > 0) {
+            const previousCount = Number(currentGame.responseCount) || 0;
+            const previousAverage = Number(currentGame.averageResponseMs) || 0;
+            const responseTimeMs = Math.max(Number(payload.responseTimeMs) || 0, 0);
+
+            currentGame.responseCount = previousCount + 1;
+            currentGame.averageResponseMs = Math.round(((previousAverage * previousCount) + responseTimeMs) / currentGame.responseCount);
         }
 
         const levelState = getLevelState(currentGame.correct);
@@ -452,6 +480,10 @@
             item: payload.item || "",
             correct: payload.correct,
             level: currentGame.level,
+            mode: payload.mode || "",
+            difficulty: currentGame.difficulty || "",
+            responseTimeMs: Number(payload.responseTimeMs) || 0,
+            helpUsed: Boolean(payload.helpUsed),
             leveledUp: currentGame.leveledUp,
             completed: currentGame.completed,
             createdAt: currentGame.lastPlayed

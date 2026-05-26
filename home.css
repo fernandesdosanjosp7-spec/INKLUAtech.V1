@@ -800,6 +800,15 @@ button {
     background: linear-gradient(135deg, rgba(95, 227, 177, 0.4), rgba(100, 181, 255, 0.34));
 }
 
+.game-visual--math {
+    color: #245fb0;
+    background:
+        radial-gradient(circle at 20% 28%, rgba(95, 227, 177, 0.38) 0 1.1rem, transparent 1.18rem),
+        radial-gradient(circle at 52% 62%, rgba(255, 226, 122, 0.46) 0 1.35rem, transparent 1.42rem),
+        radial-gradient(circle at 78% 34%, rgba(100, 181, 255, 0.38) 0 1rem, transparent 1.08rem),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.82), rgba(231, 246, 255, 0.9));
+}
+
 .card-icon {
     width: 2rem;
     height: 2rem;
@@ -1205,6 +1214,7 @@ button {
 .number-page,
 .color-page,
 .shape-page,
+.math-page,
 .simple-game-page {
     min-height: 100vh;
 }
@@ -1213,6 +1223,7 @@ button {
 .number-shell,
 .color-shell,
 .shape-shell,
+.math-shell,
 .simple-game-shell {
     width: min(100% - 2rem, 72rem);
     min-height: 100vh;
@@ -1227,6 +1238,7 @@ button {
 .number-topbar,
 .color-topbar,
 .shape-topbar,
+.math-topbar,
 .simple-game-topbar {
     display: flex;
     align-items: center;
@@ -1238,6 +1250,7 @@ button {
 .number-focus,
 .color-focus,
 .shape-focus,
+.math-focus,
 .simple-game-focus {
     display: grid;
     gap: 1.2rem;
@@ -1249,14 +1262,16 @@ button {
 }
 
 .alphabet-intro h1,
-.number-intro h1 {
+.number-intro h1,
+.math-intro h1 {
     margin: 0;
     font-size: clamp(2.4rem, 6vw, 4.6rem);
     line-height: 1;
 }
 
 .alphabet-intro p:not(.eyebrow),
-.number-intro p:not(.eyebrow) {
+.number-intro p:not(.eyebrow),
+.math-intro p:not(.eyebrow) {
     max-width: 42rem;
     margin: 0.8rem 0 0;
     color: var(--muted);
@@ -1313,6 +1328,629 @@ button {
     color: var(--primary-dark);
     font-weight: 850;
     line-height: 1.45;
+}
+
+.math-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 0.65fr);
+    gap: 1rem;
+    align-items: start;
+}
+
+.math-game-card,
+.math-side-panel {
+    border: 1px solid rgba(53, 121, 215, 0.14);
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.72);
+    box-shadow: 0 14px 32px rgba(47, 73, 98, 0.08);
+}
+
+.math-game-card {
+    display: grid;
+    gap: 1rem;
+    padding: clamp(1rem, 3vw, 1.4rem);
+}
+
+.math-side-panel {
+    display: grid;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.math-side-panel section {
+    display: grid;
+    gap: 0.65rem;
+}
+
+.math-side-panel h2,
+.math-question h2 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.math-side-panel label {
+    color: var(--primary-dark);
+    font-size: 0.82rem;
+    font-weight: 850;
+}
+
+.math-side-panel select,
+.math-side-panel input[type="range"] {
+    width: 100%;
+}
+
+.math-side-panel select {
+    min-height: 2.65rem;
+    padding: 0 0.75rem;
+    border: 1px solid var(--line);
+    border-radius: 0.75rem;
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.9);
+    font-weight: 750;
+}
+
+.math-status-row,
+.math-action-row,
+.math-toggle-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.math-guide {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    min-width: min(100%, 25rem);
+}
+
+.math-guide__avatar {
+    width: 3rem;
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    color: #176b4d;
+    background: var(--green-soft);
+    font-weight: 950;
+}
+
+.math-guide span,
+.math-report-grid span {
+    color: var(--muted);
+    font-size: 0.76rem;
+    font-weight: 850;
+    text-transform: uppercase;
+}
+
+.math-guide strong {
+    display: block;
+    margin-top: 0.15rem;
+    line-height: 1.35;
+}
+
+.math-stars {
+    min-width: 6.5rem;
+    color: #8b6b16;
+    font-size: 1.35rem;
+    font-weight: 950;
+    text-align: right;
+}
+
+.math-progress {
+    height: 0.7rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(53, 121, 215, 0.11);
+}
+
+.math-progress span {
+    display: block;
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--mint), var(--blue));
+    transition: width 240ms ease;
+}
+
+.math-question {
+    display: grid;
+    gap: 0.45rem;
+}
+
+.math-question p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 1.25rem;
+    font-weight: 850;
+}
+
+.math-pill {
+    width: fit-content;
+    min-height: 2rem;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 0.7rem;
+    border-radius: 0.7rem;
+    color: var(--primary-dark);
+    background: rgba(100, 181, 255, 0.18);
+    font-size: 0.78rem;
+    font-weight: 900;
+}
+
+.math-visual-scene {
+    min-height: clamp(12rem, 30vw, 19rem);
+    display: grid;
+    gap: 0.9rem;
+    align-content: center;
+    padding: 1rem;
+    border: 1px solid rgba(53, 121, 215, 0.13);
+    border-radius: 1rem;
+    background: linear-gradient(180deg, rgba(239, 248, 255, 0.78), rgba(255, 255, 255, 0.9));
+}
+
+.math-object-group {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.math-object-group > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+.math-group-sign {
+    width: 2rem;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    color: var(--primary-dark);
+    font-size: 1.8rem;
+    font-weight: 950;
+}
+
+.math-object {
+    width: clamp(2.55rem, 7vw, 3.5rem);
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    position: relative;
+    border: 1px solid rgba(53, 121, 215, 0.14);
+    border-radius: 0.85rem;
+    background: rgba(255, 255, 255, 0.82);
+    color: var(--primary-dark);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.74);
+    overflow: hidden;
+}
+
+.math-object span,
+.math-object::before,
+.math-object::after {
+    content: "";
+    position: absolute;
+    display: block;
+}
+
+.math-object--apple span {
+    width: 1.5rem;
+    height: 1.35rem;
+    border-radius: 52% 48% 58% 58%;
+    background: #e95656;
+}
+
+.math-object--apple::before {
+    width: 0.38rem;
+    height: 0.62rem;
+    top: 0.62rem;
+    left: 50%;
+    border-radius: 999px;
+    background: #7c5a32;
+    transform: translateX(-50%) rotate(12deg);
+}
+
+.math-object--apple::after {
+    width: 0.72rem;
+    height: 0.42rem;
+    top: 0.65rem;
+    right: 0.8rem;
+    border-radius: 100% 0;
+    background: #68b96d;
+}
+
+.math-object--flower span {
+    width: 0.72rem;
+    height: 0.72rem;
+    border-radius: 50%;
+    background: #f2c94c;
+    box-shadow: 0 -0.78rem 0 #f08ab3, 0 0.78rem 0 #f08ab3, -0.78rem 0 0 #f08ab3, 0.78rem 0 0 #f08ab3;
+}
+
+.math-object--leaf span {
+    width: 1.65rem;
+    height: 1.1rem;
+    border-radius: 100% 0 100% 0;
+    background: #68b96d;
+    transform: rotate(-24deg);
+}
+
+.math-object--leaf::after {
+    width: 1.35rem;
+    height: 0.1rem;
+    background: rgba(31, 51, 72, 0.28);
+    transform: rotate(-24deg);
+}
+
+.math-object--sun span {
+    width: 1.35rem;
+    height: 1.35rem;
+    border-radius: 50%;
+    background: #f2c94c;
+    box-shadow: 0 -1rem 0 -0.32rem #f2c94c, 0 1rem 0 -0.32rem #f2c94c, -1rem 0 0 -0.32rem #f2c94c, 1rem 0 0 -0.32rem #f2c94c;
+}
+
+.math-object--star span {
+    width: 1.7rem;
+    height: 1.7rem;
+    background: #f2c94c;
+    clip-path: polygon(50% 4%, 61% 36%, 95% 36%, 67% 55%, 78% 90%, 50% 68%, 22% 90%, 33% 55%, 5% 36%, 39% 36%);
+}
+
+.math-object--planet span {
+    width: 1.55rem;
+    height: 1.55rem;
+    border-radius: 50%;
+    background: #72c4f4;
+}
+
+.math-object--planet::after {
+    width: 2.35rem;
+    height: 0.48rem;
+    border: 0.14rem solid #9a8cff;
+    border-radius: 50%;
+    transform: rotate(-18deg);
+}
+
+.math-object--moon span {
+    width: 1.55rem;
+    height: 1.55rem;
+    border-radius: 50%;
+    background: #f2c94c;
+    box-shadow: 0.42rem 0 0 #ffffff;
+}
+
+.math-object--rocket span {
+    width: 0.95rem;
+    height: 1.9rem;
+    border-radius: 0.75rem 0.75rem 0.28rem 0.28rem;
+    background: linear-gradient(#ffffff 0 42%, #5bb7f0 42%);
+    transform: rotate(28deg);
+}
+
+.math-object--rocket::after {
+    width: 0.55rem;
+    height: 0.75rem;
+    border-radius: 0 0 50% 50%;
+    background: #f2994a;
+    transform: translate(-0.5rem, 0.9rem) rotate(28deg);
+}
+
+.math-object--fish span {
+    width: 1.65rem;
+    height: 1rem;
+    border-radius: 50%;
+    background: #5bb7f0;
+}
+
+.math-object--fish::after {
+    right: 0.65rem;
+    width: 0;
+    height: 0;
+    border-top: 0.48rem solid transparent;
+    border-bottom: 0.48rem solid transparent;
+    border-left: 0.75rem solid #5bb7f0;
+}
+
+.math-object--bird span {
+    width: 1.55rem;
+    height: 1rem;
+    border-radius: 50% 50% 42% 42%;
+    background: #9a8cff;
+}
+
+.math-object--bird::after {
+    right: 0.74rem;
+    width: 0;
+    height: 0;
+    border-top: 0.22rem solid transparent;
+    border-bottom: 0.22rem solid transparent;
+    border-left: 0.42rem solid #f2c94c;
+}
+
+.math-object--cat span,
+.math-object--rabbit span,
+.math-object--dino span,
+.math-object--robot span {
+    width: 1.6rem;
+    height: 1.35rem;
+    border-radius: 0.65rem;
+    background: #7ccdb1;
+}
+
+.math-object--cat::before {
+    width: 0;
+    height: 0;
+    top: 0.65rem;
+    border-left: 0.35rem solid transparent;
+    border-right: 0.35rem solid transparent;
+    border-bottom: 0.55rem solid #7ccdb1;
+    box-shadow: 0.9rem 0 0 -0.01rem #7ccdb1;
+}
+
+.math-object--rabbit span {
+    background: #ffffff;
+    border: 0.12rem solid #9a8cff;
+}
+
+.math-object--rabbit::before {
+    width: 0.38rem;
+    height: 1.05rem;
+    top: 0.38rem;
+    left: 1.1rem;
+    border-radius: 999px;
+    background: #ffffff;
+    border: 0.12rem solid #9a8cff;
+    box-shadow: 0.78rem 0 0 #ffffff, 0.78rem 0 0 0.12rem #9a8cff;
+}
+
+.math-object--egg span {
+    width: 1.35rem;
+    height: 1.75rem;
+    border-radius: 50% 50% 46% 46%;
+    background: #fff7dc;
+    border: 0.12rem solid #f0c95b;
+}
+
+.math-object--footprint span {
+    width: 0.95rem;
+    height: 1.15rem;
+    border-radius: 50%;
+    background: #7c5a32;
+}
+
+.math-object--footprint::before {
+    width: 0.32rem;
+    height: 0.32rem;
+    top: 0.75rem;
+    left: 1.1rem;
+    border-radius: 50%;
+    background: #7c5a32;
+    box-shadow: 0.42rem -0.28rem 0 #7c5a32, 0.9rem 0 0 #7c5a32;
+}
+
+.math-object--dino span {
+    height: 1.2rem;
+    border-radius: 0.9rem 0.9rem 0.45rem 0.45rem;
+    background: #68b96d;
+}
+
+.math-object--dino::after {
+    right: 0.78rem;
+    width: 0.72rem;
+    height: 0.72rem;
+    border-radius: 50%;
+    background: #68b96d;
+}
+
+.math-object--car span {
+    width: 2rem;
+    height: 0.9rem;
+    border-radius: 0.42rem;
+    background: #5bb7f0;
+}
+
+.math-object--car::before {
+    width: 1.1rem;
+    height: 0.62rem;
+    top: 1rem;
+    border-radius: 0.42rem 0.42rem 0 0;
+    background: #72c4f4;
+}
+
+.math-object--car::after {
+    bottom: 0.88rem;
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 50%;
+    background: #1f3348;
+    box-shadow: 1.35rem 0 0 #1f3348;
+}
+
+.math-object--wheel span {
+    width: 1.8rem;
+    height: 1.8rem;
+    border: 0.38rem solid #1f3348;
+    border-radius: 50%;
+    background: #ffffff;
+}
+
+.math-object--cone span {
+    width: 0;
+    height: 0;
+    border-left: 0.8rem solid transparent;
+    border-right: 0.8rem solid transparent;
+    border-bottom: 1.9rem solid #f2994a;
+}
+
+.math-object--light span {
+    width: 1.55rem;
+    height: 1.55rem;
+    border-radius: 50%;
+    background: #f2c94c;
+    box-shadow: 0 0 0 0.24rem rgba(242, 201, 76, 0.25);
+}
+
+.math-object--block span {
+    width: 1.65rem;
+    height: 1.65rem;
+    border-radius: 0.35rem;
+    background: #9a8cff;
+}
+
+.math-object--button span {
+    width: 1.75rem;
+    height: 1.1rem;
+    border-radius: 999px;
+    background: #5bb7f0;
+}
+
+.math-object--chip span {
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 0.25rem;
+    background: #176b4d;
+}
+
+.math-object--chip::after {
+    width: 2.35rem;
+    height: 0.12rem;
+    background: repeating-linear-gradient(90deg, transparent 0 0.24rem, #176b4d 0.24rem 0.36rem);
+}
+
+.math-object--robot span {
+    background: #72c4f4;
+}
+
+.math-object--robot::before {
+    width: 0.18rem;
+    height: 0.18rem;
+    border-radius: 50%;
+    background: #1f3348;
+    box-shadow: 0.7rem 0 0 #1f3348;
+}
+
+.math-object--removed {
+    opacity: 0.48;
+    text-decoration: line-through;
+}
+
+.math-big-number,
+.math-sequence {
+    min-height: 10rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-dark);
+    font-weight: 950;
+}
+
+.math-big-number {
+    font-size: clamp(5rem, 18vw, 9rem);
+}
+
+.math-sequence span {
+    min-width: clamp(3.2rem, 13vw, 5rem);
+    min-height: clamp(3.2rem, 13vw, 5rem);
+    display: grid;
+    place-items: center;
+    border-radius: 0.9rem;
+    background: rgba(255, 255, 255, 0.88);
+    font-size: clamp(1.7rem, 6vw, 3rem);
+}
+
+.math-sequence .is-missing {
+    color: #8b6b16;
+    background: var(--yellow-soft);
+}
+
+.math-options {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+.math-option,
+.math-soft-button {
+    min-height: 3.25rem;
+    border: 1px solid rgba(53, 121, 215, 0.18);
+    border-radius: 0.85rem;
+    color: var(--primary-dark);
+    background: rgba(255, 255, 255, 0.86);
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.math-option {
+    font-size: clamp(1.4rem, 5vw, 2.2rem);
+}
+
+.math-option.is-correct {
+    border-color: rgba(39, 145, 96, 0.35);
+    background: rgba(232, 251, 242, 0.96);
+}
+
+.math-option.is-wrong {
+    border-color: rgba(163, 72, 67, 0.26);
+    background: rgba(255, 240, 245, 0.9);
+}
+
+.math-soft-button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.math-report-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.55rem;
+}
+
+.math-report-grid div {
+    min-height: 4.2rem;
+    display: grid;
+    align-content: center;
+    gap: 0.15rem;
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+    background: rgba(239, 248, 255, 0.74);
+}
+
+.math-report-grid strong {
+    color: var(--primary-dark);
+    font-size: 1.25rem;
+}
+
+.math-difficulty-note {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.5;
+    font-weight: 700;
+}
+
+.math-visual-scene.is-helping {
+    box-shadow: 0 0 0 4px rgba(95, 227, 177, 0.2);
+}
+
+[data-math-color="quente"] .math-visual-scene,
+[data-math-color="quente"] .math-report-grid div {
+    background: linear-gradient(180deg, rgba(255, 247, 220, 0.82), rgba(255, 240, 245, 0.86));
+}
+
+[data-math-color="contraste"] .math-pill,
+[data-math-color="contraste"] .math-guide__avatar,
+[data-math-color="contraste"] .math-progress span {
+    color: #ffffff;
+    background: #245fb0;
+}
+
+[data-math-stimulus="baixo"] .math-object {
+    box-shadow: none;
 }
 
 .syllable-focus {
@@ -1749,6 +2387,7 @@ button {
     .report-action-grid,
     .report-metrics-grid,
     .two-column,
+    .math-layout,
     .nav-menu,
     .check-grid {
         grid-template-columns: 1fr;
@@ -1768,6 +2407,7 @@ button {
     .number-topbar,
     .color-topbar,
     .shape-topbar,
+    .math-topbar,
     .simple-game-topbar,
     .emotion-topbar {
         align-items: stretch;
@@ -1805,6 +2445,11 @@ button {
     .emotion-grid,
     .emotion-grid--compact,
     .alphabet-game--standalone .vowel-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .math-options,
+    .math-report-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }

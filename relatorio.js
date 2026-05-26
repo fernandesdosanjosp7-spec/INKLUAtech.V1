@@ -4,7 +4,8 @@ const defaultEvolution = {
     "Interação social": 72,
     "Reconhecimento de cores": 86,
     "Alfabetização": 58,
-    "Atenção e foco": 69
+    "Atenção e foco": 69,
+    "Matematica visual": 62
 };
 
 const readGameProgress = () => {
@@ -60,6 +61,11 @@ const formatDuration = (milliseconds = 0) => {
     }
 
     return `${seconds}s`;
+};
+
+const formatResponseTime = (milliseconds = 0) => {
+    const seconds = Number(milliseconds) / 1000;
+    return seconds > 0 ? `${seconds.toFixed(1)}s` : "Sem dados";
 };
 
 const readSavedProfile = () => {
@@ -301,7 +307,8 @@ const reportData = {
         { label: "Interação social", value: getSkillScore("Interação social"), color: "#9a8cff", soft: "#f1edff", icon: "users" },
         { label: "Reconhecimento de cores", value: getSkillScore("Reconhecimento de cores"), color: "#f0c95b", soft: "#fff7dc", icon: "palette" },
         { label: "Alfabetização", value: getSkillScore("Alfabetização"), color: "#f08ab3", soft: "#fff0f5", icon: "book" },
-        { label: "Atenção e foco", value: getSkillScore("Atenção e foco"), color: "#5bb7f0", soft: "#e7f6ff", icon: "focus" }
+        { label: "Atenção e foco", value: getSkillScore("Atenção e foco"), color: "#5bb7f0", soft: "#e7f6ff", icon: "focus" },
+        { label: "Matemática visual", value: getSkillScore("Matematica visual"), color: "#7ccdb1", soft: "#e8fbf2", icon: "target" }
     ],
     weekly: getWeeklyEvolution(),
     activities: getActivityDistribution(),
@@ -313,7 +320,8 @@ const reportData = {
         getSkillScore("Interação social"),
         getSkillScore("Reconhecimento de cores"),
         getSkillScore("Alfabetização"),
-        getSkillScore("Atenção e foco")
+        getSkillScore("Atenção e foco"),
+        getSkillScore("Matematica visual")
     ]
 };
 
@@ -432,17 +440,22 @@ if (gamesReportGrid) {
             const accuracy = accuracyTotal ? Math.round((correct / accuracyTotal) * 100) : 100;
             const level = getGameLevel(game);
             const remaining = getCorrectToNextLevel(game);
+            const averageResponse = formatResponseTime(game.averageResponseMs);
+            const difficulty = game.difficulty || "Dificuldade inicial";
+            const wrongItems = (game.wrongItems || []).slice(0, 3).join(", ") || "Nenhuma dificuldade recorrente";
 
             return `
                 <article class="game-report-card">
                     <strong>${game.title}</strong>
-                    <p>${game.skill}. Fase atual: ${level}. Acertou ${correct} e errou ${wrong} pergunta(s).</p>
+                    <p>${game.skill}. Fase atual: ${level}. Acertou ${correct} e errou ${wrong} pergunta(s). Tempo medio: ${averageResponse}. Dificuldades: ${wrongItems}.</p>
                     <div class="game-report-card__meta">
                         <span>Fase ${level}</span>
                         <span>${correct} acerto(s)</span>
                         <span>${wrong} erro(s)</span>
                         <span>${explored}/${totalItems} itens</span>
                         <span>${accuracy}% acerto</span>
+                        <span>${averageResponse}</span>
+                        <span>${difficulty}</span>
                         <span>${remaining} para avancar</span>
                         <span>${game.completed ? "Concluido" : "Em andamento"}</span>
                     </div>
@@ -457,7 +470,7 @@ if (gamesReportGrid) {
         gamesReportGrid.innerHTML = `
             <article class="game-report-card">
                 <strong>Nenhum jogo registrado ainda</strong>
-                <p>Ao jogar cores, formas, letras, silabas, numeros, rotina ou emocoes, os dados aparecerao automaticamente neste relatorio.</p>
+                <p>Ao jogar cores, formas, letras, silabas, numeros, matematica, rotina ou emocoes, os dados aparecerao automaticamente neste relatorio.</p>
                 <div class="game-report-card__meta">
                     <span>Aguardando atividades</span>
                 </div>
@@ -587,11 +600,11 @@ const createCharts = () => {
         new Chart(skillsChart, {
             type: "bar",
             data: {
-                labels: ["Comunicação", "Coordenação", "Social", "Cores", "Alfabetização", "Foco"],
+                labels: ["Comunicação", "Coordenação", "Social", "Cores", "Alfabetização", "Foco", "Matemática"],
                 datasets: [{
                     label: "Desempenho",
                     data: reportData.skills,
-                    backgroundColor: ["#5bb7f0", "#7ccdb1", "#9a8cff", "#f0c95b", "#f08ab3", "#72c4f4"],
+                    backgroundColor: ["#5bb7f0", "#7ccdb1", "#9a8cff", "#f0c95b", "#f08ab3", "#72c4f4", "#7ccdb1"],
                     borderRadius: 12,
                     borderSkipped: false
                 }]
@@ -658,7 +671,22 @@ document.getElementById("shareButton")?.addEventListener("click", async () => {
     alert("Link do relatório copiado.");
 });
 
-document.getElementById("exportButton")?.addEventListener("click", () => {
+document.getElementById("exportButton")?.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const clickedButton = event.target?.closest?.("#exportButton");
+
+    if (!clickedButton || !event.isTrusted) {
+        return;
+    }
+
+    const shouldExport = window.confirm("Deseja baixar os dados do relatorio em JSON?");
+
+    if (!shouldExport) {
+        return;
+    }
+
     saveReportToServer();
     const payload = {
         ...reportData,
@@ -673,6 +701,9 @@ document.getElementById("exportButton")?.addEventListener("click", () => {
 
     link.href = url;
     link.download = "relatorio-educacional-inklua-tech.json";
+    link.style.display = "none";
+    document.body.appendChild(link);
     link.click();
+    link.remove();
     URL.revokeObjectURL(url);
 });
