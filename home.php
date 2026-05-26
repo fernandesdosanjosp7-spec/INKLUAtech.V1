@@ -302,7 +302,7 @@ function reportValue(array $user, string $key, string $fallback): string
                     </div>
 
                     <div class="form-group">
-                        <span class="form-label">16&deg; Quais habilidades o respons&aacute;vel, professor ou terapeuta deseja desenvolver com maior prioridade?</span>
+                        <span class="form-label">16&deg; Quais habilidades o respons&aacute;vel, professor ou terapeuta precisa desenvolver com maior prioridade?</span>
                         <div class="check-grid">
                             <label><input type="checkbox" name="prioridades[]" value="fala"<?php echo checkedValue($user, "prioridades", "fala"); ?>> Fala</label>
                             <label><input type="checkbox" name="prioridades[]" value="coordenacao"<?php echo checkedValue($user, "prioridades", "coordenacao"); ?>> Coordena&ccedil;&atilde;o</label>

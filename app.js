@@ -232,6 +232,110 @@ if (initialActivity && activityContent[initialActivity]) {
     }
 }
 
+const scoreSpeechVoice = (voice) => {
+    const name = voice.name.toLowerCase();
+    const uri = String(voice.voiceURI || "").toLowerCase();
+    const normalizeText = (value) => String(value || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
+    const text = normalizeText(`${name} ${uri}`);
+    let score = 0;
+    const femaleNames = [
+        "francisca",
+        "maria",
+        "luciana",
+        "helena",
+        "vitoria",
+        "ines",
+        "joana",
+        "yara",
+        "raquel",
+        "teresa",
+        "catarina",
+        "amalia",
+        "leticia",
+        "fernanda"
+    ];
+    const maleNames = [
+        "antonio",
+        "daniel",
+        "felipe",
+        "ricardo",
+        "paulo",
+        "thiago",
+        "tiago",
+        "bruno",
+        "carlos",
+        "jorge"
+    ];
+
+    if (voice.lang?.toLowerCase() === "pt-br") score += 40;
+    if (voice.lang?.toLowerCase().startsWith("pt")) score += 25;
+    if (femaleNames.some((femaleName) => text.includes(femaleName))) score += 500;
+    if (maleNames.some((maleName) => text.includes(maleName))) score -= 1000;
+    if (text.includes("female") || text.includes("feminina") || text.includes("mulher")) score += 400;
+    if (text.includes("male") || text.includes("masculina") || text.includes("homem")) score -= 1000;
+    if (text.includes("natural")) score += 80;
+    if (text.includes("neural")) score += 70;
+    if (text.includes("online")) score += 55;
+    if (voice.localService === false) score += 45;
+    if (text.includes("microsoft")) score += 24;
+    if (text.includes("google")) score += 22;
+    if (text.includes("francisca") || text.includes("maria") || text.includes("luciana") || text.includes("helena")) score += 18;
+    if (text.includes("female") || text.includes("feminina")) score += 10;
+    if (voice.localService === true && !text.includes("natural")) score -= 30;
+
+    return score;
+};
+
+const getPreferredSpeechVoice = () => {
+    if (!("speechSynthesis" in window)) {
+        return null;
+    }
+
+    const voices = window.speechSynthesis.getVoices();
+    const portugueseVoices = voices.filter((voice) => voice.lang?.toLowerCase().startsWith("pt"));
+    const femaleVoice = portugueseVoices
+        .filter((voice) => scoreSpeechVoice(voice) > 450)
+        .sort((first, second) => scoreSpeechVoice(second) - scoreSpeechVoice(first))[0];
+
+    if (femaleVoice) {
+        return femaleVoice;
+    }
+
+    const anyFemaleVoice = voices
+        .filter((voice) => scoreSpeechVoice(voice) > 450)
+        .sort((first, second) => scoreSpeechVoice(second) - scoreSpeechVoice(first))[0];
+
+    if (anyFemaleVoice) {
+        return anyFemaleVoice;
+    }
+
+    return portugueseVoices
+        .sort((first, second) => scoreSpeechVoice(second) - scoreSpeechVoice(first))[0] || null;
+};
+
+const createSoftSpeech = (text) => {
+    const utterance = new SpeechSynthesisUtterance(text);
+    const voice = getPreferredSpeechVoice();
+
+    utterance.lang = voice?.lang || "pt-BR";
+    utterance.rate = 0.92;
+    utterance.pitch = voice && scoreSpeechVoice(voice) > 450 ? 1 : 1.08;
+    utterance.volume = 1;
+
+    if (voice) {
+        utterance.voice = voice;
+    }
+
+    return utterance;
+};
+
+if ("speechSynthesis" in window) {
+    window.speechSynthesis.onvoiceschanged = () => getPreferredSpeechVoice();
+}
+
 const speakLetter = (letter) => {
     if (!("speechSynthesis" in window)) {
         return;
@@ -240,10 +344,7 @@ const speakLetter = (letter) => {
     window.speechSynthesis.cancel();
 
     const letterName = letterNames[letter] || letter;
-    const utterance = new SpeechSynthesisUtterance(`${letterName}.`);
-    utterance.lang = "pt-BR";
-    utterance.rate = 0.82;
-    utterance.pitch = 1;
+    const utterance = createSoftSpeech(`${letterName}.`);
     window.speechSynthesis.speak(utterance);
 };
 
@@ -254,10 +355,7 @@ const speakNumber = (number) => {
 
     window.speechSynthesis.cancel();
 
-    const utterance = new SpeechSynthesisUtterance(String(number));
-    utterance.lang = "pt-BR";
-    utterance.rate = 0.82;
-    utterance.pitch = 1;
+    const utterance = createSoftSpeech(String(number));
     window.speechSynthesis.speak(utterance);
 };
 
@@ -268,10 +366,7 @@ const speakColor = (colorName) => {
 
     window.speechSynthesis.cancel();
 
-    const utterance = new SpeechSynthesisUtterance(`${colorName}.`);
-    utterance.lang = "pt-BR";
-    utterance.rate = 0.82;
-    utterance.pitch = 1;
+    const utterance = createSoftSpeech(`${colorName}.`);
     window.speechSynthesis.speak(utterance);
 };
 
@@ -391,6 +486,91 @@ const getSavedFormAnswers = () => {
 };
 
 const savedFormAnswers = getSavedFormAnswers();
+
+const hasVisibleProfileAnswers = (form) => Array.from(form.querySelectorAll("[name]")).some((field) => {
+    if (!(field instanceof HTMLInputElement || field instanceof HTMLSelectElement || field instanceof HTMLTextAreaElement)) {
+        return false;
+    }
+
+    if (field.type === "hidden") {
+        return false;
+    }
+
+    if (field instanceof HTMLInputElement && (field.type === "checkbox" || field.type === "radio")) {
+        return field.checked;
+    }
+
+    return String(field.value || "").trim() !== "";
+});
+
+const setFilteredFormView = (form, shouldFilter) => {
+    form.classList.toggle("is-filtered", shouldFilter);
+
+    form.querySelectorAll(".check-grid").forEach((grid) => {
+        const options = Array.from(grid.querySelectorAll("label"));
+        const hasCheckedOption = options.some((label) => {
+            const input = label.querySelector("input");
+            return input instanceof HTMLInputElement && input.checked;
+        });
+
+        options.forEach((label) => {
+            const input = label.querySelector("input");
+            const shouldHide = shouldFilter && hasCheckedOption && input instanceof HTMLInputElement && !input.checked;
+            label.classList.toggle("is-unselected-option", shouldHide);
+        });
+    });
+
+    form.querySelectorAll(".form-group").forEach((group) => {
+        if (group.querySelector(".check-grid")) {
+            const hasCheckedOption = Array.from(group.querySelectorAll("input[type='checkbox'], input[type='radio']")).some((input) => input.checked);
+            group.classList.toggle("is-empty-answer", shouldFilter && !hasCheckedOption);
+            return;
+        }
+
+        const field = group.querySelector("input:not([type='hidden']), select, textarea");
+        const isEmpty = field instanceof HTMLInputElement || field instanceof HTMLSelectElement || field instanceof HTMLTextAreaElement
+            ? String(field.value || "").trim() === ""
+            : false;
+
+        group.classList.toggle("is-empty-answer", shouldFilter && isEmpty);
+    });
+};
+
+const addFormFilterToggle = (form) => {
+    if (!hasVisibleProfileAnswers(form) || form.querySelector(".form-filter-toggle")) {
+        return;
+    }
+
+    const submitButton = form.querySelector(".form-submit");
+    const toggleButton = document.createElement("button");
+    toggleButton.className = "form-filter-toggle";
+    toggleButton.type = "button";
+    toggleButton.textContent = "Mostrar todas as opcoes";
+    toggleButton.setAttribute("aria-pressed", "false");
+
+    toggleButton.addEventListener("click", () => {
+        const shouldShowAll = toggleButton.getAttribute("aria-pressed") === "false";
+        toggleButton.setAttribute("aria-pressed", String(shouldShowAll));
+        toggleButton.textContent = shouldShowAll ? "Mostrar apenas respostas" : "Mostrar todas as opcoes";
+        setFilteredFormView(form, !shouldShowAll);
+    });
+
+    if (submitButton) {
+        form.insertBefore(toggleButton, submitButton);
+        return;
+    }
+
+    form.appendChild(toggleButton);
+};
+
+const applySavedAnswerView = (form) => {
+    if (!hasVisibleProfileAnswers(form)) {
+        return;
+    }
+
+    setFilteredFormView(form, true);
+    addFormFilterToggle(form);
+};
 
 if (welcomeName && savedFormAnswers.aluno_nome) {
     welcomeName.textContent = savedFormAnswers.aluno_nome;
@@ -614,6 +794,19 @@ const getDevelopmentSummary = ({ games, completedGames, accuracy, activeDays }) 
     };
 };
 
+const getGameLevelFromProgress = (game) => {
+    const correct = Math.max(Number(game?.correct) || 0, 0);
+    return Number(game?.level) || Math.floor(correct / 5) + 1;
+};
+
+const getLevelSummary = (games) => {
+    const levels = games.map(getGameLevelFromProgress);
+    const highestLevel = levels.length ? Math.max(...levels) : 1;
+    const advancedGames = levels.filter((level) => level > 1).length;
+
+    return { highestLevel, advancedGames };
+};
+
 const updateProgressCountFromGames = (completedGames) => {
     if (progressCount) {
         progressCount.textContent = String(completedGames);
@@ -646,13 +839,18 @@ const renderConsolidatedReport = () => {
     const mostUsedSkill = Object.entries(skillCount).sort((a, b) => b[1] - a[1])[0]?.[0] || "";
     const usageLabel = getUsageLabel(activeDays, recentSessions.length);
     const developmentSummary = getDevelopmentSummary({ games, completedGames, accuracy, activeDays });
+    const levelSummary = getLevelSummary(games);
 
     document.getElementById("completedActivitiesMetric")?.replaceChildren(document.createTextNode(`${completedGames} de ${totalGames}`));
     document.getElementById("completedActivitiesText")?.replaceChildren(document.createTextNode(`${games.length} jogos com registro de uso.`));
     document.getElementById("usageFrequencyMetric")?.replaceChildren(document.createTextNode(usageLabel));
     document.getElementById("usageFrequencyText")?.replaceChildren(document.createTextNode(`${activeDays} dia(s) de uso recente.`));
-    document.getElementById("developmentMetric")?.replaceChildren(document.createTextNode(developmentSummary.label));
-    document.getElementById("developmentMetricText")?.replaceChildren(document.createTextNode(developmentSummary.text));
+    document.getElementById("developmentMetric")?.replaceChildren(document.createTextNode(`Fase ${levelSummary.highestLevel}`));
+    document.getElementById("developmentMetricText")?.replaceChildren(document.createTextNode(
+        games.length
+            ? `${levelSummary.advancedGames} jogo(s) ja avancaram de fase. ${developmentSummary.text}`
+            : developmentSummary.text
+    ));
     document.getElementById("qualitativeDevelopmentText")?.replaceChildren(document.createTextNode(getQualitativeDevelopment({
         games,
         completedGames,
@@ -690,6 +888,8 @@ document.querySelectorAll(".platform-form").forEach((form) => {
         fillFormWithSavedAnswers(form, savedFormAnswers);
     }
 
+    applySavedAnswerView(form);
+
     form.addEventListener("submit", (event) => {
         const shouldSubmitToServer = form.method.toLowerCase() === "post" && form.action.includes("auth.php");
 
@@ -703,6 +903,7 @@ document.querySelectorAll(".platform-form").forEach((form) => {
         const currentAnswers = collectFormAnswers(form);
         updateReportFields(currentAnswers);
         renderReportRecommendations(currentAnswers);
+        applySavedAnswerView(form);
 
         const status = form.querySelector(".form-status");
 

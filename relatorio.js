@@ -19,6 +19,18 @@ const gameProgress = readGameProgress();
 const games = Object.values(gameProgress.games || {});
 const sessions = gameProgress.sessions || [];
 
+const getGameLevel = (game) => {
+    const correct = Math.max(Number(game?.correct) || 0, 0);
+    return Number(game?.level) || Math.floor(correct / 5) + 1;
+};
+
+const getCorrectToNextLevel = (game) => {
+    const correct = Math.max(Number(game?.correct) || 0, 0);
+    const step = Number(game?.levelStep) || 5;
+    const progress = Number.isFinite(Number(game?.progressInLevel)) ? Number(game.progressInLevel) : correct % step;
+    return Number(game?.correctToNextLevel) || step - progress;
+};
+
 const readSavedProfile = () => {
     try {
         return JSON.parse(localStorage.getItem("inklua_formulario_adaptacao")) || {};
@@ -351,14 +363,18 @@ if (gamesReportGrid) {
             const explored = Math.min(game.items?.length || 0, totalItems);
             const accuracyTotal = (game.correct || 0) + (game.wrong || 0);
             const accuracy = accuracyTotal ? Math.round(((game.correct || 0) / accuracyTotal) * 100) : 100;
+            const level = getGameLevel(game);
+            const remaining = getCorrectToNextLevel(game);
 
             return `
                 <article class="game-report-card">
                     <strong>${game.title}</strong>
-                    <p>${game.skill}</p>
+                    <p>${game.skill}. Fase atual: ${level}.</p>
                     <div class="game-report-card__meta">
+                        <span>Fase ${level}</span>
                         <span>${explored}/${totalItems} itens</span>
                         <span>${accuracy}% acerto</span>
+                        <span>${remaining} para avancar</span>
                         <span>${game.completed ? "Concluido" : "Em andamento"}</span>
                     </div>
                 </article>

@@ -8,10 +8,7 @@ const speakNumber = (number) => {
 
     window.speechSynthesis.cancel();
 
-    const utterance = new SpeechSynthesisUtterance(String(number));
-    utterance.lang = "pt-BR";
-    utterance.rate = 0.82;
-    utterance.pitch = 1;
+    const utterance = window.InkluaSpeech?.createUtterance(String(number)) || new SpeechSynthesisUtterance(String(number));
     window.speechSynthesis.speak(utterance);
 };
 
