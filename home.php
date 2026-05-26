@@ -399,6 +399,31 @@ function reportValue(array $user, string $key, string $fallback): string
                 </div>
 
                 <article class="report-panel report-panel--wide">
+                    <h3>Consolida&ccedil;&atilde;o de dados da plataforma</h3>
+                    <div class="report-metrics-grid" aria-label="Resumo consolidado dos jogos">
+                        <article class="report-metric-card">
+                            <span>Perguntas respondidas</span>
+                            <strong id="completedActivitiesMetric">0 acertos</strong>
+                            <p id="completedActivitiesText">0 erros registrados nos jogos.</p>
+                        </article>
+                        <article class="report-metric-card">
+                            <span>Tempo na plataforma</span>
+                            <strong id="usageFrequencyMetric">0s</strong>
+                            <p id="usageFrequencyText">Uso acumulado entre home, jogos e relat&oacute;rio.</p>
+                        </article>
+                        <article class="report-metric-card">
+                            <span>Desenvolvimento</span>
+                            <strong id="developmentMetric">Aguardando dados</strong>
+                            <p id="developmentMetricText">Leitura geral do progresso do aluno.</p>
+                        </article>
+                    </div>
+
+                    <p class="report-insight-text" id="qualitativeDevelopmentText">
+                        Ao usar os jogos, a plataforma vai consolidar evid&ecirc;ncias de participa&ccedil;&atilde;o, const&acirc;ncia e habilidades trabalhadas.
+                    </p>
+                </article>
+
+                <article class="report-panel report-panel--wide">
                     <h3>Plano sugerido pela plataforma</h3>
                     <div class="report-action-grid">
                         <article class="report-action-card">
@@ -556,6 +581,7 @@ function reportValue(array $user, string $key, string $fallback): string
         </section>
     </main>
 
+    <script src="game-progress.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

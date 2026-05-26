@@ -19,6 +19,20 @@ const gameProgress = readGameProgress();
 const games = Object.values(gameProgress.games || {});
 const sessions = gameProgress.sessions || [];
 
+const getTotalPlatformTime = () => {
+    if (window.InkluaGameProgress?.getPlatformUsageTime) {
+        return window.InkluaGameProgress.getPlatformUsageTime();
+    }
+
+    return Math.max(Number(gameProgress.totalTimeMs) || 0, 0);
+};
+
+const platformStats = {
+    correctAnswers: games.reduce((sum, game) => sum + (Number(game.correct) || 0), 0),
+    wrongAnswers: games.reduce((sum, game) => sum + (Number(game.wrong) || 0), 0),
+    totalTimeMs: getTotalPlatformTime()
+};
+
 const getGameLevel = (game) => {
     const correct = Math.max(Number(game?.correct) || 0, 0);
     return Number(game?.level) || Math.floor(correct / 5) + 1;
@@ -29,6 +43,23 @@ const getCorrectToNextLevel = (game) => {
     const step = Number(game?.levelStep) || 5;
     const progress = Number.isFinite(Number(game?.progressInLevel)) ? Number(game.progressInLevel) : correct % step;
     return Number(game?.correctToNextLevel) || step - progress;
+};
+
+const formatDuration = (milliseconds = 0) => {
+    const totalSeconds = Math.max(Math.floor(milliseconds / 1000), 0);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    if (hours > 0) {
+        return `${hours}h ${String(minutes).padStart(2, "0")}min`;
+    }
+
+    if (minutes > 0) {
+        return `${minutes}min ${String(seconds).padStart(2, "0")}s`;
+    }
+
+    return `${seconds}s`;
 };
 
 const readSavedProfile = () => {
@@ -268,6 +299,7 @@ const reportData = {
     ],
     weekly: getWeeklyEvolution(),
     activities: getActivityDistribution(),
+    platformStats,
     bnccAlignment,
     skills: [
         getSkillScore("Comunicação"),
@@ -353,6 +385,33 @@ if (evolutionGrid) {
     `).join("");
 }
 
+const renderPlatformSummary = () => {
+    const answered = platformStats.correctAnswers + platformStats.wrongAnswers;
+    const accuracy = answered ? Math.round((platformStats.correctAnswers / answered) * 100) : 0;
+
+    setText("correctAnswersMetric", String(platformStats.correctAnswers));
+    setText("wrongAnswersMetric", String(platformStats.wrongAnswers));
+    setText("platformTimeMetric", formatDuration(platformStats.totalTimeMs));
+    setText(
+        "correctAnswersText",
+        answered ? `${accuracy}% de acerto nas perguntas respondidas.` : "Aguardando respostas dos jogos."
+    );
+    setText(
+        "wrongAnswersText",
+        answered ? `${platformStats.wrongAnswers} resposta(s) para revisar com reforco positivo.` : "Aguardando respostas dos jogos."
+    );
+    setText(
+        "platformTimeText",
+        platformStats.totalTimeMs ? "Tempo acumulado entre home, jogos e relatorio." : "O tempo sera contado conforme a plataforma for usada."
+    );
+    setText(
+        "platformSummaryStatus",
+        answered || platformStats.totalTimeMs ? "Dados atualizados" : "Aguardando uso"
+    );
+};
+
+renderPlatformSummary();
+
 const gamesReportGrid = document.getElementById("gamesReportGrid");
 const gamesReportStatus = document.getElementById("gamesReportStatus");
 
@@ -361,17 +420,21 @@ if (gamesReportGrid) {
         gamesReportGrid.innerHTML = games.map((game) => {
             const totalItems = Math.max(Number(game.totalItems) || 1, 1);
             const explored = Math.min(game.items?.length || 0, totalItems);
+            const correct = Number(game.correct) || 0;
+            const wrong = Number(game.wrong) || 0;
             const accuracyTotal = (game.correct || 0) + (game.wrong || 0);
-            const accuracy = accuracyTotal ? Math.round(((game.correct || 0) / accuracyTotal) * 100) : 100;
+            const accuracy = accuracyTotal ? Math.round((correct / accuracyTotal) * 100) : 100;
             const level = getGameLevel(game);
             const remaining = getCorrectToNextLevel(game);
 
             return `
                 <article class="game-report-card">
                     <strong>${game.title}</strong>
-                    <p>${game.skill}. Fase atual: ${level}.</p>
+                    <p>${game.skill}. Fase atual: ${level}. Acertou ${correct} e errou ${wrong} pergunta(s).</p>
                     <div class="game-report-card__meta">
                         <span>Fase ${level}</span>
+                        <span>${correct} acerto(s)</span>
+                        <span>${wrong} erro(s)</span>
                         <span>${explored}/${totalItems} itens</span>
                         <span>${accuracy}% acerto</span>
                         <span>${remaining} para avancar</span>

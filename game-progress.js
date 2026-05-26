@@ -1,6 +1,7 @@
 (function () {
     const storageKey = "inklua_game_progress_v1";
     let speechRequestId = 0;
+    let pageSessionStartedAt = Date.now();
 
     const scoreVoice = (voice) => {
         const name = voice.name.toLowerCase();
@@ -179,6 +180,23 @@
         localStorage.setItem(storageKey, JSON.stringify(progress));
     };
 
+    const recordPlatformTime = () => {
+        const now = Date.now();
+        const elapsed = now - pageSessionStartedAt;
+
+        if (elapsed < 1000) {
+            return;
+        }
+
+        const progress = readProgress();
+        progress.games = progress.games || {};
+        progress.sessions = progress.sessions || [];
+        progress.totalTimeMs = Math.max(Number(progress.totalTimeMs) || 0, 0) + elapsed;
+        progress.lastActiveAt = new Date(now).toISOString();
+        saveProgress(progress);
+        pageSessionStartedAt = now;
+    };
+
     const uniqueValues = (values) => Array.from(new Set(values.filter(Boolean)));
 
     const levelStep = 5;
@@ -314,9 +332,18 @@
 
     const getGameProgress = () => readProgress();
 
+    const getPlatformUsageTime = () => {
+        const progress = readProgress();
+        const currentPageTime = document.visibilityState === "visible" ? Date.now() - pageSessionStartedAt : 0;
+
+        return Math.max(Number(progress.totalTimeMs) || 0, 0) + Math.max(currentPageTime, 0);
+    };
+
     window.InkluaGameProgress = {
         record: recordGameProgress,
         read: getGameProgress,
+        recordPlatformTime,
+        getPlatformUsageTime,
         getLevelState,
         storageKey
     };
@@ -329,4 +356,20 @@
     if ("speechSynthesis" in window) {
         window.speechSynthesis.onvoiceschanged = () => getPreferredVoice();
     }
+
+    window.addEventListener("pagehide", recordPlatformTime);
+    window.addEventListener("beforeunload", recordPlatformTime);
+    document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "hidden") {
+            recordPlatformTime();
+            return;
+        }
+
+        pageSessionStartedAt = Date.now();
+    });
+    window.setInterval(() => {
+        if (document.visibilityState === "visible") {
+            recordPlatformTime();
+        }
+    }, 15000);
 }());

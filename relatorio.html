@@ -108,6 +108,34 @@
             </article>
         </section>
 
+        <section class="section-block platform-summary" aria-labelledby="platform-summary-title">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Resumo da plataforma</p>
+                    <h2 id="platform-summary-title">Tempo e respostas registradas</h2>
+                </div>
+                <span class="status-pill" id="platformSummaryStatus">Sincronizado</span>
+            </div>
+
+            <div class="platform-summary-grid">
+                <article class="platform-summary-card">
+                    <span>Perguntas acertadas</span>
+                    <strong id="correctAnswersMetric">0</strong>
+                    <p id="correctAnswersText">Aguardando respostas dos jogos.</p>
+                </article>
+                <article class="platform-summary-card">
+                    <span>Perguntas erradas</span>
+                    <strong id="wrongAnswersMetric">0</strong>
+                    <p id="wrongAnswersText">Aguardando respostas dos jogos.</p>
+                </article>
+                <article class="platform-summary-card">
+                    <span>Tempo na plataforma</span>
+                    <strong id="platformTimeMetric">0 min</strong>
+                    <p id="platformTimeText">Tempo acumulado entre home, jogos e relatorio.</p>
+                </article>
+            </div>
+        </section>
+
         <section class="section-block games-report" aria-labelledby="games-report-title">
             <div class="section-heading">
                 <div>
@@ -204,6 +232,7 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="game-progress.js"></script>
     <script src="relatorio.js"></script>
 </body>
 </html>

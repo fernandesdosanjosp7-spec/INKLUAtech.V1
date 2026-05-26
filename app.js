@@ -724,6 +724,23 @@ const readGameProgress = () => {
     }
 };
 
+const formatDuration = (milliseconds = 0) => {
+    const totalSeconds = Math.max(Math.floor(milliseconds / 1000), 0);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    if (hours > 0) {
+        return `${hours}h ${String(minutes).padStart(2, "0")}min`;
+    }
+
+    if (minutes > 0) {
+        return `${minutes}min ${String(seconds).padStart(2, "0")}s`;
+    }
+
+    return `${seconds}s`;
+};
+
 const getDaysBetween = (dateString) => {
     const date = new Date(dateString);
 
@@ -835,6 +852,11 @@ const renderConsolidatedReport = () => {
     const sessions = progress.sessions || [];
     const completedGames = games.filter((game) => game.completed).length;
     const totalGames = Math.max(games.length, 8);
+    const correctAnswers = games.reduce((sum, game) => sum + (Number(game.correct) || 0), 0);
+    const wrongAnswers = games.reduce((sum, game) => sum + (Number(game.wrong) || 0), 0);
+    const totalPlatformTime = window.InkluaGameProgress?.getPlatformUsageTime
+        ? window.InkluaGameProgress.getPlatformUsageTime()
+        : Math.max(Number(progress.totalTimeMs) || 0, 0);
     const answeredSessions = sessions.filter((session) => typeof session.correct === "boolean");
     const correctSessions = answeredSessions.filter((session) => session.correct).length;
     const accuracy = answeredSessions.length ? Math.round((correctSessions / answeredSessions.length) * 100) : 0;
@@ -857,10 +879,10 @@ const renderConsolidatedReport = () => {
     const developmentSummary = getDevelopmentSummary({ games, completedGames, accuracy, activeDays });
     const levelSummary = getLevelSummary(games);
 
-    document.getElementById("completedActivitiesMetric")?.replaceChildren(document.createTextNode(`${completedGames} de ${totalGames}`));
-    document.getElementById("completedActivitiesText")?.replaceChildren(document.createTextNode(`${games.length} jogos com registro de uso.`));
-    document.getElementById("usageFrequencyMetric")?.replaceChildren(document.createTextNode(usageLabel));
-    document.getElementById("usageFrequencyText")?.replaceChildren(document.createTextNode(`${activeDays} dia(s) de uso recente.`));
+    document.getElementById("completedActivitiesMetric")?.replaceChildren(document.createTextNode(`${correctAnswers} acerto(s)`));
+    document.getElementById("completedActivitiesText")?.replaceChildren(document.createTextNode(`${wrongAnswers} erro(s). ${completedGames} de ${totalGames} atividades concluidas.`));
+    document.getElementById("usageFrequencyMetric")?.replaceChildren(document.createTextNode(formatDuration(totalPlatformTime)));
+    document.getElementById("usageFrequencyText")?.replaceChildren(document.createTextNode(`${usageLabel}. ${activeDays} dia(s) de uso recente.`));
     document.getElementById("developmentMetric")?.replaceChildren(document.createTextNode(`Fase ${levelSummary.highestLevel}`));
     document.getElementById("developmentMetricText")?.replaceChildren(document.createTextNode(
         games.length
