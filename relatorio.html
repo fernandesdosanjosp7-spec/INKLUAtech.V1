@@ -4,27 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>INKLUA Tech | Relat&oacute;rio Educacional</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="relatorio.css">
 </head>
 <body>
-    <main class="report-page">
-        <div class="soft-shape soft-shape--one" aria-hidden="true"></div>
-        <div class="soft-shape soft-shape--two" aria-hidden="true"></div>
-
-        <header class="report-header">
-            <a class="brand" href="home.php" aria-label="Voltar para o dashboard INKLUA Tech">
+    <main class="platform-shell">
+        <aside class="sidebar" aria-label="Navega&ccedil;&atilde;o da plataforma">
+            <a class="brand" href="home.php">
                 <img src="assets/ink-logo.png" alt="Logo INKLUA Tech">
-                <span>INKLUA Tech</span>
+                <span>Inklua Tech</span>
             </a>
 
-            <div class="report-title">
-                <p>Relat&oacute;rio Educacional</p>
-                <h1>Acompanhamento de desenvolvimento e progresso do aluno</h1>
-            </div>
-        </header>
+            <nav class="nav-menu">
+                <a href="home.php#inicio">In&iacute;cio</a>
+                <a href="home.php#formulario">Formul&aacute;rio</a>
+                <a class="is-active" href="relatorio.php">Relat&oacute;rio</a>
+                <a href="home.php#jogos">Jogos</a>
+                <a href="home.php#aprendizado">Aprendizado</a>
+                <a href="home.php#rotina">Rotina</a>
+                <a href="home.php#apoio">Apoio</a>
+            </nav>
+
+        </aside>
+
+        <section class="platform-content">
+            <header class="topbar">
+                <div>
+                    <p class="eyebrow">Relat&oacute;rio educacional</p>
+                    <h1>Acompanhamento de desenvolvimento e progresso</h1>
+                </div>
+                <a class="topbar-button" href="home.php">Voltar</a>
+            </header>
 
         <section class="student-card" aria-labelledby="student-name">
             <div class="student-photo" aria-label="Foto do aluno">
@@ -190,6 +199,7 @@
                 <span aria-hidden="true">←</span>
                 Voltar ao dashboard
             </a>
+        </section>
         </section>
     </main>
 

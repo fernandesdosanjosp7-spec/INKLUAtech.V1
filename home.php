@@ -389,37 +389,12 @@ function reportValue(array $user, string $key, string $fallback): string
                     </article>
 
                     <article class="report-panel">
-                        <h3>Perfil usado nas adapta&ccedil;&otilde;es</h3>
-                        <dl class="report-details">
-                            <div>
-                                <dt>Conte&uacute;dos reconhecidos</dt>
-                                <dd><?php echo reportValue($user, "conteudos_reconhecidos", "Preencha o formul&aacute;rio para registrar letras, n&uacute;meros, cores ou formas."); ?></dd>
-                            </div>
-                            <div>
-                                <dt>Atividades que funcionam melhor</dt>
-                                <dd><?php echo reportValue($user, "atividade_funciona", "Preencha o formul&aacute;rio para indicar jogos, imagens, &aacute;udios ou atividades curtas."); ?></dd>
-                            </div>
-                            <div>
-                                <dt>Prioridades de desenvolvimento</dt>
-                                <dd><?php echo reportValue($user, "prioridades", "Preencha o formul&aacute;rio para registrar fala, leitura, aten&ccedil;&atilde;o, autonomia ou socializa&ccedil;&atilde;o."); ?></dd>
-                            </div>
-                            <div>
-                                <dt>Comunica&ccedil;&atilde;o preferencial</dt>
-                                <dd><?php echo reportValue($user, "comunicacao_melhor", "Preencha o formul&aacute;rio para indicar fala, gestos, imagens, escrita, sons ou comunica&ccedil;&atilde;o alternativa."); ?></dd>
-                            </div>
-                            <div>
-                                <dt>Compreens&atilde;o</dt>
-                                <dd><?php echo reportValue($user, "compreensao_melhor", "Preencha o formul&aacute;rio para indicar frases curtas, imagens, repeti&ccedil;&atilde;o, demonstra&ccedil;&atilde;o pr&aacute;tica ou v&iacute;deos."); ?></dd>
-                            </div>
-                            <div>
-                                <dt>Sensibilidades</dt>
-                                <dd><?php echo reportValue($user, "sensibilidades_importantes", "Preencha o formul&aacute;rio para indicar sons altos, luz forte, muitas cores, toques ou ambientes agitados."); ?></dd>
-                            </div>
-                            <div>
-                                <dt>Recursos &uacute;teis</dt>
-                                <dd><?php echo reportValue($user, "recursos_uteis", "Preencha o formul&aacute;rio para indicar rotina visual, &aacute;udio, imagens, refor&ccedil;o positivo ou conte&uacute;dos personalizados."); ?></dd>
-                            </div>
-                        </dl>
+                        <h3>Pr&oacute;ximos passos do acompanhamento</h3>
+                        <ul class="report-timeline">
+                            <li>Observar quais jogos geram mais participa&ccedil;&atilde;o e repetir essas atividades em sess&otilde;es curtas.</li>
+                            <li>Registrar conquistas simples, como escolhas aut&ocirc;nomas, respostas corretas e tempo de foco.</li>
+                            <li>Usar o relat&oacute;rio completo para comparar evolu&ccedil;&atilde;o, comportamento e habilidades trabalhadas.</li>
+                        </ul>
                     </article>
                 </div>
 
