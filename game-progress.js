@@ -1,7 +1,9 @@
 (function () {
     const storageKey = "inklua_game_progress_v1";
+    const syncEndpoint = "game-progress-api.php";
     let speechRequestId = 0;
     let pageSessionStartedAt = Date.now();
+    let syncTimer = 0;
 
     const scoreVoice = (voice) => {
         const name = voice.name.toLowerCase();
@@ -176,8 +178,138 @@
         }
     };
 
+    const normalizeProgress = (progress = {}) => ({
+        ...progress,
+        games: progress.games && typeof progress.games === "object" ? progress.games : {},
+        sessions: Array.isArray(progress.sessions) ? progress.sessions : [],
+        totalTimeMs: Math.max(Number(progress.totalTimeMs) || 0, 0)
+    });
+
     const saveProgress = (progress) => {
-        localStorage.setItem(storageKey, JSON.stringify(progress));
+        const normalizedProgress = normalizeProgress(progress);
+        localStorage.setItem(storageKey, JSON.stringify(normalizedProgress));
+        scheduleServerSync(normalizedProgress);
+    };
+
+    const getSessionKey = (session) => [
+        session.gameId || "",
+        session.item || "",
+        session.correct,
+        session.createdAt || ""
+    ].join("|");
+
+    const mergeGameProgress = (localGame = {}, serverGame = {}) => {
+        const items = uniqueValues([...(localGame.items || []), ...(serverGame.items || [])]);
+        const correct = Math.max(Number(localGame.correct) || 0, Number(serverGame.correct) || 0);
+        const levelState = getLevelState(correct);
+
+        return {
+            ...serverGame,
+            ...localGame,
+            interactions: Math.max(Number(localGame.interactions) || 0, Number(serverGame.interactions) || 0),
+            correct,
+            wrong: Math.max(Number(localGame.wrong) || 0, Number(serverGame.wrong) || 0),
+            items,
+            completed: Boolean(localGame.completed || serverGame.completed),
+            totalItems: Math.max(Number(localGame.totalItems) || 0, Number(serverGame.totalItems) || 0, 1),
+            level: Math.max(Number(localGame.level) || 1, Number(serverGame.level) || 1, levelState.level),
+            levelStep: levelState.levelStep,
+            progressInLevel: levelState.progressInLevel,
+            correctToNextLevel: levelState.correctToNextLevel,
+            levelUps: Math.max(Number(localGame.levelUps) || 0, Number(serverGame.levelUps) || 0),
+            lastPlayed: [localGame.lastPlayed, serverGame.lastPlayed].filter(Boolean).sort().pop() || null,
+            lastLevelUp: [localGame.lastLevelUp, serverGame.lastLevelUp].filter(Boolean).sort().pop() || null
+        };
+    };
+
+    const mergeProgress = (localProgress, serverProgress) => {
+        const local = normalizeProgress(localProgress);
+        const server = normalizeProgress(serverProgress);
+        const gameIds = uniqueValues([...Object.keys(local.games), ...Object.keys(server.games)]);
+        const sessionsByKey = new Map();
+
+        [...server.sessions, ...local.sessions].forEach((session) => {
+            sessionsByKey.set(getSessionKey(session), session);
+        });
+
+        return {
+            ...server,
+            ...local,
+            games: gameIds.reduce((games, gameId) => {
+                games[gameId] = mergeGameProgress(local.games[gameId], server.games[gameId]);
+                return games;
+            }, {}),
+            sessions: Array.from(sessionsByKey.values())
+                .sort((first, second) => String(first.createdAt || "").localeCompare(String(second.createdAt || "")))
+                .slice(-120),
+            totalTimeMs: Math.max(local.totalTimeMs, server.totalTimeMs),
+            lastActiveAt: [local.lastActiveAt, server.lastActiveAt].filter(Boolean).sort().pop() || null
+        };
+    };
+
+    const canSyncWithServer = () => {
+        const staticServerPorts = new Set(["5500", "5501"]);
+        return window.location.protocol !== "file:" && !staticServerPorts.has(window.location.port) && typeof fetch === "function";
+    };
+
+    const preferPhpNavigation = () => {
+        if (!canSyncWithServer()) {
+            return;
+        }
+
+        document.querySelectorAll("a[href^='home.html']").forEach((link) => {
+            const href = link.getAttribute("href") || "";
+            link.setAttribute("href", href.replace("home.html", "home.php"));
+        });
+
+        document.querySelectorAll("a[href='relatorio.html']").forEach((link) => {
+            link.setAttribute("href", "relatorio.php");
+        });
+    };
+
+    const syncProgressToServer = (progress = readProgress()) => {
+        if (!canSyncWithServer()) {
+            return;
+        }
+
+        fetch(syncEndpoint, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: "same-origin",
+            body: JSON.stringify({ progress: normalizeProgress(progress) })
+        }).catch(() => {});
+    };
+
+    const scheduleServerSync = (progress) => {
+        if (!canSyncWithServer()) {
+            return;
+        }
+
+        window.clearTimeout(syncTimer);
+        syncTimer = window.setTimeout(() => syncProgressToServer(progress), 350);
+    };
+
+    const loadProgressFromServer = () => {
+        if (!canSyncWithServer()) {
+            return;
+        }
+
+        fetch(syncEndpoint, {
+            credentials: "same-origin"
+        })
+            .then((response) => response.ok ? response.json() : null)
+            .then((payload) => {
+                if (!payload?.ok || !payload.progress) {
+                    return;
+                }
+
+                const mergedProgress = mergeProgress(readProgress(), payload.progress);
+                localStorage.setItem(storageKey, JSON.stringify(mergedProgress));
+                syncProgressToServer(mergedProgress);
+            })
+            .catch(() => {});
     };
 
     const recordPlatformTime = () => {
@@ -339,6 +471,20 @@
         return Math.max(Number(progress.totalTimeMs) || 0, 0) + Math.max(currentPageTime, 0);
     };
 
+    const hydrateInitialServerProgress = () => {
+        const serverProgress = window.InkluaServerGameProgress;
+
+        if (!serverProgress || typeof serverProgress !== "object") {
+            return;
+        }
+
+        const mergedProgress = mergeProgress(readProgress(), serverProgress);
+        localStorage.setItem(storageKey, JSON.stringify(mergedProgress));
+    };
+
+    hydrateInitialServerProgress();
+    preferPhpNavigation();
+
     window.InkluaGameProgress = {
         record: recordGameProgress,
         read: getGameProgress,
@@ -356,6 +502,8 @@
     if ("speechSynthesis" in window) {
         window.speechSynthesis.onvoiceschanged = () => getPreferredVoice();
     }
+
+    loadProgressFromServer();
 
     window.addEventListener("pagehide", recordPlatformTime);
     window.addEventListener("beforeunload", recordPlatformTime);

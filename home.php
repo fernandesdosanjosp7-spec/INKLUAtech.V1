@@ -11,6 +11,7 @@ if (empty($_SESSION["user_id"])) {
 $databaseError = "";
 $savedMessage = "";
 $user = [];
+$serverGameProgress = ["games" => [], "sessions" => []];
 
 try {
     $pdo = getDatabase();
@@ -23,6 +24,15 @@ try {
         session_destroy();
         header("Location: Index.html#login");
         exit;
+    }
+
+    $progressStmt = $pdo->prepare("SELECT dados FROM progresso_jogos WHERE user_id = :id LIMIT 1");
+    $progressStmt->execute([":id" => $_SESSION["user_id"]]);
+    $progressData = $progressStmt->fetchColumn();
+    $decodedProgress = $progressData ? json_decode($progressData, true) : null;
+
+    if (is_array($decodedProgress)) {
+        $serverGameProgress = $decodedProgress;
     }
 
     if (($_GET["status"] ?? "") === "registered") {
@@ -581,6 +591,9 @@ function reportValue(array $user, string $key, string $fallback): string
         </section>
     </main>
 
+    <script>
+        window.InkluaServerGameProgress = <?php echo json_encode($serverGameProgress, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
+    </script>
     <script src="game-progress.js"></script>
     <script src="app.js"></script>
 </body>

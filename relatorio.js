@@ -72,6 +72,7 @@ const readSavedProfile = () => {
 
 const savedProfile = readSavedProfile();
 const serverProfile = window.InkluaStudentProfile || {};
+const serverReport = window.InkluaServerReport || {};
 
 const firstFilled = (...values) => values.find((value) => String(value || "").trim() !== "") || "";
 
@@ -146,6 +147,11 @@ const renderStudentProfile = () => {
 
     const teacherNotes = document.getElementById("teacherNotes");
     if (teacherNotes) {
+        if (serverReport.teacherNotes) {
+            teacherNotes.value = serverReport.teacherNotes;
+            return;
+        }
+
         const notes = [
             studentProfile.observations,
             studentProfile.strategies ? `Estrategias que ajudam: ${studentProfile.strategies}.` : "",
@@ -599,7 +605,40 @@ createCharts();
 
 const getNotes = () => document.getElementById("teacherNotes")?.value.trim() || "";
 
+const canSyncReport = () => {
+    const staticServerPorts = new Set(["5500", "5501"]);
+    return window.location.protocol !== "file:" && !staticServerPorts.has(window.location.port) && typeof fetch === "function";
+};
+let reportSyncTimer = 0;
+
+const saveReportToServer = () => {
+    if (!canSyncReport()) {
+        return;
+    }
+
+    fetch("report-api.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        credentials: "same-origin",
+        body: JSON.stringify({
+            teacherNotes: getNotes(),
+            reportData
+        })
+    }).catch(() => {});
+};
+
+const scheduleReportSave = () => {
+    window.clearTimeout(reportSyncTimer);
+    reportSyncTimer = window.setTimeout(saveReportToServer, 500);
+};
+
+document.getElementById("teacherNotes")?.addEventListener("input", scheduleReportSave);
+window.addEventListener("pagehide", saveReportToServer);
+
 document.getElementById("pdfButton")?.addEventListener("click", () => {
+    saveReportToServer();
     window.print();
 });
 
@@ -620,6 +659,7 @@ document.getElementById("shareButton")?.addEventListener("click", async () => {
 });
 
 document.getElementById("exportButton")?.addEventListener("click", () => {
+    saveReportToServer();
     const payload = {
         ...reportData,
         gameProgress,
