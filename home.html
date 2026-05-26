@@ -1,78 +1,3 @@
-<?php
-session_start();
-
-require __DIR__ . "/db.php";
-
-if (empty($_SESSION["user_id"])) {
-    header("Location: Index.html#login");
-    exit;
-}
-
-$databaseError = "";
-$savedMessage = "";
-$user = [];
-$serverGameProgress = ["games" => [], "sessions" => []];
-
-try {
-    $pdo = getDatabase();
-    $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE id = :id LIMIT 1");
-    $stmt->execute([":id" => $_SESSION["user_id"]]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if (!$user) {
-        $_SESSION = [];
-        session_destroy();
-        header("Location: Index.html#login");
-        exit;
-    }
-
-    $progressStmt = $pdo->prepare("SELECT dados FROM progresso_jogos WHERE user_id = :id LIMIT 1");
-    $progressStmt->execute([":id" => $_SESSION["user_id"]]);
-    $progressData = $progressStmt->fetchColumn();
-    $decodedProgress = $progressData ? json_decode($progressData, true) : null;
-
-    if (is_array($decodedProgress)) {
-        $serverGameProgress = $decodedProgress;
-    }
-
-    if (($_GET["status"] ?? "") === "registered") {
-        $savedMessage = "Cadastro criado com sucesso.";
-    }
-
-    if (($_GET["status"] ?? "") === "profile_saved") {
-        $savedMessage = "Formulario salvo com sucesso.";
-    }
-} catch (Throwable $e) {
-    $databaseError = $e->getMessage();
-}
-
-function h(?string $value): string
-{
-    return htmlspecialchars($value ?? "", ENT_QUOTES, "UTF-8");
-}
-
-function selectedValue(array $user, string $key, string $value): string
-{
-    return (($user[$key] ?? "") === $value) ? " selected" : "";
-}
-
-function checkedValue(array $user, string $key, string $value): string
-{
-    $values = array_map("trim", explode(",", $user[$key] ?? ""));
-    return in_array($value, $values, true) ? " checked" : "";
-}
-
-function reportValue(array $user, string $key, string $fallback): string
-{
-    $value = trim((string) ($user[$key] ?? ""));
-
-    if ($value === "") {
-        return $fallback;
-    }
-
-    return h(str_replace("-", " ", $value));
-}
-?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -101,7 +26,7 @@ function reportValue(array $user, string $key, string $fallback): string
 
             <div class="student-card">
                 <span>Perfil</span>
-                <strong><?php echo h($user["aluno_nome"] ?: "Aluno"); ?></strong>
+                <strong>Aluno</strong>
                 <p>Atividades visuais, previs&iacute;veis e adaptadas.</p>
             </div>
         </aside>
@@ -112,21 +37,13 @@ function reportValue(array $user, string $key, string $fallback): string
                     <p class="eyebrow">Painel principal</p>
                     <h1>Jogos e aprendizado educativo</h1>
                 </div>
-                <a class="topbar-button" href="auth.php?action=logout">Sair</a>
+                <a class="topbar-button" href="Index.html">Sair</a>
             </header>
-
-            <?php if (!empty($databaseError)) : ?>
-                <p class="system-alert">Erro no banco de dados: <?php echo htmlspecialchars($databaseError, ENT_QUOTES, "UTF-8"); ?></p>
-            <?php endif; ?>
-
-            <?php if (!empty($savedMessage)) : ?>
-                <p class="system-success"><?php echo htmlspecialchars($savedMessage, ENT_QUOTES, "UTF-8"); ?></p>
-            <?php endif; ?>
 
             <section class="platform-view is-active-view" id="inicio" data-view="inicio" aria-label="Resumo do dia">
                 <div class="welcome-panel">
                     <p class="eyebrow">Boas-vindas</p>
-                    <h2><span id="welcomeGreeting">Ol&aacute;</span>, <?php echo h($user["aluno_nome"] ?: "aluno"); ?>!</h2>
+                    <h2><span id="welcomeGreeting">Ol&aacute;</span>, <span id="welcomeName">aluno</span>!</h2>
                     <p>Hoje separamos atividades curtas para praticar comunica&ccedil;&atilde;o, rotina e percep&ccedil;&atilde;o com calma.</p>
                     <div class="welcome-actions" aria-label="Atalhos de in&iacute;cio">
                         <a href="#jogos">Come&ccedil;ar pelos jogos</a>
@@ -168,170 +85,169 @@ function reportValue(array $user, string $key, string $fallback): string
                     </div>
                 </div>
 
-                <form class="platform-form" action="auth.php" method="post">
-                    <input type="hidden" name="action" value="update_profile">
+                <form class="platform-form" action="#formulario" method="get" data-local-form>
                     <div class="form-group">
                         <label for="platform-nivel-suporte">1&deg; Qual o n&iacute;vel de suporte do estudante?</label>
                         <select id="platform-nivel-suporte" name="nivel_suporte">
                             <option value="">Selecione</option>
-                            <option value="nivel-1"<?php echo selectedValue($user, "nivel_suporte", "nivel-1"); ?>>N&iacute;vel 1 - necessita de pouco apoio</option>
-                            <option value="nivel-2"<?php echo selectedValue($user, "nivel_suporte", "nivel-2"); ?>>N&iacute;vel 2 - necessita de apoio substancial</option>
-                            <option value="nivel-3"<?php echo selectedValue($user, "nivel_suporte", "nivel-3"); ?>>N&iacute;vel 3 - necessita de apoio muito substancial</option>
-                            <option value="nao-informado"<?php echo selectedValue($user, "nivel_suporte", "nao-informado"); ?>>N&atilde;o sei informar</option>
+                            <option value="nivel-1">N&iacute;vel 1 - necessita de pouco apoio</option>
+                            <option value="nivel-2">N&iacute;vel 2 - necessita de apoio substancial</option>
+                            <option value="nivel-3">N&iacute;vel 3 - necessita de apoio muito substancial</option>
+                            <option value="nao-informado">N&atilde;o sei informar</option>
                         </select>
                     </div>
 
                     <div class="form-group">
                         <span class="form-label">2&deg; Como o usu&aacute;rio se comunica melhor?</span>
                         <div class="check-grid">
-                            <label><input type="checkbox" name="comunicacao_melhor[]" value="fala"<?php echo checkedValue($user, "comunicacao_melhor", "fala"); ?>> Fala</label>
-                            <label><input type="checkbox" name="comunicacao_melhor[]" value="gestos"<?php echo checkedValue($user, "comunicacao_melhor", "gestos"); ?>> Gestos</label>
-                            <label><input type="checkbox" name="comunicacao_melhor[]" value="imagens"<?php echo checkedValue($user, "comunicacao_melhor", "imagens"); ?>> Imagens</label>
-                            <label><input type="checkbox" name="comunicacao_melhor[]" value="escrita"<?php echo checkedValue($user, "comunicacao_melhor", "escrita"); ?>> Escrita</label>
-                            <label><input type="checkbox" name="comunicacao_melhor[]" value="sons"<?php echo checkedValue($user, "comunicacao_melhor", "sons"); ?>> Sons</label>
-                            <label><input type="checkbox" name="comunicacao_melhor[]" value="comunicacao-alternativa"<?php echo checkedValue($user, "comunicacao_melhor", "comunicacao-alternativa"); ?>> Comunica&ccedil;&atilde;o alternativa</label>
+                            <label><input type="checkbox" name="comunicacao_melhor[]" value="fala"> Fala</label>
+                            <label><input type="checkbox" name="comunicacao_melhor[]" value="gestos"> Gestos</label>
+                            <label><input type="checkbox" name="comunicacao_melhor[]" value="imagens"> Imagens</label>
+                            <label><input type="checkbox" name="comunicacao_melhor[]" value="escrita"> Escrita</label>
+                            <label><input type="checkbox" name="comunicacao_melhor[]" value="sons"> Sons</label>
+                            <label><input type="checkbox" name="comunicacao_melhor[]" value="comunicacao-alternativa"> Comunica&ccedil;&atilde;o alternativa</label>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <span class="form-label">3&deg; Ele compreende melhor:</span>
                         <div class="check-grid">
-                            <label><input type="checkbox" name="compreensao_melhor[]" value="frases-curtas"<?php echo checkedValue($user, "compreensao_melhor", "frases-curtas"); ?>> Frases curtas</label>
-                            <label><input type="checkbox" name="compreensao_melhor[]" value="imagens"<?php echo checkedValue($user, "compreensao_melhor", "imagens"); ?>> Imagens</label>
-                            <label><input type="checkbox" name="compreensao_melhor[]" value="repeticao"<?php echo checkedValue($user, "compreensao_melhor", "repeticao"); ?>> Repeti&ccedil;&atilde;o</label>
-                            <label><input type="checkbox" name="compreensao_melhor[]" value="demonstracao-pratica"<?php echo checkedValue($user, "compreensao_melhor", "demonstracao-pratica"); ?>> Demonstra&ccedil;&atilde;o pr&aacute;tica</label>
-                            <label><input type="checkbox" name="compreensao_melhor[]" value="videos"<?php echo checkedValue($user, "compreensao_melhor", "videos"); ?>> V&iacute;deos</label>
+                            <label><input type="checkbox" name="compreensao_melhor[]" value="frases-curtas"> Frases curtas</label>
+                            <label><input type="checkbox" name="compreensao_melhor[]" value="imagens"> Imagens</label>
+                            <label><input type="checkbox" name="compreensao_melhor[]" value="repeticao"> Repeti&ccedil;&atilde;o</label>
+                            <label><input type="checkbox" name="compreensao_melhor[]" value="demonstracao-pratica"> Demonstra&ccedil;&atilde;o pr&aacute;tica</label>
+                            <label><input type="checkbox" name="compreensao_melhor[]" value="videos"> V&iacute;deos</label>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <span class="form-label">4&deg; Quais conte&uacute;dos ele j&aacute; reconhece?</span>
                         <div class="check-grid">
-                            <label><input type="checkbox" name="conteudos_reconhecidos[]" value="letras"<?php echo checkedValue($user, "conteudos_reconhecidos", "letras"); ?>> Letras</label>
-                            <label><input type="checkbox" name="conteudos_reconhecidos[]" value="numeros"<?php echo checkedValue($user, "conteudos_reconhecidos", "numeros"); ?>> N&uacute;meros</label>
-                            <label><input type="checkbox" name="conteudos_reconhecidos[]" value="cores"<?php echo checkedValue($user, "conteudos_reconhecidos", "cores"); ?>> Cores</label>
-                            <label><input type="checkbox" name="conteudos_reconhecidos[]" value="animais"<?php echo checkedValue($user, "conteudos_reconhecidos", "animais"); ?>> Animais</label>
-                            <label><input type="checkbox" name="conteudos_reconhecidos[]" value="formas"<?php echo checkedValue($user, "conteudos_reconhecidos", "formas"); ?>> Formas</label>
-                            <label><input type="checkbox" name="conteudos_reconhecidos[]" value="objetos-dia-a-dia"<?php echo checkedValue($user, "conteudos_reconhecidos", "objetos-dia-a-dia"); ?>> Objetos do dia a dia</label>
+                            <label><input type="checkbox" name="conteudos_reconhecidos[]" value="letras"> Letras</label>
+                            <label><input type="checkbox" name="conteudos_reconhecidos[]" value="numeros"> N&uacute;meros</label>
+                            <label><input type="checkbox" name="conteudos_reconhecidos[]" value="cores"> Cores</label>
+                            <label><input type="checkbox" name="conteudos_reconhecidos[]" value="animais"> Animais</label>
+                            <label><input type="checkbox" name="conteudos_reconhecidos[]" value="formas"> Formas</label>
+                            <label><input type="checkbox" name="conteudos_reconhecidos[]" value="objetos-dia-a-dia"> Objetos do dia a dia</label>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <span class="form-label">5&deg; Qual forma de atividade costuma funcionar melhor?</span>
                         <div class="check-grid">
-                            <label><input type="checkbox" name="atividade_funciona[]" value="jogos"<?php echo checkedValue($user, "atividade_funciona", "jogos"); ?>> Jogos</label>
-                            <label><input type="checkbox" name="atividade_funciona[]" value="associacao-imagens"<?php echo checkedValue($user, "atividade_funciona", "associacao-imagens"); ?>> Associa&ccedil;&atilde;o de imagens</label>
-                            <label><input type="checkbox" name="atividade_funciona[]" value="audios"<?php echo checkedValue($user, "atividade_funciona", "audios"); ?>> &Aacute;udios</label>
-                            <label><input type="checkbox" name="atividade_funciona[]" value="videos"<?php echo checkedValue($user, "atividade_funciona", "videos"); ?>> V&iacute;deos</label>
-                            <label><input type="checkbox" name="atividade_funciona[]" value="repeticao"<?php echo checkedValue($user, "atividade_funciona", "repeticao"); ?>> Atividades com repeti&ccedil;&atilde;o</label>
-                            <label><input type="checkbox" name="atividade_funciona[]" value="curtas"<?php echo checkedValue($user, "atividade_funciona", "curtas"); ?>> Atividades curtas</label>
+                            <label><input type="checkbox" name="atividade_funciona[]" value="jogos"> Jogos</label>
+                            <label><input type="checkbox" name="atividade_funciona[]" value="associacao-imagens"> Associa&ccedil;&atilde;o de imagens</label>
+                            <label><input type="checkbox" name="atividade_funciona[]" value="audios"> &Aacute;udios</label>
+                            <label><input type="checkbox" name="atividade_funciona[]" value="videos"> V&iacute;deos</label>
+                            <label><input type="checkbox" name="atividade_funciona[]" value="repeticao"> Atividades com repeti&ccedil;&atilde;o</label>
+                            <label><input type="checkbox" name="atividade_funciona[]" value="curtas"> Atividades curtas</label>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <span class="form-label">6&deg; Existe alguma sensibilidade importante?</span>
                         <div class="check-grid">
-                            <label><input type="checkbox" name="sensibilidades_importantes[]" value="sons-altos"<?php echo checkedValue($user, "sensibilidades_importantes", "sons-altos"); ?>> Sons altos</label>
-                            <label><input type="checkbox" name="sensibilidades_importantes[]" value="luz-forte"<?php echo checkedValue($user, "sensibilidades_importantes", "luz-forte"); ?>> Luz forte</label>
-                            <label><input type="checkbox" name="sensibilidades_importantes[]" value="muitas-cores"<?php echo checkedValue($user, "sensibilidades_importantes", "muitas-cores"); ?>> Muitas cores</label>
-                            <label><input type="checkbox" name="sensibilidades_importantes[]" value="toques"<?php echo checkedValue($user, "sensibilidades_importantes", "toques"); ?>> Toques</label>
-                            <label><input type="checkbox" name="sensibilidades_importantes[]" value="ambientes-agitados"<?php echo checkedValue($user, "sensibilidades_importantes", "ambientes-agitados"); ?>> Ambientes agitados</label>
-                            <label><input type="checkbox" name="sensibilidades_importantes[]" value="nenhuma-informada"<?php echo checkedValue($user, "sensibilidades_importantes", "nenhuma-informada"); ?>> Nenhuma informada</label>
+                            <label><input type="checkbox" name="sensibilidades_importantes[]" value="sons-altos"> Sons altos</label>
+                            <label><input type="checkbox" name="sensibilidades_importantes[]" value="luz-forte"> Luz forte</label>
+                            <label><input type="checkbox" name="sensibilidades_importantes[]" value="muitas-cores"> Muitas cores</label>
+                            <label><input type="checkbox" name="sensibilidades_importantes[]" value="toques"> Toques</label>
+                            <label><input type="checkbox" name="sensibilidades_importantes[]" value="ambientes-agitados"> Ambientes agitados</label>
+                            <label><input type="checkbox" name="sensibilidades_importantes[]" value="nenhuma-informada"> Nenhuma informada</label>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label for="platform-sensibilidades">7&deg; Detalhe sensibilidades, desconfortos ou situa&ccedil;&otilde;es que causam distra&ccedil;&atilde;o.</label>
-                        <textarea id="platform-sensibilidades" name="sensibilidades" rows="3"><?php echo h($user["sensibilidades"] ?? ""); ?></textarea>
+                        <textarea id="platform-sensibilidades" name="sensibilidades" rows="3"></textarea>
                     </div>
 
                     <div class="form-group">
                         <span class="form-label">8&deg; Quais elementos chamam mais a aten&ccedil;&atilde;o do usu&aacute;rio?</span>
                         <div class="check-grid">
-                            <label><input type="checkbox" name="elementos_atencao[]" value="cores-suaves"<?php echo checkedValue($user, "elementos_atencao", "cores-suaves"); ?>> Cores suaves</label>
-                            <label><input type="checkbox" name="elementos_atencao[]" value="personagens"<?php echo checkedValue($user, "elementos_atencao", "personagens"); ?>> Personagens</label>
-                            <label><input type="checkbox" name="elementos_atencao[]" value="musicas"<?php echo checkedValue($user, "elementos_atencao", "musicas"); ?>> M&uacute;sicas</label>
-                            <label><input type="checkbox" name="elementos_atencao[]" value="imagens-reais"<?php echo checkedValue($user, "elementos_atencao", "imagens-reais"); ?>> Imagens reais</label>
-                            <label><input type="checkbox" name="elementos_atencao[]" value="desenhos"<?php echo checkedValue($user, "elementos_atencao", "desenhos"); ?>> Desenhos</label>
-                            <label><input type="checkbox" name="elementos_atencao[]" value="objetos-especificos"<?php echo checkedValue($user, "elementos_atencao", "objetos-especificos"); ?>> Objetos espec&iacute;ficos</label>
+                            <label><input type="checkbox" name="elementos_atencao[]" value="cores-suaves"> Cores suaves</label>
+                            <label><input type="checkbox" name="elementos_atencao[]" value="personagens"> Personagens</label>
+                            <label><input type="checkbox" name="elementos_atencao[]" value="musicas"> M&uacute;sicas</label>
+                            <label><input type="checkbox" name="elementos_atencao[]" value="imagens-reais"> Imagens reais</label>
+                            <label><input type="checkbox" name="elementos_atencao[]" value="desenhos"> Desenhos</label>
+                            <label><input type="checkbox" name="elementos_atencao[]" value="objetos-especificos"> Objetos espec&iacute;ficos</label>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label for="platform-preferencias-visuais">9&deg; Quais cores, temas ou estilos visuais deixam o usu&aacute;rio mais confort&aacute;vel?</label>
-                        <textarea id="platform-preferencias-visuais" name="preferencias_visuais" rows="3"><?php echo h($user["preferencias_visuais"] ?? ""); ?></textarea>
+                        <textarea id="platform-preferencias-visuais" name="preferencias_visuais" rows="3"></textarea>
                     </div>
 
                     <div class="form-group">
                         <label for="platform-hiperfocos">10&deg; Existem hiperfocos, interesses espec&iacute;ficos ou temas favoritos que possam ser usados para melhorar o aprendizado?</label>
-                        <textarea id="platform-hiperfocos" name="hiperfocos" rows="3"><?php echo h($user["hiperfocos"] ?? ""); ?></textarea>
+                        <textarea id="platform-hiperfocos" name="hiperfocos" rows="3"></textarea>
                     </div>
 
                     <div class="form-group">
                         <label for="platform-adaptacao-rotina">11&deg; O usu&aacute;rio se adapta bem a mudan&ccedil;as na rotina?</label>
                         <select id="platform-adaptacao-rotina" name="adaptacao_rotina">
                             <option value="">Selecione</option>
-                            <option value="sim"<?php echo selectedValue($user, "adaptacao_rotina", "sim"); ?>>Sim</option>
-                            <option value="as-vezes"<?php echo selectedValue($user, "adaptacao_rotina", "as-vezes"); ?>>&Agrave;s vezes</option>
-                            <option value="nao"<?php echo selectedValue($user, "adaptacao_rotina", "nao"); ?>>N&atilde;o</option>
+                            <option value="sim">Sim</option>
+                            <option value="as-vezes">&Agrave;s vezes</option>
+                            <option value="nao">N&atilde;o</option>
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label for="platform-rotina">12&deg; O usu&aacute;rio prefere rotinas bem organizadas e previs&iacute;veis durante as atividades?</label>
-                        <textarea id="platform-rotina" name="rotina" rows="3"><?php echo h($user["rotina"] ?? ""); ?></textarea>
+                        <textarea id="platform-rotina" name="rotina" rows="3"></textarea>
                     </div>
 
                     <div class="form-group">
                         <span class="form-label">13&deg; O que ajuda em momentos de dificuldade?</span>
                         <div class="check-grid">
-                            <label><input type="checkbox" name="ajuda_dificuldade[]" value="pausa"<?php echo checkedValue($user, "ajuda_dificuldade", "pausa"); ?>> Pausa</label>
-                            <label><input type="checkbox" name="ajuda_dificuldade[]" value="musica-calma"<?php echo checkedValue($user, "ajuda_dificuldade", "musica-calma"); ?>> M&uacute;sica calma</label>
-                            <label><input type="checkbox" name="ajuda_dificuldade[]" value="imagem-explicativa"<?php echo checkedValue($user, "ajuda_dificuldade", "imagem-explicativa"); ?>> Imagem explicativa</label>
-                            <label><input type="checkbox" name="ajuda_dificuldade[]" value="ajuda-adulto"<?php echo checkedValue($user, "ajuda_dificuldade", "ajuda-adulto"); ?>> Ajuda de adulto</label>
-                            <label><input type="checkbox" name="ajuda_dificuldade[]" value="ambiente-silencioso"<?php echo checkedValue($user, "ajuda_dificuldade", "ambiente-silencioso"); ?>> Ambiente silencioso</label>
-                            <label><input type="checkbox" name="ajuda_dificuldade[]" value="outra-estrategia"<?php echo checkedValue($user, "ajuda_dificuldade", "outra-estrategia"); ?>> Outra estrat&eacute;gia</label>
+                            <label><input type="checkbox" name="ajuda_dificuldade[]" value="pausa"> Pausa</label>
+                            <label><input type="checkbox" name="ajuda_dificuldade[]" value="musica-calma"> M&uacute;sica calma</label>
+                            <label><input type="checkbox" name="ajuda_dificuldade[]" value="imagem-explicativa"> Imagem explicativa</label>
+                            <label><input type="checkbox" name="ajuda_dificuldade[]" value="ajuda-adulto"> Ajuda de adulto</label>
+                            <label><input type="checkbox" name="ajuda_dificuldade[]" value="ambiente-silencioso"> Ambiente silencioso</label>
+                            <label><input type="checkbox" name="ajuda_dificuldade[]" value="outra-estrategia"> Outra estrat&eacute;gia</label>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label for="platform-autonomia">14&deg; O usu&aacute;rio necessita de apoio constante durante as atividades ou consegue realizar tarefas sozinho?</label>
-                        <textarea id="platform-autonomia" name="autonomia" rows="3"><?php echo h($user["autonomia"] ?? ""); ?></textarea>
+                        <textarea id="platform-autonomia" name="autonomia" rows="3"></textarea>
                     </div>
 
                     <div class="form-group">
                         <span class="form-label">15&deg; Quais recursos seriam mais &uacute;teis para esse usu&aacute;rio?</span>
                         <div class="check-grid">
-                            <label><input type="checkbox" name="recursos_uteis[]" value="rotina-visual"<?php echo checkedValue($user, "recursos_uteis", "rotina-visual"); ?>> Rotina visual</label>
-                            <label><input type="checkbox" name="recursos_uteis[]" value="atividades-audio"<?php echo checkedValue($user, "recursos_uteis", "atividades-audio"); ?>> Atividades com &aacute;udio</label>
-                            <label><input type="checkbox" name="recursos_uteis[]" value="atividades-imagens"<?php echo checkedValue($user, "recursos_uteis", "atividades-imagens"); ?>> Atividades com imagens</label>
-                            <label><input type="checkbox" name="recursos_uteis[]" value="reforco-positivo"<?php echo checkedValue($user, "recursos_uteis", "reforco-positivo"); ?>> Refor&ccedil;o positivo</label>
-                            <label><input type="checkbox" name="recursos_uteis[]" value="relatorio-evolucao"<?php echo checkedValue($user, "recursos_uteis", "relatorio-evolucao"); ?>> Relat&oacute;rio de evolu&ccedil;&atilde;o</label>
-                            <label><input type="checkbox" name="recursos_uteis[]" value="conteudos-personalizados"<?php echo checkedValue($user, "recursos_uteis", "conteudos-personalizados"); ?>> Conte&uacute;dos personalizados</label>
+                            <label><input type="checkbox" name="recursos_uteis[]" value="rotina-visual"> Rotina visual</label>
+                            <label><input type="checkbox" name="recursos_uteis[]" value="atividades-audio"> Atividades com &aacute;udio</label>
+                            <label><input type="checkbox" name="recursos_uteis[]" value="atividades-imagens"> Atividades com imagens</label>
+                            <label><input type="checkbox" name="recursos_uteis[]" value="reforco-positivo"> Refor&ccedil;o positivo</label>
+                            <label><input type="checkbox" name="recursos_uteis[]" value="relatorio-evolucao"> Relat&oacute;rio de evolu&ccedil;&atilde;o</label>
+                            <label><input type="checkbox" name="recursos_uteis[]" value="conteudos-personalizados"> Conte&uacute;dos personalizados</label>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <span class="form-label">16&deg; Quais habilidades o respons&aacute;vel, professor ou terapeuta precisa desenvolver com maior prioridade?</span>
                         <div class="check-grid">
-                            <label><input type="checkbox" name="prioridades[]" value="fala"<?php echo checkedValue($user, "prioridades", "fala"); ?>> Fala</label>
-                            <label><input type="checkbox" name="prioridades[]" value="coordenacao"<?php echo checkedValue($user, "prioridades", "coordenacao"); ?>> Coordena&ccedil;&atilde;o</label>
-                            <label><input type="checkbox" name="prioridades[]" value="leitura"<?php echo checkedValue($user, "prioridades", "leitura"); ?>> Leitura</label>
-                            <label><input type="checkbox" name="prioridades[]" value="socializacao"<?php echo checkedValue($user, "prioridades", "socializacao"); ?>> Socializa&ccedil;&atilde;o</label>
-                            <label><input type="checkbox" name="prioridades[]" value="atencao"<?php echo checkedValue($user, "prioridades", "atencao"); ?>> Aten&ccedil;&atilde;o</label>
-                            <label><input type="checkbox" name="prioridades[]" value="autonomia"<?php echo checkedValue($user, "prioridades", "autonomia"); ?>> Autonomia</label>
-                            <label><input type="checkbox" name="prioridades[]" value="cores-numeros-letras"<?php echo checkedValue($user, "prioridades", "cores-numeros-letras"); ?>> Reconhecimento de cores/n&uacute;meros/letras</label>
+                            <label><input type="checkbox" name="prioridades[]" value="fala"> Fala</label>
+                            <label><input type="checkbox" name="prioridades[]" value="coordenacao"> Coordena&ccedil;&atilde;o</label>
+                            <label><input type="checkbox" name="prioridades[]" value="leitura"> Leitura</label>
+                            <label><input type="checkbox" name="prioridades[]" value="socializacao"> Socializa&ccedil;&atilde;o</label>
+                            <label><input type="checkbox" name="prioridades[]" value="atencao"> Aten&ccedil;&atilde;o</label>
+                            <label><input type="checkbox" name="prioridades[]" value="autonomia"> Autonomia</label>
+                            <label><input type="checkbox" name="prioridades[]" value="cores-numeros-letras"> Reconhecimento de cores/n&uacute;meros/letras</label>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label for="platform-estrategias">17&deg; Existe alguma estrat&eacute;gia, m&eacute;todo ou adapta&ccedil;&atilde;o que j&aacute; funciona bem com o usu&aacute;rio no dia a dia escolar ou terap&ecirc;utico?</label>
-                        <textarea id="platform-estrategias" name="estrategias" rows="3"><?php echo h($user["estrategias"] ?? ""); ?></textarea>
+                        <textarea id="platform-estrategias" name="estrategias" rows="3"></textarea>
                     </div>
 
                     <div class="form-group">
                         <label for="platform-observacoes-usuario">18&deg; Observa&ccedil;&otilde;es importantes sobre o usu&aacute;rio:</label>
-                        <textarea id="platform-observacoes-usuario" name="observacoes_usuario" rows="4"><?php echo h($user["observacoes_usuario"] ?? ""); ?></textarea>
+                        <textarea id="platform-observacoes-usuario" name="observacoes_usuario" rows="4"></textarea>
                     </div>
 
                     <button class="complete-button form-submit" type="submit">Salvar respostas</button>
@@ -345,7 +261,7 @@ function reportValue(array $user, string $key, string $fallback): string
                         <p class="eyebrow">Desenvolvimento do aluno</p>
                         <h2 id="report-title">Relat&oacute;rio de acompanhamento</h2>
                     </div>
-                    <a class="topbar-button" href="relatorio.php">Abrir relat&oacute;rio completo</a>
+                    <a class="topbar-button" href="relatorio.html">Abrir relat&oacute;rio completo</a>
                 </div>
 
                 <div class="report-summary">
@@ -435,21 +351,11 @@ function reportValue(array $user, string $key, string $fallback): string
 
                 <article class="report-panel report-panel--wide">
                     <h3>Plano sugerido pela plataforma</h3>
-                    <div class="report-action-grid">
+                    <div class="report-action-grid" id="reportRecommendations" aria-live="polite">
                         <article class="report-action-card">
-                            <strong>Comunica&ccedil;&atilde;o e express&atilde;o</strong>
-                            <p>Use jogos de emo&ccedil;&otilde;es, vogais, s&iacute;labas e alfabeto para ampliar escolhas, fala, escuta e comunica&ccedil;&atilde;o alternativa.</p>
-                            <a href="#jogos">Ver jogos</a>
-                        </article>
-                        <article class="report-action-card">
-                            <strong>Percep&ccedil;&atilde;o visual e matem&aacute;tica</strong>
-                            <p>Use cores, formas e n&uacute;meros para trabalhar reconhecimento, associa&ccedil;&atilde;o, contagem e compara&ccedil;&atilde;o.</p>
-                            <a href="#jogos">Praticar percep&ccedil;&atilde;o</a>
-                        </article>
-                        <article class="report-action-card">
-                            <strong>Rotina e autonomia</strong>
-                            <p>Use rotina visual, pausas e instru&ccedil;&otilde;es curtas para apoiar previsibilidade e participa&ccedil;&atilde;o.</p>
-                            <a href="#rotina">Ver rotina</a>
+                            <strong>Preencha o formul&aacute;rio</strong>
+                            <p>As recomenda&ccedil;&otilde;es aparecem aqui com base em comunica&ccedil;&atilde;o, aprendizagem, sensibilidades e prioridades.</p>
+                            <a href="#formulario">Ir para o formul&aacute;rio</a>
                         </article>
                     </div>
                 </article>
@@ -591,9 +497,6 @@ function reportValue(array $user, string $key, string $fallback): string
         </section>
     </main>
 
-    <script>
-        window.InkluaServerGameProgress = <?php echo json_encode($serverGameProgress, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
-    </script>
     <script src="game-progress.js"></script>
     <script src="app.js"></script>
 </body>

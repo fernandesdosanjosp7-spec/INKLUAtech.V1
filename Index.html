@@ -1,12 +1,415 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=, initial-scale=1.0">
-    <title>Document</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INKLUAtech | In&iacute;cio</title>
+    <link rel="stylesheet" href="entrada.css">
 </head>
 <body>
-    <h1>Seja bem-vindo</h1>
-    
+    <main class="entry-page">
+        <div class="entry-background" aria-hidden="true">
+            <span class="entry-puzzle entry-puzzle--one"></span>
+            <span class="entry-puzzle entry-puzzle--two"></span>
+            <span class="entry-puzzle entry-puzzle--three"></span>
+            <span class="entry-infinity">&infin;</span>
+            <span class="entry-line entry-line--one"></span>
+            <span class="entry-line entry-line--two"></span>
+        </div>
+
+        <section class="entry-hero" aria-labelledby="entry-title">
+            <header class="entry-brand">
+                <a class="entry-brand__home" href="Index.html" aria-label="Inklua Tech, p&aacute;gina inicial">
+                    <img src="assets/ink-logo.png" alt="Logo Inklua Tech">
+                    <span>Inklua Tech</span>
+                </a>
+            </header>
+
+            <div class="entry-content">
+                <p class="entry-kicker">Incluindo pessoas autistas na educa&ccedil;&atilde;o por meio da tecnologia</p>
+                <h1 id="entry-title">Inclusão que transforma o aprendizado.</h1>
+                <p class="entry-text">
+                    Uma plataforma pensada para pessoas autistas, fam&iacute;lias e profissionais acompanharem o desenvolvimento educacional com organiza&ccedil;&atilde;o, previsibilidade e cuidado.
+                </p>
+
+                <div class="entry-actions">
+                    <a class="entry-button entry-button--primary" href="#login">Entrar na plataforma</a>
+                    <a class="entry-button entry-button--secondary" href="#inicio-plataforma">Conhecer recursos</a>
+                </div>
+            </div>
+
+            <aside class="entry-panel" aria-label="Recursos da plataforma">
+                <div class="entry-card">
+                    <span class="entry-card__icon"></span>
+                    <div>
+                        <strong>Rotina visual</strong>
+                        <p>Organize etapas de aprendizagem com previsibilidade.</p>
+                    </div>
+                </div>
+                <div class="entry-card">
+                    <span class="entry-card__icon entry-card__icon--mint"></span>
+                    <div>
+                        <strong>Acompanhamento</strong>
+                        <p>Registre progresso, necessidades e conquistas.</p>
+                    </div>
+                </div>
+                <div class="entry-card">
+                    <span class="entry-card__icon entry-card__icon--lilac"></span>
+                    <div>
+                        <strong>Comunica&ccedil;&atilde;o clara</strong>
+                        <p>Apoio para educadores, respons&aacute;veis e estudantes.</p>
+                    </div>
+                </div>
+            </aside>
+        </section>
+
+        <section class="entry-next" id="inicio-plataforma" aria-labelledby="entry-next-title">
+            <div class="entry-next__content">
+                <p class="entry-kicker">Primeiro passo</p>
+                <h2 id="entry-next-title">Veja como a INKLUAtech organiza o apoio educacional.</h2>
+                <p>
+                    Antes de fazer login, conhe&ccedil;a os recursos pensados para tornar a rotina mais clara,
+                    visual e acolhedora para estudantes autistas, fam&iacute;lias e profissionais.
+                </p>
+            </div>
+
+            <div class="entry-next__grid">
+                <article class="entry-feature">
+                    <span class="entry-feature__number">01</span>
+                    <h3>Rotinas visuais</h3>
+                    <p>Ajude a antecipar atividades, passos e combinados de forma simples.</p>
+                </article>
+
+                <article class="entry-feature">
+                    <span class="entry-feature__number">02</span>
+                    <h3>Acompanhamento</h3>
+                    <p>Registre progresso, necessidades e conquistas com mais organiza&ccedil;&atilde;o.</p>
+                </article>
+
+                <article class="entry-feature">
+                    <span class="entry-feature__number">03</span>
+                    <h3>Comunica&ccedil;&atilde;o clara</h3>
+                    <p>Apoio para escolhas, prefer&ecirc;ncias e comunica&ccedil;&atilde;o no dia a dia.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="entry-login-layer" id="login" aria-labelledby="login-title">
+            <a class="entry-login-layer__backdrop" href="#" aria-label="Fechar login"></a>
+
+            <div class="entry-login-card" role="dialog" aria-modal="true">
+                <a class="entry-login-card__close" href="#" aria-label="Fechar login">&times;</a>
+
+                <div class="entry-login-card__brand">
+                    <img src="assets/ink-logo.png" alt="Logo Inklua Tech">
+                    <div>
+                        <p>Inklua Tech</p>
+                        <h2 id="login-title">Acesse sua conta</h2>
+                    </div>
+                </div>
+
+                <form class="entry-login-form" action="auth.php" method="post">
+                    <input type="hidden" name="action" value="login">
+                    <div class="entry-login-form__group">
+                        <label for="cpf">CPF</label>
+                        <input
+                            type="text"
+                            id="cpf"
+                            name="cpf"
+                            placeholder="000.000.000-00"
+                            autocomplete="username"
+                            inputmode="numeric"
+                            required
+                        >
+                    </div>
+
+                    <div class="entry-login-form__group">
+                        <label for="password">Senha</label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Digite sua senha"
+                            autocomplete="current-password"
+                            required
+                        >
+                    </div>
+
+                    <button class="entry-login-form__button" type="submit">Entrar</button>
+                </form>
+
+                <div class="entry-login-card__links">
+                    <a href="#cadastro">Criar conta</a>
+                    <a href="#login">Esqueci minha senha</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="entry-register-layer" id="cadastro" aria-labelledby="register-title">
+            <a class="entry-login-layer__backdrop" href="#login" aria-label="Voltar para o login"></a>
+
+            <div class="entry-register-card" role="dialog" aria-modal="true">
+                <a class="entry-login-card__close" href="#login" aria-label="Voltar para o login">&times;</a>
+
+                <div class="entry-login-card__brand">
+                    <img src="assets/ink-logo.png" alt="Logo Inklua Tech">
+                    <div>
+                        <p>Cadastro INKLUAtech</p>
+                        <h2 id="register-title">Criar conta</h2>
+                    </div>
+                </div>
+
+                <form class="entry-register-form" action="auth.php" method="post">
+                    <input type="hidden" name="action" value="register">
+                    <input class="entry-register-tab-input" type="radio" name="register_tab" id="tab-acesso" checked>
+                    <input class="entry-register-tab-input" type="radio" name="register_tab" id="tab-perfil">
+
+                    <div class="entry-register-tabs" role="tablist" aria-label="Etapas do cadastro">
+                        <label for="tab-acesso" role="tab">Dados de acesso</label>
+                        <label for="tab-perfil" role="tab">Perfil do aluno</label>
+                    </div>
+
+                    <fieldset class="entry-register-step entry-register-step--access">
+                        <legend>Dados de acesso</legend>
+
+                        <div class="entry-register-grid">
+                            <div class="entry-login-form__group">
+                                <label for="register-cpf">CPF</label>
+                                <input
+                                    type="text"
+                                    id="register-cpf"
+                                    name="cpf"
+                                    placeholder="000.000.000-00"
+                                    autocomplete="username"
+                                    inputmode="numeric"
+                                    required
+                                >
+                            </div>
+
+                            <div class="entry-login-form__group">
+                                <label for="register-password">Senha</label>
+                                <input
+                                    type="password"
+                                    id="register-password"
+                                    name="senha"
+                                    placeholder="Crie uma senha"
+                                    autocomplete="new-password"
+                                    required
+                                >
+                            </div>
+                        </div>
+
+                        <label class="entry-button entry-button--primary entry-register-next" for="tab-perfil">Continuar</label>
+                    </fieldset>
+
+                    <fieldset class="entry-register-step entry-register-step--profile">
+                        <legend>Respons&aacute;vel pelo preenchimento</legend>
+
+                        <div class="entry-register-grid">
+                            <div class="entry-login-form__group">
+                                <label for="responsavel-nome">Nome</label>
+                                <input type="text" id="responsavel-nome" name="responsavel_nome" placeholder="Nome completo" required>
+                            </div>
+
+                            <div class="entry-login-form__group">
+                                <label for="responsavel-vinculo">V&iacute;nculo</label>
+                                <select id="responsavel-vinculo" name="responsavel_vinculo" required>
+                                    <option value="">Selecione</option>
+                                    <option value="pai">Pai</option>
+                                    <option value="mae">M&atilde;e</option>
+                                    <option value="responsavel">Respons&aacute;vel</option>
+                                    <option value="professor">Professor(a)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <h3 class="entry-register-section-title">Perfil do aluno</h3>
+
+                        <div class="entry-register-grid">
+                            <div class="entry-login-form__group">
+                                <label for="aluno-nome">Nome do aluno</label>
+                                <input type="text" id="aluno-nome" name="aluno_nome" placeholder="Nome do aluno" required>
+                            </div>
+
+                            <div class="entry-login-form__group">
+                                <label for="aluno-idade">Idade</label>
+                                <input type="number" id="aluno-idade" name="aluno_idade" min="1" max="99" placeholder="Idade">
+                            </div>
+                        </div>
+
+                        <div class="entry-login-form__group">
+                            <label for="nivel-suporte">1&deg; Qual o n&iacute;vel de suporte do estudante?</label>
+                            <select id="nivel-suporte" name="nivel_suporte">
+                                <option value="">Selecione</option>
+                                <option value="nivel-1">N&iacute;vel 1 - necessita de pouco apoio</option>
+                                <option value="nivel-2">N&iacute;vel 2 - necessita de apoio substancial</option>
+                                <option value="nivel-3">N&iacute;vel 3 - necessita de apoio muito substancial</option>
+                                <option value="nao-informado">N&atilde;o sei informar</option>
+                            </select>
+                        </div>
+
+                        <div class="entry-login-form__group">
+                            <span class="entry-form-label">2&deg; Como o usu&aacute;rio se comunica melhor?</span>
+                            <div class="entry-check-grid">
+                                <label><input type="checkbox" name="comunicacao_melhor[]" value="fala"> Fala</label>
+                                <label><input type="checkbox" name="comunicacao_melhor[]" value="gestos"> Gestos</label>
+                                <label><input type="checkbox" name="comunicacao_melhor[]" value="imagens"> Imagens</label>
+                                <label><input type="checkbox" name="comunicacao_melhor[]" value="escrita"> Escrita</label>
+                                <label><input type="checkbox" name="comunicacao_melhor[]" value="sons"> Sons</label>
+                                <label><input type="checkbox" name="comunicacao_melhor[]" value="comunicacao-alternativa"> Comunica&ccedil;&atilde;o alternativa</label>
+                            </div>
+                        </div>
+
+                        <div class="entry-login-form__group">
+                            <span class="entry-form-label">3&deg; Ele compreende melhor:</span>
+                            <div class="entry-check-grid">
+                                <label><input type="checkbox" name="compreensao_melhor[]" value="frases-curtas"> Frases curtas</label>
+                                <label><input type="checkbox" name="compreensao_melhor[]" value="imagens"> Imagens</label>
+                                <label><input type="checkbox" name="compreensao_melhor[]" value="repeticao"> Repeti&ccedil;&atilde;o</label>
+                                <label><input type="checkbox" name="compreensao_melhor[]" value="demonstracao-pratica"> Demonstra&ccedil;&atilde;o pr&aacute;tica</label>
+                                <label><input type="checkbox" name="compreensao_melhor[]" value="videos"> V&iacute;deos</label>
+                            </div>
+                        </div>
+
+                        <div class="entry-login-form__group">
+                            <span class="entry-form-label">4&deg; Quais conte&uacute;dos ele j&aacute; reconhece?</span>
+                            <div class="entry-check-grid">
+                                <label><input type="checkbox" name="conteudos_reconhecidos[]" value="letras"> Letras</label>
+                                <label><input type="checkbox" name="conteudos_reconhecidos[]" value="numeros"> N&uacute;meros</label>
+                                <label><input type="checkbox" name="conteudos_reconhecidos[]" value="cores"> Cores</label>
+                                <label><input type="checkbox" name="conteudos_reconhecidos[]" value="animais"> Animais</label>
+                                <label><input type="checkbox" name="conteudos_reconhecidos[]" value="formas"> Formas</label>
+                                <label><input type="checkbox" name="conteudos_reconhecidos[]" value="objetos-dia-a-dia"> Objetos do dia a dia</label>
+                            </div>
+                        </div>
+
+                        <div class="entry-login-form__group">
+                            <span class="entry-form-label">5&deg; Qual forma de atividade costuma funcionar melhor?</span>
+                            <div class="entry-check-grid">
+                                <label><input type="checkbox" name="atividade_funciona[]" value="jogos"> Jogos</label>
+                                <label><input type="checkbox" name="atividade_funciona[]" value="associacao-imagens"> Associa&ccedil;&atilde;o de imagens</label>
+                                <label><input type="checkbox" name="atividade_funciona[]" value="audios"> &Aacute;udios</label>
+                                <label><input type="checkbox" name="atividade_funciona[]" value="videos"> V&iacute;deos</label>
+                                <label><input type="checkbox" name="atividade_funciona[]" value="repeticao"> Atividades com repeti&ccedil;&atilde;o</label>
+                                <label><input type="checkbox" name="atividade_funciona[]" value="curtas"> Atividades curtas</label>
+                            </div>
+                        </div>
+
+                        <div class="entry-login-form__group">
+                            <span class="entry-form-label">6&deg; Existe alguma sensibilidade importante?</span>
+                            <div class="entry-check-grid">
+                                <label><input type="checkbox" name="sensibilidades_importantes[]" value="sons-altos"> Sons altos</label>
+                                <label><input type="checkbox" name="sensibilidades_importantes[]" value="luz-forte"> Luz forte</label>
+                                <label><input type="checkbox" name="sensibilidades_importantes[]" value="muitas-cores"> Muitas cores</label>
+                                <label><input type="checkbox" name="sensibilidades_importantes[]" value="toques"> Toques</label>
+                                <label><input type="checkbox" name="sensibilidades_importantes[]" value="ambientes-agitados"> Ambientes agitados</label>
+                                <label><input type="checkbox" name="sensibilidades_importantes[]" value="nenhuma-informada"> Nenhuma informada</label>
+                            </div>
+                        </div>
+
+                        <div class="entry-login-form__group">
+                            <label for="sensibilidades">7&deg; Detalhe sensibilidades, desconfortos ou situa&ccedil;&otilde;es que causam distra&ccedil;&atilde;o.</label>
+                            <textarea id="sensibilidades" name="sensibilidades" rows="3"></textarea>
+                        </div>
+
+                        <div class="entry-login-form__group">
+                            <span class="entry-form-label">8&deg; Quais elementos chamam mais a aten&ccedil;&atilde;o do usu&aacute;rio?</span>
+                            <div class="entry-check-grid">
+                                <label><input type="checkbox" name="elementos_atencao[]" value="cores-suaves"> Cores suaves</label>
+                                <label><input type="checkbox" name="elementos_atencao[]" value="personagens"> Personagens</label>
+                                <label><input type="checkbox" name="elementos_atencao[]" value="musicas"> M&uacute;sicas</label>
+                                <label><input type="checkbox" name="elementos_atencao[]" value="imagens-reais"> Imagens reais</label>
+                                <label><input type="checkbox" name="elementos_atencao[]" value="desenhos"> Desenhos</label>
+                                <label><input type="checkbox" name="elementos_atencao[]" value="objetos-especificos"> Objetos espec&iacute;ficos</label>
+                            </div>
+                        </div>
+
+                        <div class="entry-login-form__group">
+                            <label for="preferencias-visuais">9&deg; Quais cores, temas ou estilos visuais deixam o usu&aacute;rio mais confort&aacute;vel?</label>
+                            <textarea id="preferencias-visuais" name="preferencias_visuais" rows="3"></textarea>
+                        </div>
+
+                        <div class="entry-login-form__group">
+                            <label for="hiperfocos">10&deg; Existem hiperfocos, interesses espec&iacute;ficos ou temas favoritos que possam ser usados para melhorar o aprendizado?</label>
+                            <textarea id="hiperfocos" name="hiperfocos" rows="3"></textarea>
+                        </div>
+
+                        <div class="entry-login-form__group">
+                            <label for="adaptacao-rotina">11&deg; O usu&aacute;rio se adapta bem a mudan&ccedil;as na rotina?</label>
+                            <select id="adaptacao-rotina" name="adaptacao_rotina">
+                                <option value="">Selecione</option>
+                                <option value="sim">Sim</option>
+                                <option value="as-vezes">&Agrave;s vezes</option>
+                                <option value="nao">N&atilde;o</option>
+                            </select>
+                        </div>
+
+                        <div class="entry-login-form__group">
+                            <label for="rotina">12&deg; O usu&aacute;rio prefere rotinas bem organizadas e previs&iacute;veis durante as atividades?</label>
+                            <textarea id="rotina" name="rotina" rows="3"></textarea>
+                        </div>
+
+                        <div class="entry-login-form__group">
+                            <span class="entry-form-label">13&deg; O que ajuda em momentos de dificuldade?</span>
+                            <div class="entry-check-grid">
+                                <label><input type="checkbox" name="ajuda_dificuldade[]" value="pausa"> Pausa</label>
+                                <label><input type="checkbox" name="ajuda_dificuldade[]" value="musica-calma"> M&uacute;sica calma</label>
+                                <label><input type="checkbox" name="ajuda_dificuldade[]" value="imagem-explicativa"> Imagem explicativa</label>
+                                <label><input type="checkbox" name="ajuda_dificuldade[]" value="ajuda-adulto"> Ajuda de adulto</label>
+                                <label><input type="checkbox" name="ajuda_dificuldade[]" value="ambiente-silencioso"> Ambiente silencioso</label>
+                                <label><input type="checkbox" name="ajuda_dificuldade[]" value="outra-estrategia"> Outra estrat&eacute;gia</label>
+                            </div>
+                        </div>
+
+                        <div class="entry-login-form__group">
+                            <label for="autonomia">14&deg; O usu&aacute;rio necessita de apoio constante durante as atividades ou consegue realizar tarefas sozinho?</label>
+                            <textarea id="autonomia" name="autonomia" rows="3"></textarea>
+                        </div>
+
+                        <div class="entry-login-form__group">
+                            <span class="entry-form-label">15&deg; Quais recursos seriam mais &uacute;teis para esse usu&aacute;rio?</span>
+                            <div class="entry-check-grid">
+                                <label><input type="checkbox" name="recursos_uteis[]" value="rotina-visual"> Rotina visual</label>
+                                <label><input type="checkbox" name="recursos_uteis[]" value="atividades-audio"> Atividades com &aacute;udio</label>
+                                <label><input type="checkbox" name="recursos_uteis[]" value="atividades-imagens"> Atividades com imagens</label>
+                                <label><input type="checkbox" name="recursos_uteis[]" value="reforco-positivo"> Refor&ccedil;o positivo</label>
+                                <label><input type="checkbox" name="recursos_uteis[]" value="relatorio-evolucao"> Relat&oacute;rio de evolu&ccedil;&atilde;o</label>
+                                <label><input type="checkbox" name="recursos_uteis[]" value="conteudos-personalizados"> Conte&uacute;dos personalizados</label>
+                            </div>
+                        </div>
+
+                        <div class="entry-login-form__group">
+                            <span class="entry-form-label">16&deg; Quais habilidades o respons&aacute;vel, professor ou terapeuta precisa desenvolver com maior prioridade?</span>
+                            <div class="entry-check-grid">
+                                <label><input type="checkbox" name="prioridades[]" value="fala"> Fala</label>
+                                <label><input type="checkbox" name="prioridades[]" value="coordenacao"> Coordena&ccedil;&atilde;o</label>
+                                <label><input type="checkbox" name="prioridades[]" value="leitura"> Leitura</label>
+                                <label><input type="checkbox" name="prioridades[]" value="socializacao"> Socializa&ccedil;&atilde;o</label>
+                                <label><input type="checkbox" name="prioridades[]" value="atencao"> Aten&ccedil;&atilde;o</label>
+                                <label><input type="checkbox" name="prioridades[]" value="autonomia"> Autonomia</label>
+                                <label><input type="checkbox" name="prioridades[]" value="cores-numeros-letras"> Reconhecimento de cores/n&uacute;meros/letras</label>
+                            </div>
+                        </div>
+
+                        <div class="entry-login-form__group">
+                            <label for="estrategias">17&deg; Existe alguma estrat&eacute;gia, m&eacute;todo ou adapta&ccedil;&atilde;o que j&aacute; funciona bem com o usu&aacute;rio no dia a dia escolar ou terap&ecirc;utico?</label>
+                            <textarea id="estrategias" name="estrategias" rows="3"></textarea>
+                        </div>
+
+                        <div class="entry-login-form__group">
+                            <label for="observacoes-usuario">18&deg; Observa&ccedil;&otilde;es adicionais importantes.</label>
+                            <textarea id="observacoes-usuario" name="observacoes_usuario" rows="4"></textarea>
+                        </div>
+                    </fieldset>
+
+                    <div class="entry-register-actions">
+                        <label class="entry-button entry-button--secondary" for="tab-acesso">Voltar aos dados</label>
+                        <button class="entry-login-form__button" type="submit">Criar conta</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+    <script src="cadastro.js"></script>
 </body>
 </html>

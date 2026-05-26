@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INKLUAtech | Jogo das Vogais</title>
+    <link rel="stylesheet" href="home.css">
+</head>
+<body class="alphabet-page">
+    <main class="alphabet-shell">
+        <header class="alphabet-topbar">
+            <a class="brand" href="home.html">
+                <img src="assets/ink-logo.png" alt="Logo Inklua Tech">
+                <span>Inklua Tech</span>
+            </a>
+            <a class="topbar-button" href="home.html#jogos">Voltar aos jogos</a>
+        </header>
+
+        <section class="alphabet-focus" aria-labelledby="vowels-title">
+            <div class="alphabet-intro">
+                <p class="eyebrow">Jogo educativo</p>
+                <h1 id="vowels-title">Jogo das Vogais</h1>
+                <p>Toque em uma vogal para ouvir qual letra &eacute;.</p>
+            </div>
+
+            <div class="alphabet-game alphabet-game--standalone vowel-game">
+                <div class="alphabet-display" id="vowelDisplay" aria-live="polite">A</div>
+                <div class="alphabet-grid vowel-grid" aria-label="Vogais">
+                    <button class="alphabet-letter vowel-letter" type="button" data-letter="A">A</button>
+                    <button class="alphabet-letter vowel-letter" type="button" data-letter="E">E</button>
+                    <button class="alphabet-letter vowel-letter" type="button" data-letter="I">I</button>
+                    <button class="alphabet-letter vowel-letter" type="button" data-letter="O">O</button>
+                    <button class="alphabet-letter vowel-letter" type="button" data-letter="U">U</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="game-progress.js"></script>
+    <script src="vogais.js"></script>
+</body>
+</html>
