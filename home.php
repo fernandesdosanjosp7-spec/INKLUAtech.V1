@@ -82,7 +82,7 @@ function reportValue(array $user, string $key, string $fallback): string
             <nav class="nav-menu">
                 <a class="is-active" href="#inicio">In&iacute;cio</a>
                 <a href="#formulario">Formul&aacute;rio</a>
-                <a href="relatorio.php">Relat&oacute;rio</a>
+                <a href="#relatorio">Relat&oacute;rio</a>
                 <a href="#jogos">Jogos</a>
                 <a href="#aprendizado">Aprendizado</a>
                 <a href="#rotina">Rotina</a>
@@ -335,6 +335,7 @@ function reportValue(array $user, string $key, string $fallback): string
                         <p class="eyebrow">Desenvolvimento do aluno</p>
                         <h2 id="report-title">Relat&oacute;rio de acompanhamento</h2>
                     </div>
+                    <a class="topbar-button" href="relatorio.php">Abrir relat&oacute;rio completo</a>
                 </div>
 
                 <div class="report-summary">
@@ -402,9 +403,55 @@ function reportValue(array $user, string $key, string $fallback): string
                                 <dt>Prioridades de desenvolvimento</dt>
                                 <dd><?php echo reportValue($user, "prioridades", "Preencha o formul&aacute;rio para registrar fala, leitura, aten&ccedil;&atilde;o, autonomia ou socializa&ccedil;&atilde;o."); ?></dd>
                             </div>
+                            <div>
+                                <dt>Comunica&ccedil;&atilde;o preferencial</dt>
+                                <dd><?php echo reportValue($user, "comunicacao_melhor", "Preencha o formul&aacute;rio para indicar fala, gestos, imagens, escrita, sons ou comunica&ccedil;&atilde;o alternativa."); ?></dd>
+                            </div>
+                            <div>
+                                <dt>Compreens&atilde;o</dt>
+                                <dd><?php echo reportValue($user, "compreensao_melhor", "Preencha o formul&aacute;rio para indicar frases curtas, imagens, repeti&ccedil;&atilde;o, demonstra&ccedil;&atilde;o pr&aacute;tica ou v&iacute;deos."); ?></dd>
+                            </div>
+                            <div>
+                                <dt>Sensibilidades</dt>
+                                <dd><?php echo reportValue($user, "sensibilidades_importantes", "Preencha o formul&aacute;rio para indicar sons altos, luz forte, muitas cores, toques ou ambientes agitados."); ?></dd>
+                            </div>
+                            <div>
+                                <dt>Recursos &uacute;teis</dt>
+                                <dd><?php echo reportValue($user, "recursos_uteis", "Preencha o formul&aacute;rio para indicar rotina visual, &aacute;udio, imagens, refor&ccedil;o positivo ou conte&uacute;dos personalizados."); ?></dd>
+                            </div>
                         </dl>
                     </article>
                 </div>
+
+                <article class="report-panel report-panel--wide">
+                    <h3>Plano sugerido pela plataforma</h3>
+                    <div class="report-action-grid">
+                        <article class="report-action-card">
+                            <strong>Comunica&ccedil;&atilde;o e express&atilde;o</strong>
+                            <p>Use jogos de emo&ccedil;&otilde;es, vogais, s&iacute;labas e alfabeto para ampliar escolhas, fala, escuta e comunica&ccedil;&atilde;o alternativa.</p>
+                            <a href="#jogos">Ver jogos</a>
+                        </article>
+                        <article class="report-action-card">
+                            <strong>Percep&ccedil;&atilde;o visual e matem&aacute;tica</strong>
+                            <p>Use cores, formas e n&uacute;meros para trabalhar reconhecimento, associa&ccedil;&atilde;o, contagem e compara&ccedil;&atilde;o.</p>
+                            <a href="#jogos">Praticar percep&ccedil;&atilde;o</a>
+                        </article>
+                        <article class="report-action-card">
+                            <strong>Rotina e autonomia</strong>
+                            <p>Use rotina visual, pausas e instru&ccedil;&otilde;es curtas para apoiar previsibilidade e participa&ccedil;&atilde;o.</p>
+                            <a href="#rotina">Ver rotina</a>
+                        </article>
+                    </div>
+                </article>
+
+                <article class="report-panel report-panel--wide">
+                    <h3>Alinhamento &agrave; BNCC</h3>
+                    <ul class="report-timeline">
+                        <li><strong>Direitos de aprendizagem:</strong> conviver, brincar, participar, explorar, expressar e conhecer-se.</li>
+                        <li><strong>Campos de experi&ecirc;ncia:</strong> o eu, o outro e o n&oacute;s; corpo, gestos e movimentos; tra&ccedil;os, sons, cores e formas; escuta, fala, pensamento e imagina&ccedil;&atilde;o; espa&ccedil;os, tempos, quantidades, rela&ccedil;&otilde;es e transforma&ccedil;&otilde;es.</li>
+                        <li><strong>Compet&ecirc;ncias gerais:</strong> comunica&ccedil;&atilde;o, pensamento criativo, autoconhecimento, empatia, coopera&ccedil;&atilde;o e autonomia.</li>
+                    </ul>
+                </article>
 
                 <article class="report-panel report-panel--wide">
                     <h3>Como acompanhar dentro da plataforma</h3>

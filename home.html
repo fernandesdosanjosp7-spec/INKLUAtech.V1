@@ -17,7 +17,7 @@
             <nav class="nav-menu">
                 <a class="is-active" href="#inicio">In&iacute;cio</a>
                 <a href="#formulario">Formul&aacute;rio</a>
-                <a href="relatorio.html">Relat&oacute;rio</a>
+                <a href="#relatorio">Relat&oacute;rio</a>
                 <a href="#jogos">Jogos</a>
                 <a href="#aprendizado">Aprendizado</a>
                 <a href="#rotina">Rotina</a>
@@ -261,6 +261,7 @@
                         <p class="eyebrow">Desenvolvimento do aluno</p>
                         <h2 id="report-title">Relat&oacute;rio de acompanhamento</h2>
                     </div>
+                    <a class="topbar-button" href="relatorio.html">Abrir relat&oacute;rio completo</a>
                 </div>
 
                 <div class="report-summary">
@@ -328,9 +329,70 @@
                                 <dt>Prioridades de desenvolvimento</dt>
                                 <dd data-report-field="prioridades">Preencha o formul&aacute;rio para registrar fala, leitura, aten&ccedil;&atilde;o, autonomia ou socializa&ccedil;&atilde;o.</dd>
                             </div>
+                            <div>
+                                <dt>Comunica&ccedil;&atilde;o preferencial</dt>
+                                <dd data-report-field="comunicacao_melhor">Preencha o formul&aacute;rio para indicar fala, gestos, imagens, escrita, sons ou comunica&ccedil;&atilde;o alternativa.</dd>
+                            </div>
+                            <div>
+                                <dt>Compreens&atilde;o</dt>
+                                <dd data-report-field="compreensao_melhor">Preencha o formul&aacute;rio para indicar frases curtas, imagens, repeti&ccedil;&atilde;o, demonstra&ccedil;&atilde;o pr&aacute;tica ou v&iacute;deos.</dd>
+                            </div>
+                            <div>
+                                <dt>Sensibilidades</dt>
+                                <dd data-report-field="sensibilidades_importantes">Preencha o formul&aacute;rio para indicar sons altos, luz forte, muitas cores, toques ou ambientes agitados.</dd>
+                            </div>
+                            <div>
+                                <dt>Recursos &uacute;teis</dt>
+                                <dd data-report-field="recursos_uteis">Preencha o formul&aacute;rio para indicar rotina visual, &aacute;udio, imagens, refor&ccedil;o positivo ou conte&uacute;dos personalizados.</dd>
+                            </div>
                         </dl>
                     </article>
                 </div>
+
+                <article class="report-panel report-panel--wide">
+                    <h3>Consolida&ccedil;&atilde;o de dados da plataforma</h3>
+                    <div class="report-metrics-grid" aria-label="Resumo consolidado dos jogos">
+                        <article class="report-metric-card">
+                            <span>Atividades conclu&iacute;das</span>
+                            <strong id="completedActivitiesMetric">0 de 8</strong>
+                            <p id="completedActivitiesText">Acompanhamento das atividades finalizadas.</p>
+                        </article>
+                        <article class="report-metric-card">
+                            <span>Frequ&ecirc;ncia de uso</span>
+                            <strong id="usageFrequencyMetric">Sem uso recente</strong>
+                            <p id="usageFrequencyText">Uso registrado nos &uacute;ltimos 7 dias.</p>
+                        </article>
+                        <article class="report-metric-card">
+                            <span>Desenvolvimento</span>
+                            <strong id="developmentMetric">Aguardando dados</strong>
+                            <p id="developmentMetricText">Leitura geral do progresso do aluno.</p>
+                        </article>
+                    </div>
+
+                    <p class="report-insight-text" id="qualitativeDevelopmentText">
+                        Ao usar os jogos, a plataforma vai consolidar evid&ecirc;ncias de participa&ccedil;&atilde;o, const&acirc;ncia e habilidades trabalhadas.
+                    </p>
+                </article>
+
+                <article class="report-panel report-panel--wide">
+                    <h3>Plano sugerido pela plataforma</h3>
+                    <div class="report-action-grid" id="reportRecommendations" aria-live="polite">
+                        <article class="report-action-card">
+                            <strong>Preencha o formul&aacute;rio</strong>
+                            <p>As recomenda&ccedil;&otilde;es aparecem aqui com base em comunica&ccedil;&atilde;o, aprendizagem, sensibilidades e prioridades.</p>
+                            <a href="#formulario">Ir para o formul&aacute;rio</a>
+                        </article>
+                    </div>
+                </article>
+
+                <article class="report-panel report-panel--wide">
+                    <h3>Alinhamento &agrave; BNCC</h3>
+                    <ul class="report-timeline">
+                        <li><strong>Direitos de aprendizagem:</strong> conviver, brincar, participar, explorar, expressar e conhecer-se.</li>
+                        <li><strong>Campos de experi&ecirc;ncia:</strong> o eu, o outro e o n&oacute;s; corpo, gestos e movimentos; tra&ccedil;os, sons, cores e formas; escuta, fala, pensamento e imagina&ccedil;&atilde;o; espa&ccedil;os, tempos, quantidades, rela&ccedil;&otilde;es e transforma&ccedil;&otilde;es.</li>
+                        <li><strong>Compet&ecirc;ncias gerais:</strong> comunica&ccedil;&atilde;o, pensamento criativo, autoconhecimento, empatia, coopera&ccedil;&atilde;o e autonomia.</li>
+                    </ul>
+                </article>
 
                 <article class="report-panel report-panel--wide">
                     <h3>Como acompanhar dentro da plataforma</h3>

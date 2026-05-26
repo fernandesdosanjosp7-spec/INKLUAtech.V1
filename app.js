@@ -32,6 +32,15 @@ const showPlatformView = (viewName = "inicio") => {
     });
 };
 
+const goToPlatformView = (viewName) => {
+    if (!availableViews.includes(viewName)) {
+        return;
+    }
+
+    showPlatformView(viewName);
+    window.location.hash = viewName;
+};
+
 const getViewFromHash = () => window.location.hash.replace("#", "") || "inicio";
 
 navLinks.forEach((link) => {
@@ -44,8 +53,7 @@ navLinks.forEach((link) => {
         }
 
         event.preventDefault();
-        showPlatformView(viewName);
-        window.location.hash = viewName;
+        goToPlatformView(viewName);
     });
 });
 
@@ -446,7 +454,236 @@ const updateReportFields = (answers) => {
     });
 };
 
+const includesAny = (value, options) => {
+    const normalized = Array.isArray(value) ? value : String(value || "").split(",");
+    return normalized.some((item) => options.includes(item.trim()));
+};
+
+const renderReportRecommendations = (answers) => {
+    const container = document.getElementById("reportRecommendations");
+
+    if (!container) {
+        return;
+    }
+
+    const recommendations = [];
+
+    if (includesAny(answers.prioridades, ["fala", "leitura", "socializacao"]) || includesAny(answers.comunicacao_melhor, ["fala", "gestos", "imagens", "comunicacao-alternativa"])) {
+        recommendations.push({
+            title: "Comunica\u00e7\u00e3o e express\u00e3o",
+            text: "Priorize emo\u00e7\u00f5es, vogais, s\u00edlabas e alfabeto para trabalhar escolhas, escuta, fala e comunica\u00e7\u00e3o alternativa.",
+            href: "#jogos",
+            action: "Ver jogos"
+        });
+    }
+
+    if (includesAny(answers.conteudos_reconhecidos, ["cores", "formas", "numeros"]) || includesAny(answers.atividade_funciona, ["associacao-imagens", "jogos"])) {
+        recommendations.push({
+            title: "Percep\u00e7\u00e3o visual e matem\u00e1tica",
+            text: "Use cores, formas e n\u00fameros para refor\u00e7ar reconhecimento, associa\u00e7\u00e3o, contagem e compara\u00e7\u00e3o.",
+            href: "#jogos",
+            action: "Praticar percep\u00e7\u00e3o"
+        });
+    }
+
+    if (answers.adaptacao_rotina === "nao" || answers.adaptacao_rotina === "as-vezes" || includesAny(answers.recursos_uteis, ["rotina-visual", "reforco-positivo"])) {
+        recommendations.push({
+            title: "Rotina e autonomia",
+            text: "Use rotina visual, pausas e instru\u00e7\u00f5es curtas para apoiar previsibilidade, transi\u00e7\u00f5es e participa\u00e7\u00e3o.",
+            href: "#rotina",
+            action: "Ver rotina"
+        });
+    }
+
+    if (includesAny(answers.sensibilidades_importantes, ["sons-altos", "luz-forte", "muitas-cores", "ambientes-agitados"])) {
+        recommendations.push({
+            title: "Ajustes sensoriais",
+            text: "Mantenha atividades curtas, tela limpa, pausas e ambiente silencioso quando houver sinais de desconforto.",
+            href: "#apoio",
+            action: "Ver apoio"
+        });
+    }
+
+    const cards = recommendations.length ? recommendations : [{
+        title: "Complete o perfil",
+        text: "Preencha comunica\u00e7\u00e3o, aprendizagem, sensibilidades e prioridades para gerar recomenda\u00e7\u00f5es personalizadas.",
+        href: "#formulario",
+        action: "Ir para o formul\u00e1rio"
+    }];
+
+    container.innerHTML = cards.slice(0, 4).map((item) => `
+        <article class="report-action-card">
+            <strong>${item.title}</strong>
+            <p>${item.text}</p>
+            <a href="${item.href}">${item.action}</a>
+        </article>
+    `).join("");
+};
+
+const readGameProgress = () => {
+    try {
+        return JSON.parse(localStorage.getItem("inklua_game_progress_v1")) || { games: {}, sessions: [] };
+    } catch (error) {
+        return { games: {}, sessions: [] };
+    }
+};
+
+const getDaysBetween = (dateString) => {
+    const date = new Date(dateString);
+
+    if (Number.isNaN(date.getTime())) {
+        return null;
+    }
+
+    const today = new Date();
+    const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const dateStart = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+    return Math.floor((todayStart - dateStart) / 86400000);
+};
+
+const getUsageLabel = (activeDays, sessionsLastSevenDays) => {
+    if (!sessionsLastSevenDays) {
+        return "Sem uso recente";
+    }
+
+    if (activeDays >= 5) {
+        return "Uso frequente";
+    }
+
+    if (activeDays >= 3) {
+        return "Uso regular";
+    }
+
+    return "Uso inicial";
+};
+
+const getQualitativeDevelopment = ({ games, completedGames, accuracy, activeDays, mostUsedSkill }) => {
+    if (!games.length) {
+        return "Ainda nao ha dados suficientes dos jogos. Conforme o aluno utilizar a plataforma, o relatorio vai indicar constancia, progresso e habilidades mais trabalhadas.";
+    }
+
+    const completionText = completedGames >= 4
+        ? "O aluno apresenta boa continuidade nas atividades propostas"
+        : completedGames >= 1
+            ? "O aluno iniciou uma trajetoria de participacao nas atividades"
+            : "O aluno esta explorando as atividades, ainda sem conclusoes registradas";
+
+    const accuracyText = accuracy >= 80
+        ? "com alta taxa de acertos, indicando reconhecimento consistente e maior autonomia."
+        : accuracy >= 55
+            ? "com respostas em desenvolvimento, sugerindo necessidade de reforco e repeticao planejada."
+            : "com muitos momentos de tentativa, o que indica oportunidade de apoio mais proximo e atividades mais curtas.";
+
+    const frequencyText = activeDays >= 3
+        ? "A frequencia recente ajuda a observar evolucao ao longo da semana."
+        : "Aumentar a regularidade de uso pode tornar o acompanhamento mais fiel ao progresso real.";
+
+    const skillText = mostUsedSkill
+        ? `A area mais trabalhada foi ${mostUsedSkill.replace(/-/g, " ")}.`
+        : "As areas trabalhadas ainda estao se formando conforme o uso.";
+
+    return `${completionText}, ${accuracyText} ${frequencyText} ${skillText}`;
+};
+
+const getDevelopmentSummary = ({ games, completedGames, accuracy, activeDays }) => {
+    if (!games.length) {
+        return {
+            label: "Aguardando dados",
+            text: "Leitura geral do progresso do aluno."
+        };
+    }
+
+    if (completedGames >= 4 && accuracy >= 70 && activeDays >= 3) {
+        return {
+            label: "Evolucao consistente",
+            text: "Boa continuidade, frequencia recente e respostas mais autonomas."
+        };
+    }
+
+    if (completedGames >= 1 || activeDays >= 2) {
+        return {
+            label: "Em desenvolvimento",
+            text: "Ha participacao registrada; manter repeticao e reforco positivo."
+        };
+    }
+
+    return {
+        label: "Uso inicial",
+        text: "Ainda e preciso mais constancia para avaliar impacto ao longo do tempo."
+    };
+};
+
+const updateProgressCountFromGames = (completedGames) => {
+    if (progressCount) {
+        progressCount.textContent = String(completedGames);
+    }
+};
+
+const renderConsolidatedReport = () => {
+    const progress = readGameProgress();
+    const games = Object.values(progress.games || {});
+    const sessions = progress.sessions || [];
+    const completedGames = games.filter((game) => game.completed).length;
+    const totalGames = Math.max(games.length, 8);
+    const answeredSessions = sessions.filter((session) => typeof session.correct === "boolean");
+    const correctSessions = answeredSessions.filter((session) => session.correct).length;
+    const accuracy = answeredSessions.length ? Math.round((correctSessions / answeredSessions.length) * 100) : 0;
+    const recentSessions = sessions.filter((session) => {
+        const daysBetween = getDaysBetween(session.createdAt);
+        return daysBetween !== null && daysBetween >= 0 && daysBetween <= 6;
+    });
+    const activeDays = new Set(recentSessions.map((session) => String(session.createdAt || "").slice(0, 10)).filter(Boolean)).size;
+    const skillCount = games.reduce((counts, game) => {
+        const skill = game.skill || "";
+
+        if (skill) {
+            counts[skill] = (counts[skill] || 0) + (game.interactions || 0);
+        }
+
+        return counts;
+    }, {});
+    const mostUsedSkill = Object.entries(skillCount).sort((a, b) => b[1] - a[1])[0]?.[0] || "";
+    const usageLabel = getUsageLabel(activeDays, recentSessions.length);
+    const developmentSummary = getDevelopmentSummary({ games, completedGames, accuracy, activeDays });
+
+    document.getElementById("completedActivitiesMetric")?.replaceChildren(document.createTextNode(`${completedGames} de ${totalGames}`));
+    document.getElementById("completedActivitiesText")?.replaceChildren(document.createTextNode(`${games.length} jogos com registro de uso.`));
+    document.getElementById("usageFrequencyMetric")?.replaceChildren(document.createTextNode(usageLabel));
+    document.getElementById("usageFrequencyText")?.replaceChildren(document.createTextNode(`${activeDays} dia(s) de uso recente.`));
+    document.getElementById("developmentMetric")?.replaceChildren(document.createTextNode(developmentSummary.label));
+    document.getElementById("developmentMetricText")?.replaceChildren(document.createTextNode(developmentSummary.text));
+    document.getElementById("qualitativeDevelopmentText")?.replaceChildren(document.createTextNode(getQualitativeDevelopment({
+        games,
+        completedGames,
+        accuracy,
+        activeDays,
+        mostUsedSkill
+    })));
+
+    updateProgressCountFromGames(completedGames);
+};
+
 updateReportFields(savedFormAnswers);
+renderReportRecommendations(savedFormAnswers);
+renderConsolidatedReport();
+
+document.addEventListener("click", (event) => {
+    const link = event.target instanceof Element ? event.target.closest("a[href^='#']") : null;
+
+    if (!(link instanceof HTMLAnchorElement)) {
+        return;
+    }
+
+    const viewName = link.getAttribute("href")?.replace("#", "") || "";
+
+    if (!availableViews.includes(viewName)) {
+        return;
+    }
+
+    event.preventDefault();
+    goToPlatformView(viewName);
+});
 
 document.querySelectorAll(".platform-form").forEach((form) => {
     if (form.hasAttribute("data-local-form")) {
@@ -463,7 +700,9 @@ document.querySelectorAll(".platform-form").forEach((form) => {
         }
 
         event.preventDefault();
-        updateReportFields(collectFormAnswers(form));
+        const currentAnswers = collectFormAnswers(form);
+        updateReportFields(currentAnswers);
+        renderReportRecommendations(currentAnswers);
 
         const status = form.querySelector(".form-status");
 

@@ -204,6 +204,39 @@ const getWeeklyEvolution = () => {
     });
 };
 
+const bnccAlignment = [
+    {
+        title: "Comunicacao, escuta e expressao",
+        activities: "Emocoes, silabas, alfabeto, vogais e comunicacao alternativa",
+        bncc: "Competencia geral 4: comunicacao. Campos de experiencia: escuta, fala, pensamento e imaginacao; o eu, o outro e o nos.",
+        evidence: "Observa escolhas, respostas a comandos curtos, nomeacao de letras/sons e expressao de sentimentos."
+    },
+    {
+        title: "Pensamento matematico e percepcao visual",
+        activities: "Numeros, cores, formas e matematica visual",
+        bncc: "Competencia geral 2: pensamento cientifico, critico e criativo. Campo de experiencia: espacos, tempos, quantidades, relacoes e transformacoes.",
+        evidence: "Observa reconhecimento, comparacao, associacao visual, contagem e resolucao de pequenas escolhas."
+    },
+    {
+        title: "Autonomia, rotina e autorregulacao",
+        activities: "Sequencia da rotina, pausa sensorial e apoio visual",
+        bncc: "Competencias gerais 8 e 10: autoconhecimento, autocuidado, responsabilidade e cidadania. Campo de experiencia: o eu, o outro e o nos.",
+        evidence: "Observa previsibilidade, transicao entre etapas, necessidade de apoio e estrategias que favorecem participacao."
+    },
+    {
+        title: "Corpo, gestos e interacao",
+        activities: "Jogos de toque, escolha, coordenacao e participacao",
+        bncc: "Competencia geral 9: empatia e cooperacao. Campo de experiencia: corpo, gestos e movimentos.",
+        evidence: "Observa iniciativa, atencao compartilhada, interacao com o adulto e resposta motora aos estimulos da tela."
+    },
+    {
+        title: "Tracos, sons, cores e formas",
+        activities: "Cores, formas, sons de letras e atividades com audio",
+        bncc: "Campo de experiencia: tracos, sons, cores e formas. Competencia geral 3: repertorio cultural.",
+        evidence: "Observa exploracao sensorial, discriminacao visual/auditiva e preferencia por estimulos suaves ou personagens."
+    }
+];
+
 const reportData = {
     student: {
         name: "Lucas Andrade",
@@ -223,6 +256,7 @@ const reportData = {
     ],
     weekly: getWeeklyEvolution(),
     activities: getActivityDistribution(),
+    bnccAlignment,
     skills: [
         getSkillScore("Comunicação"),
         getSkillScore("Coordenação motora"),
@@ -345,6 +379,31 @@ if (gamesReportGrid) {
             </article>
         `;
     }
+}
+
+const bnccGrid = document.getElementById("bnccGrid");
+
+if (bnccGrid) {
+    bnccGrid.innerHTML = bnccAlignment.map((item) => `
+        <article class="bncc-card">
+            <span class="bncc-card__tag">BNCC</span>
+            <h3>${item.title}</h3>
+            <dl>
+                <div>
+                    <dt>Atividades relacionadas</dt>
+                    <dd>${item.activities}</dd>
+                </div>
+                <div>
+                    <dt>Referencia BNCC</dt>
+                    <dd>${item.bncc}</dd>
+                </div>
+                <div>
+                    <dt>Evidencias observaveis</dt>
+                    <dd>${item.evidence}</dd>
+                </div>
+            </dl>
+        </article>
+    `).join("");
 }
 
 const chartOptions = {
