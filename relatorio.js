@@ -154,9 +154,9 @@ const renderStudentProfile = () => {
 
         const notes = [
             studentProfile.observations,
-            studentProfile.strategies ? `Estrategias que ajudam: ${studentProfile.strategies}.` : "",
-            studentProfile.routine ? `Rotina: ${studentProfile.routine}.` : "",
-            studentProfile.autonomy ? `Autonomia: ${studentProfile.autonomy}.` : ""
+            studentProfile.strategies ? `Apoios e estrategias que favorecem o desenvolvimento: ${studentProfile.strategies}.` : "",
+            studentProfile.routine ? `Organizacao da rotina observada: ${studentProfile.routine}.` : "",
+            studentProfile.autonomy ? `Autonomia e participacao: ${studentProfile.autonomy}.` : ""
         ].filter(Boolean).join("\n\n");
 
         if (notes) {

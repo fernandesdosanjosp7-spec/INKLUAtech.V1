@@ -636,9 +636,38 @@ textarea {
     margin-top: 1.25rem;
 }
 
+.teacher-notes__intro {
+    max-width: 62rem;
+    margin: 0.2rem 0 0;
+    color: var(--muted);
+    font-size: 0.94rem;
+    line-height: 1.65;
+    font-weight: 600;
+}
+
+.teacher-notes__prompts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    margin: 1rem 0;
+}
+
+.teacher-notes__prompts span {
+    min-height: 2rem;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 0.72rem;
+    border: 1px solid rgba(91, 183, 240, 0.22);
+    border-radius: 0.75rem;
+    color: var(--primary-dark);
+    background: rgba(255, 255, 255, 0.72);
+    font-size: 0.78rem;
+    font-weight: 800;
+}
+
 .teacher-notes textarea {
     width: 100%;
-    min-height: 11rem;
+    min-height: 14rem;
     resize: vertical;
     padding: 1rem;
     border: 1px solid var(--line);
