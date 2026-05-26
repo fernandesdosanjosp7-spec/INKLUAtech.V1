@@ -4,27 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>INKLUA Tech | Relat&oacute;rio Educacional</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="relatorio.css">
 </head>
 <body>
-    <main class="report-page">
-        <div class="soft-shape soft-shape--one" aria-hidden="true"></div>
-        <div class="soft-shape soft-shape--two" aria-hidden="true"></div>
-
-        <header class="report-header">
-            <a class="brand" href="home.php" aria-label="Voltar para o dashboard INKLUA Tech">
+    <main class="platform-shell">
+        <aside class="sidebar" aria-label="Navega&ccedil;&atilde;o da plataforma">
+            <a class="brand" href="home.php">
                 <img src="assets/ink-logo.png" alt="Logo INKLUA Tech">
-                <span>INKLUA Tech</span>
+                <span>Inklua Tech</span>
             </a>
 
-            <div class="report-title">
-                <p>Relat&oacute;rio Educacional</p>
-                <h1>Acompanhamento de desenvolvimento e progresso do aluno</h1>
-            </div>
-        </header>
+            <nav class="nav-menu">
+                <a href="home.php#inicio">In&iacute;cio</a>
+                <a href="home.php#formulario">Formul&aacute;rio</a>
+                <a class="is-active" href="relatorio.php">Relat&oacute;rio</a>
+                <a href="home.php#jogos">Jogos</a>
+                <a href="home.php#aprendizado">Aprendizado</a>
+                <a href="home.php#rotina">Rotina</a>
+                <a href="home.php#apoio">Apoio</a>
+            </nav>
+
+        </aside>
+
+        <section class="platform-content">
+            <header class="topbar">
+                <div>
+                    <p class="eyebrow">Relat&oacute;rio educacional</p>
+                    <h1>Acompanhamento de desenvolvimento e progresso</h1>
+                </div>
+                <a class="topbar-button" href="home.php">Voltar</a>
+            </header>
 
         <section class="student-card" aria-labelledby="student-name">
             <div class="student-photo" aria-label="Foto do aluno">
@@ -99,6 +108,34 @@
             </article>
         </section>
 
+        <section class="section-block platform-summary" aria-labelledby="platform-summary-title">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Resumo da plataforma</p>
+                    <h2 id="platform-summary-title">Tempo e respostas registradas</h2>
+                </div>
+                <span class="status-pill" id="platformSummaryStatus">Sincronizado</span>
+            </div>
+
+            <div class="platform-summary-grid">
+                <article class="platform-summary-card">
+                    <span>Perguntas acertadas</span>
+                    <strong id="correctAnswersMetric">0</strong>
+                    <p id="correctAnswersText">Aguardando respostas dos jogos.</p>
+                </article>
+                <article class="platform-summary-card">
+                    <span>Perguntas erradas</span>
+                    <strong id="wrongAnswersMetric">0</strong>
+                    <p id="wrongAnswersText">Aguardando respostas dos jogos.</p>
+                </article>
+                <article class="platform-summary-card">
+                    <span>Tempo na plataforma</span>
+                    <strong id="platformTimeMetric">0 min</strong>
+                    <p id="platformTimeText">Tempo acumulado entre home, jogos e relatorio.</p>
+                </article>
+            </div>
+        </section>
+
         <section class="section-block games-report" aria-labelledby="games-report-title">
             <div class="section-heading">
                 <div>
@@ -166,11 +203,21 @@
         <section class="section-block teacher-notes" aria-labelledby="notes-title">
             <div class="section-heading">
                 <div>
-                    <p class="eyebrow">Observa&ccedil;&otilde;es do professor</p>
-                    <h2 id="notes-title">Registro pedag&oacute;gico</h2>
+                    <p class="eyebrow">Profissional ou respons&aacute;vel</p>
+                    <h2 id="notes-title">Registro do desenvolvimento do aluno</h2>
                 </div>
             </div>
-            <textarea id="teacherNotes" aria-label="Campo de observa&ccedil;&otilde;es do professor">Lucas demonstrou boa participa&ccedil;&atilde;o nas atividades com imagens e cores. Durante a rotina visual, respondeu melhor quando recebeu instru&ccedil;&otilde;es curtas e previs&iacute;veis. Houve melhora na comunica&ccedil;&atilde;o ativa, principalmente ao escolher atividades e expressar prefer&ecirc;ncias.</textarea>
+            <p class="teacher-notes__intro">
+                Espa&ccedil;o reservado para descrever avan&ccedil;os observados, habilidades desenvolvidas, autonomia, comunica&ccedil;&atilde;o, intera&ccedil;&atilde;o, desafios e encaminhamentos para as pr&oacute;ximas atividades.
+            </p>
+            <div class="teacher-notes__prompts" aria-label="Sugest&otilde;es para o registro">
+                <span>Desenvolvimento geral</span>
+                <span>Habilidades desenvolvidas</span>
+                <span>Comunica&ccedil;&atilde;o e intera&ccedil;&atilde;o</span>
+                <span>Autonomia</span>
+                <span>Pr&oacute;ximos passos</span>
+            </div>
+            <textarea id="teacherNotes" aria-label="Campo de registro do profissional ou respons&aacute;vel" placeholder="Descreva aqui o desenvolvimento do aluno, habilidades desenvolvidas, avan&ccedil;os percebidos, apoios necess&aacute;rios e recomenda&ccedil;&otilde;es para continuidade."></textarea>
         </section>
 
         <section class="action-bar" aria-label="A&ccedil;&otilde;es do relat&oacute;rio">
@@ -191,9 +238,11 @@
                 Voltar ao dashboard
             </a>
         </section>
+        </section>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="game-progress.js"></script>
     <script src="relatorio.js"></script>
 </body>
 </html>

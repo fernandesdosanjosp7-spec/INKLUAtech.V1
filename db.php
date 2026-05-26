@@ -12,6 +12,7 @@ function getDatabase(): PDO
     $databasePath = __DIR__ . DIRECTORY_SEPARATOR . "database.db";
     $pdo = new PDO("sqlite:" . $databasePath);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo->exec("PRAGMA foreign_keys = ON");
 
     ensureSchema($pdo);
 
@@ -53,7 +54,10 @@ function ensureSchema(PDO $pdo): void
             adaptacao_rotina TEXT,
             ajuda_dificuldade TEXT,
             recursos_uteis TEXT,
-            observacoes_usuario TEXT
+            observacoes_usuario TEXT,
+            criado_em TEXT,
+            atualizado_em TEXT,
+            ultimo_login_em TEXT
         )
     ");
 
@@ -90,7 +94,10 @@ function ensureSchema(PDO $pdo): void
         "adaptacao_rotina" => "TEXT",
         "ajuda_dificuldade" => "TEXT",
         "recursos_uteis" => "TEXT",
-        "observacoes_usuario" => "TEXT"
+        "observacoes_usuario" => "TEXT",
+        "criado_em" => "TEXT",
+        "atualizado_em" => "TEXT",
+        "ultimo_login_em" => "TEXT"
     ];
 
     foreach ($requiredColumns as $column => $type) {
@@ -98,6 +105,29 @@ function ensureSchema(PDO $pdo): void
             $pdo->exec("ALTER TABLE usuarios ADD COLUMN {$column} {$type}");
         }
     }
+
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS progresso_jogos (
+            user_id INTEGER PRIMARY KEY,
+            dados TEXT NOT NULL,
+            atualizado_em TEXT NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES usuarios(id) ON DELETE CASCADE
+        )
+    ");
+
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS relatorios (
+            user_id INTEGER PRIMARY KEY,
+            observacoes_professor TEXT,
+            dados_json TEXT,
+            atualizado_em TEXT NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES usuarios(id) ON DELETE CASCADE
+        )
+    ");
+
+    $pdo->exec("CREATE INDEX IF NOT EXISTS idx_usuarios_cpf ON usuarios(cpf)");
+    $pdo->exec("CREATE INDEX IF NOT EXISTS idx_progresso_jogos_atualizado ON progresso_jogos(atualizado_em)");
+    $pdo->exec("CREATE INDEX IF NOT EXISTS idx_relatorios_atualizado ON relatorios(atualizado_em)");
 }
 
 function normalizeCpf(string $cpf): string

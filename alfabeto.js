@@ -38,10 +38,7 @@ const speakLetter = (letter) => {
     window.speechSynthesis.cancel();
 
     const letterName = letterNames[letter] || letter;
-    const utterance = new SpeechSynthesisUtterance(`${letterName}.`);
-    utterance.lang = "pt-BR";
-    utterance.rate = 0.82;
-    utterance.pitch = 1;
+    const utterance = window.InkluaSpeech?.createUtterance(`${letterName}.`) || new SpeechSynthesisUtterance(`${letterName}.`);
     window.speechSynthesis.speak(utterance);
 };
 

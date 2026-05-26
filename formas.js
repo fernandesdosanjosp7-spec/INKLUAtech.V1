@@ -8,10 +8,7 @@ const speakShape = (shapeName) => {
 
     window.speechSynthesis.cancel();
 
-    const utterance = new SpeechSynthesisUtterance(`Forma ${shapeName}.`);
-    utterance.lang = "pt-BR";
-    utterance.rate = 0.82;
-    utterance.pitch = 1;
+    const utterance = window.InkluaSpeech?.createUtterance(`Forma ${shapeName}.`) || new SpeechSynthesisUtterance(`Forma ${shapeName}.`);
     window.speechSynthesis.speak(utterance);
 };
 

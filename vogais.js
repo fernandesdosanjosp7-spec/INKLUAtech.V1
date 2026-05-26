@@ -16,10 +16,7 @@ const speakVowel = (letter) => {
 
     window.speechSynthesis.cancel();
 
-    const utterance = new SpeechSynthesisUtterance(`${vowelNames[letter] || letter}.`);
-    utterance.lang = "pt-BR";
-    utterance.rate = 0.82;
-    utterance.pitch = 1;
+    const utterance = window.InkluaSpeech?.createUtterance(`${vowelNames[letter] || letter}.`) || new SpeechSynthesisUtterance(`${vowelNames[letter] || letter}.`);
     window.speechSynthesis.speak(utterance);
 };
 

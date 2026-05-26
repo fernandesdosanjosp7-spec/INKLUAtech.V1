@@ -8,10 +8,7 @@ const speakColor = (colorName) => {
 
     window.speechSynthesis.cancel();
 
-    const utterance = new SpeechSynthesisUtterance(`${colorName}.`);
-    utterance.lang = "pt-BR";
-    utterance.rate = 0.82;
-    utterance.pitch = 1;
+    const utterance = window.InkluaSpeech?.createUtterance(`${colorName}.`) || new SpeechSynthesisUtterance(`${colorName}.`);
     window.speechSynthesis.speak(utterance);
 };
 

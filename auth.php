@@ -66,7 +66,10 @@ try {
                 adaptacao_rotina,
                 ajuda_dificuldade,
                 recursos_uteis,
-                observacoes_usuario
+                observacoes_usuario,
+                criado_em,
+                atualizado_em,
+                ultimo_login_em
             ) VALUES (
                 :nome,
                 :cpf,
@@ -96,10 +99,14 @@ try {
                 :adaptacao_rotina,
                 :ajuda_dificuldade,
                 :recursos_uteis,
-                :observacoes_usuario
+                :observacoes_usuario,
+                :criado_em,
+                :atualizado_em,
+                :ultimo_login_em
             )
         ");
 
+        $now = date("c");
         $stmt->execute([
             ":nome" => $_POST["responsavel_nome"] ?? "",
             ":cpf" => $cpf,
@@ -129,7 +136,10 @@ try {
             ":adaptacao_rotina" => $profile["adaptacao_rotina"],
             ":ajuda_dificuldade" => $profile["ajuda_dificuldade"],
             ":recursos_uteis" => $profile["recursos_uteis"],
-            ":observacoes_usuario" => $profile["observacoes_usuario"]
+            ":observacoes_usuario" => $profile["observacoes_usuario"],
+            ":criado_em" => $now,
+            ":atualizado_em" => $now,
+            ":ultimo_login_em" => $now
         ]);
 
         $_SESSION["user_id"] = (int) $pdo->lastInsertId();
@@ -164,6 +174,11 @@ try {
         }
 
         $_SESSION["user_id"] = (int) $user["id"];
+        $stmt = $pdo->prepare("UPDATE usuarios SET ultimo_login_em = :ultimo_login_em WHERE id = :id");
+        $stmt->execute([
+            ":ultimo_login_em" => date("c"),
+            ":id" => $user["id"]
+        ]);
         redirectTo("home.php");
     }
 
@@ -195,7 +210,8 @@ try {
                 adaptacao_rotina = :adaptacao_rotina,
                 ajuda_dificuldade = :ajuda_dificuldade,
                 recursos_uteis = :recursos_uteis,
-                observacoes_usuario = :observacoes_usuario
+                observacoes_usuario = :observacoes_usuario,
+                atualizado_em = :atualizado_em
             WHERE id = :id
         ");
 
@@ -221,6 +237,7 @@ try {
             ":ajuda_dificuldade" => $profile["ajuda_dificuldade"],
             ":recursos_uteis" => $profile["recursos_uteis"],
             ":observacoes_usuario" => $profile["observacoes_usuario"],
+            ":atualizado_em" => date("c"),
             ":id" => $_SESSION["user_id"]
         ]);
 

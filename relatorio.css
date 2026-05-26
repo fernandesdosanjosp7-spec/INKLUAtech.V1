@@ -1,19 +1,18 @@
 :root {
-    --bg: #f4faff;
-    --surface: rgba(255, 255, 255, 0.88);
+    --surface: rgba(255, 255, 255, 0.74);
     --surface-strong: #ffffff;
-    --text: #1e354d;
-    --muted: #6b8095;
-    --primary: #5bb7f0;
-    --primary-dark: #2479b6;
-    --blue-soft: #e7f6ff;
-    --green-soft: #e8fbf2;
-    --purple-soft: #f1edff;
-    --yellow-soft: #fff7dc;
-    --pink-soft: #fff0f5;
-    --line: rgba(87, 128, 166, 0.16);
-    --shadow: 0 22px 58px rgba(48, 91, 132, 0.12);
-    --radius: 1.35rem;
+    --text: #1f3348;
+    --muted: #65778a;
+    --primary: #3579d7;
+    --primary-dark: #245fb0;
+    --blue-soft: rgba(100, 181, 255, 0.16);
+    --green-soft: rgba(95, 227, 177, 0.18);
+    --purple-soft: rgba(216, 194, 255, 0.28);
+    --yellow-soft: rgba(255, 226, 122, 0.32);
+    --pink-soft: rgba(255, 143, 163, 0.2);
+    --line: rgba(112, 139, 166, 0.22);
+    --shadow: 0 24px 70px rgba(47, 73, 98, 0.14);
+    --radius: 0.9rem;
 }
 
 * {
@@ -28,24 +27,16 @@ body {
     min-height: 100vh;
     margin: 0;
     color: var(--text);
-    font-family: Montserrat, "Segoe UI", Arial, sans-serif;
+    font-family: Inter, "Segoe UI", Arial, Helvetica, sans-serif;
     background:
-        radial-gradient(circle at 10% 10%, rgba(91, 183, 240, 0.2) 0 14rem, transparent 26rem),
-        radial-gradient(circle at 92% 16%, rgba(192, 219, 255, 0.42) 0 12rem, transparent 28rem),
-        linear-gradient(135deg, #f7fcff 0%, #f3f9ff 48%, #f8fbff 100%);
+        radial-gradient(circle at 10% 12%, rgba(100, 181, 255, 0.28) 0 12rem, transparent 26rem),
+        radial-gradient(circle at 92% 18%, rgba(216, 194, 255, 0.42) 0 13rem, transparent 30rem),
+        radial-gradient(circle at 30% 94%, rgba(95, 227, 177, 0.24) 0 14rem, transparent 28rem),
+        linear-gradient(135deg, #eef8ff 0%, #fff9fd 48%, #f4eeff 100%);
 }
 
 body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0.38;
-    background-image:
-        linear-gradient(45deg, rgba(91, 183, 240, 0.08) 25%, transparent 25%),
-        linear-gradient(-45deg, rgba(151, 214, 244, 0.08) 25%, transparent 25%);
-    background-size: 5.5rem 5.5rem;
-    mask-image: linear-gradient(to bottom, black, transparent 64%);
+    display: none;
 }
 
 a {
@@ -58,57 +49,52 @@ textarea {
     font: inherit;
 }
 
-.report-page {
-    position: relative;
-    width: min(1180px, calc(100% - 2rem));
-    margin: 0 auto;
-    padding: clamp(1.1rem, 3vw, 2rem) 0 2.5rem;
-}
-
-.soft-shape {
-    position: fixed;
-    z-index: -1;
-    width: 8rem;
-    aspect-ratio: 1;
-    border-radius: 32% 68% 42% 58%;
-    border: 1px solid rgba(91, 183, 240, 0.22);
-    background: rgba(255, 255, 255, 0.4);
-    transform: rotate(18deg);
-}
-
-.soft-shape--one {
-    left: 3vw;
-    bottom: 8vh;
-}
-
-.soft-shape--two {
-    right: 4vw;
-    top: 30vh;
-    width: 6rem;
-    border-color: rgba(183, 163, 255, 0.24);
-}
-
-.report-header {
+.platform-shell {
+    min-height: 100vh;
     display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: clamp(1rem, 3vw, 2rem);
-    align-items: center;
-    margin-bottom: 1.25rem;
-    padding: clamp(1rem, 2.6vw, 1.4rem);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    background: rgba(255, 255, 255, 0.7);
-    box-shadow: 0 18px 48px rgba(48, 91, 132, 0.08);
+    grid-template-columns: 17rem minmax(0, 1fr);
+}
+
+.sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    padding: 1.4rem;
+    border-right: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.66);
     backdrop-filter: blur(18px);
 }
 
+.platform-content {
+    display: grid;
+    gap: 1.25rem;
+    align-content: start;
+    padding: clamp(1rem, 3vw, 2rem);
+}
+
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.topbar h1 {
+    margin: 0;
+    font-size: clamp(2rem, 4vw, 3.4rem);
+    line-height: 1.08;
+    letter-spacing: 0;
+}
+
 .brand {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 0.8rem;
-    color: var(--primary-dark);
-    font-weight: 800;
-    white-space: nowrap;
+    color: var(--primary);
+    font-weight: 900;
 }
 
 .brand img {
@@ -117,20 +103,47 @@ textarea {
     object-fit: contain;
 }
 
-.report-title p,
+.nav-menu {
+    display: grid;
+    gap: 0.45rem;
+}
+
+.nav-menu a,
+.topbar-button {
+    min-height: 2.85rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.8rem;
+    font-weight: 850;
+}
+
+.nav-menu a {
+    justify-content: flex-start;
+    padding: 0 0.9rem;
+    color: var(--muted);
+}
+
+.nav-menu a:hover,
+.nav-menu a.is-active {
+    color: var(--primary-dark);
+    background: var(--blue-soft);
+}
+
 .eyebrow {
     margin: 0;
     color: var(--primary-dark);
     font-size: 0.78rem;
-    font-weight: 800;
-    letter-spacing: 0.03em;
+    font-weight: 900;
+    letter-spacing: 0;
     text-transform: uppercase;
 }
 
-.report-title h1 {
-    margin: 0.35rem 0 0;
-    font-size: clamp(1.45rem, 3.6vw, 2.8rem);
-    line-height: 1.08;
+.topbar-button {
+    padding: 0 1rem;
+    color: var(--primary);
+    border: 1px solid rgba(53, 121, 215, 0.18);
+    background: rgba(255, 255, 255, 0.7);
 }
 
 .student-card,
@@ -149,7 +162,6 @@ textarea {
     grid-template-columns: auto minmax(16rem, 1fr) minmax(22rem, 0.9fr);
     gap: clamp(1rem, 3vw, 1.6rem);
     align-items: center;
-    margin-bottom: 1.25rem;
     padding: clamp(1rem, 3vw, 1.6rem);
 }
 
@@ -159,10 +171,10 @@ textarea {
     display: grid;
     place-items: center;
     border: 0.45rem solid #ffffff;
-    border-radius: 2rem;
+    border-radius: 1rem;
     color: #ffffff;
     background:
-        linear-gradient(135deg, rgba(91, 183, 240, 0.92), rgba(124, 205, 177, 0.9)),
+        linear-gradient(135deg, rgba(100, 181, 255, 0.95), rgba(95, 227, 177, 0.9)),
         var(--primary);
     box-shadow: 0 18px 32px rgba(36, 121, 182, 0.18);
     font-size: clamp(1.6rem, 4vw, 2.4rem);
@@ -254,20 +266,12 @@ textarea {
     min-height: 10.4rem;
     padding: 1rem;
     border: 1px solid rgba(91, 183, 240, 0.14);
-    border-radius: 1.15rem;
+    border-radius: var(--radius);
     background: var(--surface-strong);
 }
 
 .evolution-card::after {
-    content: "";
-    position: absolute;
-    right: -1.8rem;
-    top: -1.8rem;
-    width: 5.4rem;
-    aspect-ratio: 1;
-    border-radius: 1.4rem;
-    background: var(--card-soft, var(--blue-soft));
-    transform: rotate(18deg);
+    display: none;
 }
 
 .evolution-icon {
@@ -382,6 +386,45 @@ textarea {
     margin-top: 1.25rem;
 }
 
+.platform-summary {
+    margin-top: 1.25rem;
+}
+
+.platform-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.9rem;
+}
+
+.platform-summary-card {
+    padding: 1rem;
+    border: 1px solid rgba(91, 183, 240, 0.14);
+    border-radius: var(--radius);
+    background: rgba(255, 255, 255, 0.78);
+}
+
+.platform-summary-card span {
+    display: block;
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.platform-summary-card strong {
+    display: block;
+    margin-top: 0.35rem;
+    color: var(--primary-dark);
+    font-size: clamp(1.55rem, 4vw, 2.25rem);
+}
+
+.platform-summary-card p {
+    margin: 0.35rem 0 0;
+    color: var(--muted);
+    font-size: 0.86rem;
+    line-height: 1.55;
+}
+
 .games-report-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -451,7 +494,7 @@ textarea {
     align-items: center;
     padding: 0 0.75rem;
     border: 1px solid rgba(91, 183, 240, 0.16);
-    border-radius: 999px;
+    border-radius: 0.8rem;
     color: var(--primary-dark);
     background: var(--blue-soft);
     font-size: 0.78rem;
@@ -593,9 +636,38 @@ textarea {
     margin-top: 1.25rem;
 }
 
+.teacher-notes__intro {
+    max-width: 62rem;
+    margin: 0.2rem 0 0;
+    color: var(--muted);
+    font-size: 0.94rem;
+    line-height: 1.65;
+    font-weight: 600;
+}
+
+.teacher-notes__prompts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    margin: 1rem 0;
+}
+
+.teacher-notes__prompts span {
+    min-height: 2rem;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 0.72rem;
+    border: 1px solid rgba(91, 183, 240, 0.22);
+    border-radius: 0.75rem;
+    color: var(--primary-dark);
+    background: rgba(255, 255, 255, 0.72);
+    font-size: 0.78rem;
+    font-weight: 800;
+}
+
 .teacher-notes textarea {
     width: 100%;
-    min-height: 11rem;
+    min-height: 14rem;
     resize: vertical;
     padding: 1rem;
     border: 1px solid var(--line);
@@ -652,7 +724,63 @@ textarea {
     background: transparent;
 }
 
+.game-report-card,
+.bncc-card,
+.teacher-notes textarea {
+    border-radius: var(--radius);
+}
+
+.game-report-card__meta span,
+.bncc-rights span,
+.bncc-card__tag,
+.tag {
+    border-radius: 0.75rem;
+}
+
+.ai-badge {
+    border-radius: 0.85rem;
+}
+
+.action-button span {
+    width: 1rem;
+    font-size: 0;
+    text-align: center;
+}
+
+.action-button span::before {
+    font-size: 0.95rem;
+}
+
+#pdfButton span::before {
+    content: "\2193";
+}
+
+#shareButton span::before {
+    content: "\2197";
+}
+
+#exportButton span::before {
+    content: "\21D3";
+}
+
+.action-button--ghost span::before {
+    content: "\2190";
+}
+
 @media (max-width: 64rem) {
+    .platform-shell {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        position: static;
+        height: auto;
+    }
+
+    .nav-menu {
+        grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+    }
+
     .student-card,
     .charts-grid,
     .two-column {
@@ -661,6 +789,7 @@ textarea {
 
     .student-info,
     .evolution-grid,
+    .platform-summary-grid,
     .games-report-grid,
     .bncc-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -668,15 +797,10 @@ textarea {
 }
 
 @media (max-width: 42rem) {
-    .report-page {
-        width: min(100% - 1rem, 1180px);
-    }
-
-    .report-header,
+    .topbar,
     .section-heading,
     .chart-heading {
         align-items: stretch;
-        grid-template-columns: 1fr;
         flex-direction: column;
     }
 
@@ -686,6 +810,7 @@ textarea {
 
     .student-info,
     .evolution-grid,
+    .platform-summary-grid,
     .games-report-grid,
     .bncc-grid {
         grid-template-columns: 1fr;
@@ -706,20 +831,22 @@ textarea {
     }
 
     body::before,
-    .soft-shape,
+    .sidebar,
     .action-bar {
         display: none;
     }
 
-    .report-page {
-        width: 100%;
+    .platform-shell {
+        display: block;
+    }
+
+    .platform-content {
         padding: 0;
     }
 
     .student-card,
     .section-block,
-    .chart-card,
-    .report-header {
+    .chart-card {
         box-shadow: none;
         break-inside: avoid;
     }

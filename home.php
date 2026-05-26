@@ -11,6 +11,7 @@ if (empty($_SESSION["user_id"])) {
 $databaseError = "";
 $savedMessage = "";
 $user = [];
+$serverGameProgress = ["games" => [], "sessions" => []];
 
 try {
     $pdo = getDatabase();
@@ -23,6 +24,15 @@ try {
         session_destroy();
         header("Location: Index.html#login");
         exit;
+    }
+
+    $progressStmt = $pdo->prepare("SELECT dados FROM progresso_jogos WHERE user_id = :id LIMIT 1");
+    $progressStmt->execute([":id" => $_SESSION["user_id"]]);
+    $progressData = $progressStmt->fetchColumn();
+    $decodedProgress = $progressData ? json_decode($progressData, true) : null;
+
+    if (is_array($decodedProgress)) {
+        $serverGameProgress = $decodedProgress;
     }
 
     if (($_GET["status"] ?? "") === "registered") {
@@ -302,7 +312,7 @@ function reportValue(array $user, string $key, string $fallback): string
                     </div>
 
                     <div class="form-group">
-                        <span class="form-label">16&deg; Quais habilidades o respons&aacute;vel, professor ou terapeuta deseja desenvolver com maior prioridade?</span>
+                        <span class="form-label">16&deg; Quais habilidades o respons&aacute;vel, professor ou terapeuta precisa desenvolver com maior prioridade?</span>
                         <div class="check-grid">
                             <label><input type="checkbox" name="prioridades[]" value="fala"<?php echo checkedValue($user, "prioridades", "fala"); ?>> Fala</label>
                             <label><input type="checkbox" name="prioridades[]" value="coordenacao"<?php echo checkedValue($user, "prioridades", "coordenacao"); ?>> Coordena&ccedil;&atilde;o</label>
@@ -389,39 +399,39 @@ function reportValue(array $user, string $key, string $fallback): string
                     </article>
 
                     <article class="report-panel">
-                        <h3>Perfil usado nas adapta&ccedil;&otilde;es</h3>
-                        <dl class="report-details">
-                            <div>
-                                <dt>Conte&uacute;dos reconhecidos</dt>
-                                <dd><?php echo reportValue($user, "conteudos_reconhecidos", "Preencha o formul&aacute;rio para registrar letras, n&uacute;meros, cores ou formas."); ?></dd>
-                            </div>
-                            <div>
-                                <dt>Atividades que funcionam melhor</dt>
-                                <dd><?php echo reportValue($user, "atividade_funciona", "Preencha o formul&aacute;rio para indicar jogos, imagens, &aacute;udios ou atividades curtas."); ?></dd>
-                            </div>
-                            <div>
-                                <dt>Prioridades de desenvolvimento</dt>
-                                <dd><?php echo reportValue($user, "prioridades", "Preencha o formul&aacute;rio para registrar fala, leitura, aten&ccedil;&atilde;o, autonomia ou socializa&ccedil;&atilde;o."); ?></dd>
-                            </div>
-                            <div>
-                                <dt>Comunica&ccedil;&atilde;o preferencial</dt>
-                                <dd><?php echo reportValue($user, "comunicacao_melhor", "Preencha o formul&aacute;rio para indicar fala, gestos, imagens, escrita, sons ou comunica&ccedil;&atilde;o alternativa."); ?></dd>
-                            </div>
-                            <div>
-                                <dt>Compreens&atilde;o</dt>
-                                <dd><?php echo reportValue($user, "compreensao_melhor", "Preencha o formul&aacute;rio para indicar frases curtas, imagens, repeti&ccedil;&atilde;o, demonstra&ccedil;&atilde;o pr&aacute;tica ou v&iacute;deos."); ?></dd>
-                            </div>
-                            <div>
-                                <dt>Sensibilidades</dt>
-                                <dd><?php echo reportValue($user, "sensibilidades_importantes", "Preencha o formul&aacute;rio para indicar sons altos, luz forte, muitas cores, toques ou ambientes agitados."); ?></dd>
-                            </div>
-                            <div>
-                                <dt>Recursos &uacute;teis</dt>
-                                <dd><?php echo reportValue($user, "recursos_uteis", "Preencha o formul&aacute;rio para indicar rotina visual, &aacute;udio, imagens, refor&ccedil;o positivo ou conte&uacute;dos personalizados."); ?></dd>
-                            </div>
-                        </dl>
+                        <h3>Pr&oacute;ximos passos do acompanhamento</h3>
+                        <ul class="report-timeline">
+                            <li>Observar quais jogos geram mais participa&ccedil;&atilde;o e repetir essas atividades em sess&otilde;es curtas.</li>
+                            <li>Registrar conquistas simples, como escolhas aut&ocirc;nomas, respostas corretas e tempo de foco.</li>
+                            <li>Usar o relat&oacute;rio completo para comparar evolu&ccedil;&atilde;o, comportamento e habilidades trabalhadas.</li>
+                        </ul>
                     </article>
                 </div>
+
+                <article class="report-panel report-panel--wide">
+                    <h3>Consolida&ccedil;&atilde;o de dados da plataforma</h3>
+                    <div class="report-metrics-grid" aria-label="Resumo consolidado dos jogos">
+                        <article class="report-metric-card">
+                            <span>Perguntas respondidas</span>
+                            <strong id="completedActivitiesMetric">0 acertos</strong>
+                            <p id="completedActivitiesText">0 erros registrados nos jogos.</p>
+                        </article>
+                        <article class="report-metric-card">
+                            <span>Tempo na plataforma</span>
+                            <strong id="usageFrequencyMetric">0s</strong>
+                            <p id="usageFrequencyText">Uso acumulado entre home, jogos e relat&oacute;rio.</p>
+                        </article>
+                        <article class="report-metric-card">
+                            <span>Desenvolvimento</span>
+                            <strong id="developmentMetric">Aguardando dados</strong>
+                            <p id="developmentMetricText">Leitura geral do progresso do aluno.</p>
+                        </article>
+                    </div>
+
+                    <p class="report-insight-text" id="qualitativeDevelopmentText">
+                        Ao usar os jogos, a plataforma vai consolidar evid&ecirc;ncias de participa&ccedil;&atilde;o, const&acirc;ncia e habilidades trabalhadas.
+                    </p>
+                </article>
 
                 <article class="report-panel report-panel--wide">
                     <h3>Plano sugerido pela plataforma</h3>
@@ -581,6 +591,10 @@ function reportValue(array $user, string $key, string $fallback): string
         </section>
     </main>
 
+    <script>
+        window.InkluaServerGameProgress = <?php echo json_encode($serverGameProgress, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
+    </script>
+    <script src="game-progress.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
