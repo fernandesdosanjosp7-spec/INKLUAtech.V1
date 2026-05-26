@@ -736,6 +736,289 @@ button {
     background: linear-gradient(135deg, rgba(95, 227, 177, 0.4), rgba(100, 181, 255, 0.34));
 }
 
+.game-visual {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+}
+
+.game-visual::before,
+.game-visual::after {
+    content: "";
+    position: absolute;
+    display: block;
+}
+
+.game-visual--emotions {
+    color: transparent;
+    background:
+        radial-gradient(circle at 18% 22%, rgba(255, 226, 122, 0.38) 0 1.6rem, transparent 1.7rem),
+        linear-gradient(135deg, rgba(255, 247, 220, 0.98), rgba(255, 240, 245, 0.9));
+}
+
+.game-visual--emotions::before {
+    width: 3.6rem;
+    aspect-ratio: 1;
+    left: 23%;
+    top: 50%;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 36% 38%, #1f3348 0 0.18rem, transparent 0.2rem),
+        radial-gradient(circle at 64% 38%, #1f3348 0 0.18rem, transparent 0.2rem),
+        radial-gradient(ellipse at 50% 66%, transparent 0 0.52rem, #1f3348 0.55rem 0.66rem, transparent 0.69rem),
+        #ffe27a;
+    transform: translateY(-50%);
+}
+
+.game-visual--emotions::after {
+    width: 3.2rem;
+    aspect-ratio: 1;
+    left: calc(23% + 4.55rem);
+    top: calc(50% + 0.35rem);
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 36% 38%, #1f3348 0 0.16rem, transparent 0.18rem),
+        radial-gradient(circle at 64% 38%, #1f3348 0 0.16rem, transparent 0.18rem),
+        radial-gradient(ellipse at 50% 70%, #1f3348 0 0.42rem, transparent 0.45rem),
+        #ffd7e2;
+    transform: translateY(-50%);
+}
+
+.game-visual--routine {
+    color: transparent;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(232, 251, 242, 0.9));
+}
+
+.game-visual--routine::before {
+    width: 78%;
+    height: 0.3rem;
+    left: 11%;
+    top: 50%;
+    border-radius: 999px;
+    background: rgba(36, 95, 176, 0.18);
+}
+
+.game-visual--routine::after {
+    content: "1";
+    width: 2.45rem;
+    aspect-ratio: 1;
+    left: 16%;
+    top: 50%;
+    display: grid;
+    place-items: center;
+    border-radius: 0.78rem;
+    color: #ffffff;
+    background: var(--mint);
+    font-size: 1.2rem;
+    font-weight: 950;
+    transform: translateY(-50%);
+    box-shadow: 4.2rem 0 0 0 var(--blue), 8.4rem 0 0 0 var(--lilac);
+}
+
+.game-visual--colors {
+    color: transparent;
+    background:
+        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.92) 0 2.2rem, transparent 2.25rem),
+        conic-gradient(from 20deg, #eb5757, #f2994a, #ffe066, #27ae60, #2f80ed, #9a8cff, #eb5757);
+}
+
+.game-visual--colors::before {
+    width: 4.8rem;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 50% 50%, #ffffff 0 0.62rem, transparent 0.66rem),
+        conic-gradient(#eb5757, #f2994a, #ffe066, #27ae60, #2f80ed, #9a8cff, #eb5757);
+    box-shadow: 0 0 0 0.55rem rgba(255, 255, 255, 0.78);
+}
+
+.game-visual--colors::after {
+    width: 2.25rem;
+    height: 0.7rem;
+    right: 20%;
+    bottom: 1.35rem;
+    border-radius: 999px;
+    background: #ffffff;
+    transform: rotate(-22deg);
+}
+
+.game-visual--shapes {
+    color: transparent;
+    background:
+        radial-gradient(circle at 18% 22%, rgba(95, 227, 177, 0.22) 0 1.6rem, transparent 1.7rem),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(239, 248, 255, 0.88));
+}
+
+.game-visual--shapes::before {
+    width: 2.6rem;
+    aspect-ratio: 1;
+    left: 16%;
+    top: 48%;
+    border-radius: 50%;
+    background: #eb5757;
+    transform: translateY(-50%);
+    box-shadow: 4.2rem 0.15rem 0 0 #2f80ed;
+}
+
+.game-visual--shapes::after {
+    width: 0;
+    height: 0;
+    right: 18%;
+    top: 50%;
+    border-left: 1.55rem solid transparent;
+    border-right: 1.55rem solid transparent;
+    border-bottom: 2.65rem solid #f6c65b;
+    transform: translateY(-54%);
+}
+
+.game-visual--letters {
+    color: transparent;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 240, 245, 0.9));
+}
+
+.game-visual--letters::before {
+    width: 5.2rem;
+    height: 3.6rem;
+    border: 0.22rem solid rgba(156, 63, 114, 0.28);
+    border-radius: 0.8rem;
+    background:
+        linear-gradient(rgba(156, 63, 114, 0.14) 0 0) 50% 72% / 3.1rem 0.18rem no-repeat,
+        #ffffff;
+    box-shadow: 0 14px 24px rgba(156, 63, 114, 0.12);
+}
+
+.game-visual--letters::after {
+    content: "Aa";
+    position: relative;
+    color: #9c3f72;
+    font-size: 2.75rem;
+    font-weight: 950;
+    z-index: 1;
+}
+
+.game-visual--vowels {
+    color: transparent;
+    letter-spacing: 0;
+    background:
+        radial-gradient(circle at 18% 24%, rgba(255, 143, 163, 0.32) 0 1.3rem, transparent 1.4rem),
+        radial-gradient(circle at 82% 72%, rgba(95, 227, 177, 0.28) 0 1.45rem, transparent 1.55rem),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(216, 194, 255, 0.54));
+}
+
+.game-visual--vowels::before {
+    content: "A";
+    width: 2.35rem;
+    aspect-ratio: 1;
+    left: 13%;
+    top: 50%;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    color: #7a3d9c;
+    background: rgba(255, 255, 255, 0.86);
+    font-size: 1.5rem;
+    font-weight: 950;
+    transform: translateY(-50%);
+}
+
+.game-visual--vowels::after {
+    content: "E I O U";
+    left: calc(13% + 2.75rem);
+    top: 50%;
+    color: #7a3d9c;
+    font-size: 1.35rem;
+    font-weight: 950;
+    word-spacing: 0.68rem;
+    transform: translateY(-50%);
+}
+
+.game-visual--syllables {
+    color: transparent;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(231, 246, 255, 0.9));
+}
+
+.game-visual--syllables::before {
+    width: 5.8rem;
+    height: 3.4rem;
+    border: 0.22rem solid #245fb0;
+    border-radius: 0.75rem;
+    background: #ffffff;
+    box-shadow: 0 16px 24px rgba(36, 95, 176, 0.12);
+}
+
+.game-visual--syllables::after {
+    content: "BA";
+    position: relative;
+    color: #245fb0;
+    font-size: 2.45rem;
+    font-weight: 950;
+    z-index: 1;
+}
+
+.game-visual--numbers {
+    color: transparent;
+    background:
+        radial-gradient(circle at 80% 25%, rgba(100, 181, 255, 0.28) 0 1.45rem, transparent 1.55rem),
+        linear-gradient(135deg, rgba(232, 251, 242, 0.94), rgba(231, 246, 255, 0.9));
+}
+
+.game-visual--numbers::before {
+    content: "1";
+    width: 2.45rem;
+    aspect-ratio: 1;
+    left: 16%;
+    top: 50%;
+    display: grid;
+    place-items: center;
+    border-radius: 0.75rem;
+    color: #176b4d;
+    background: rgba(255, 255, 255, 0.9);
+    font-size: 1.6rem;
+    font-weight: 950;
+    transform: translateY(-50%);
+    box-shadow: 3.15rem 0 0 rgba(255, 255, 255, 0.9), 6.3rem 0 0 rgba(255, 255, 255, 0.9);
+}
+
+.game-visual--numbers::after {
+    content: "2 3";
+    left: calc(16% + 3.15rem);
+    top: 50%;
+    color: #176b4d;
+    font-size: 1.55rem;
+    font-weight: 950;
+    word-spacing: 1.05rem;
+    transform: translateY(-50%);
+}
+
+.game-visual--math {
+    color: transparent;
+    background:
+        radial-gradient(circle at 20% 28%, rgba(95, 227, 177, 0.34) 0 1.1rem, transparent 1.18rem),
+        radial-gradient(circle at 78% 34%, rgba(100, 181, 255, 0.28) 0 1rem, transparent 1.08rem),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(231, 246, 255, 0.92));
+}
+
+.game-visual--math::before {
+    width: 1.5rem;
+    aspect-ratio: 1;
+    left: 18%;
+    top: 50%;
+    border-radius: 0.45rem;
+    background: #7ccdb1;
+    transform: translateY(-50%);
+    box-shadow: 1.95rem 0 0 #7ccdb1, 5.1rem 0 0 #f0c95b, 7.05rem 0 0 #f0c95b, 9rem 0 0 #f0c95b;
+}
+
+.game-visual--math::after {
+    content: "+";
+    left: calc(18% + 3.55rem);
+    top: 50%;
+    color: #245fb0;
+    font-size: 2rem;
+    font-weight: 950;
+    transform: translateY(-50%);
+}
+
 .card-icon {
     width: 2rem;
     height: 2rem;
