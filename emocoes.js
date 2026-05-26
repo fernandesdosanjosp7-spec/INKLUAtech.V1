@@ -120,6 +120,11 @@ const loadCurrentLevel = () => {
 };
 
 const speak = (text) => {
+    if (window.InkluaSpeech?.speak) {
+        window.InkluaSpeech.speak(text);
+        return;
+    }
+
     if (!("speechSynthesis" in window)) {
         return;
     }

@@ -49,6 +49,11 @@ const loadCurrentLevel = () => {
 };
 
 const speakSyllable = (text) => {
+    if (window.InkluaSpeech?.speak) {
+        window.InkluaSpeech.speak(text);
+        return;
+    }
+
     if (!("speechSynthesis" in window)) {
         return;
     }

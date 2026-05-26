@@ -242,25 +242,40 @@ const scoreSpeechVoice = (voice) => {
     const text = normalizeText(`${name} ${uri}`);
     let score = 0;
     const femaleNames = [
+        "ana",
+        "beatriz",
+        "bruna",
+        "camila",
+        "carolina",
+        "claudia",
         "francisca",
-        "maria",
-        "luciana",
+        "fernanda",
+        "gabriela",
         "helena",
-        "vitoria",
+        "heloisa",
         "ines",
+        "juliana",
+        "leticia",
+        "livia",
+        "luciana",
+        "maria",
+        "manuela",
         "joana",
+        "patricia",
+        "sandra",
+        "thalita",
         "yara",
         "raquel",
         "teresa",
         "catarina",
         "amalia",
-        "leticia",
-        "fernanda"
+        "vitoria"
     ];
     const maleNames = [
         "antonio",
         "daniel",
         "felipe",
+        "joaquim",
         "ricardo",
         "paulo",
         "thiago",
@@ -274,15 +289,16 @@ const scoreSpeechVoice = (voice) => {
     if (voice.lang?.toLowerCase().startsWith("pt")) score += 25;
     if (femaleNames.some((femaleName) => text.includes(femaleName))) score += 500;
     if (maleNames.some((maleName) => text.includes(maleName))) score -= 1000;
-    if (text.includes("female") || text.includes("feminina") || text.includes("mulher")) score += 400;
+    if (text.includes("female") || text.includes("feminina") || text.includes("mulher") || text.includes("woman")) score += 400;
     if (text.includes("male") || text.includes("masculina") || text.includes("homem")) score -= 1000;
+    if (text.includes("doce") || text.includes("suave") || text.includes("soft")) score += 100;
     if (text.includes("natural")) score += 80;
     if (text.includes("neural")) score += 70;
     if (text.includes("online")) score += 55;
     if (voice.localService === false) score += 45;
     if (text.includes("microsoft")) score += 24;
     if (text.includes("google")) score += 22;
-    if (text.includes("francisca") || text.includes("maria") || text.includes("luciana") || text.includes("helena")) score += 18;
+    if (text.includes("francisca") || text.includes("maria") || text.includes("luciana") || text.includes("helena")) score += 35;
     if (text.includes("female") || text.includes("feminina")) score += 10;
     if (voice.localService === true && !text.includes("natural")) score -= 30;
 
@@ -321,8 +337,8 @@ const createSoftSpeech = (text) => {
     const voice = getPreferredSpeechVoice();
 
     utterance.lang = voice?.lang || "pt-BR";
-    utterance.rate = 0.92;
-    utterance.pitch = voice && scoreSpeechVoice(voice) > 450 ? 1 : 1.08;
+    utterance.rate = 0.86;
+    utterance.pitch = 1.16;
     utterance.volume = 1;
 
     if (voice) {
