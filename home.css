@@ -272,6 +272,77 @@ button {
     box-shadow: 0 10px 20px rgba(53, 121, 215, 0.18);
 }
 
+.mood-checkin {
+    display: grid;
+    grid-template-columns: minmax(14rem, 0.8fr) minmax(0, 1.2fr);
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: clamp(1rem, 3vw, 1.25rem);
+    border: 1px solid rgba(53, 121, 215, 0.16);
+    border-radius: 1rem;
+    background:
+        radial-gradient(circle at 8% 18%, rgba(255, 226, 122, 0.28) 0 3.4rem, transparent 3.6rem),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.86), rgba(255, 240, 245, 0.72));
+    box-shadow: 0 14px 38px rgba(47, 73, 98, 0.08);
+}
+
+.mood-checkin h3 {
+    margin: 0.2rem 0 0;
+    color: var(--text);
+    font-size: clamp(1.35rem, 3vw, 2rem);
+}
+
+.mood-checkin p:not(.eyebrow) {
+    margin: 0.35rem 0 0;
+    color: var(--muted);
+    line-height: 1.45;
+    font-weight: 750;
+}
+
+.mood-options {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+.mood-options button {
+    min-height: 7rem;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 0.45rem;
+    padding: 0.8rem 0.5rem;
+    border: 1px solid rgba(53, 121, 215, 0.14);
+    border-radius: 0.95rem;
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.78);
+    cursor: pointer;
+    transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.mood-options button:hover {
+    transform: translateY(-0.14rem);
+    border-color: rgba(53, 121, 215, 0.3);
+    box-shadow: 0 1rem 1.8rem rgba(47, 73, 98, 0.11);
+}
+
+.mood-options button.is-selected {
+    border-color: rgba(36, 95, 176, 0.42);
+    background: rgba(231, 246, 255, 0.94);
+    box-shadow: 0 0 0 0.22rem rgba(100, 181, 255, 0.14);
+}
+
+.mood-options span {
+    font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+    font-size: 2.25rem;
+    line-height: 1;
+}
+
+.mood-options strong {
+    font-size: 0.92rem;
+}
+
 .overview-card,
 .game-card,
 .report-card,
@@ -2545,6 +2616,181 @@ button {
     font-weight: 850;
 }
 
+.routine-board {
+    display: grid;
+    gap: 1rem;
+}
+
+.routine-status {
+    width: fit-content;
+    min-height: 2.2rem;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 0.8rem;
+    border-radius: 999px;
+    color: var(--primary-dark);
+    background: rgba(100, 181, 255, 0.16);
+    font-size: 0.8rem;
+    font-weight: 900;
+}
+
+.routine-hero {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 1rem;
+    align-items: center;
+    padding: clamp(1rem, 3vw, 1.35rem);
+    border: 1px solid rgba(53, 121, 215, 0.14);
+    border-radius: 0.95rem;
+    background:
+        radial-gradient(circle at 92% 18%, rgba(255, 226, 122, 0.24) 0 3rem, transparent 3.2rem),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(232, 251, 242, 0.88));
+}
+
+.routine-hero__icon {
+    width: clamp(4rem, 11vw, 5.5rem);
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    border-radius: 1rem;
+    color: #ffffff;
+    background: linear-gradient(135deg, var(--primary-dark), var(--mint));
+    box-shadow: 0 1rem 1.8rem rgba(36, 95, 176, 0.16);
+    font-weight: 950;
+}
+
+.routine-hero span:not(.routine-hero__icon) {
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.routine-hero strong {
+    display: block;
+    margin-top: 0.18rem;
+    color: var(--text);
+    font-size: clamp(1.35rem, 3vw, 2rem);
+}
+
+.routine-hero p {
+    max-width: 46rem;
+    margin: 0.4rem 0 0;
+    color: var(--muted);
+    line-height: 1.55;
+}
+
+.routine-progress {
+    height: 0.75rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(112, 139, 166, 0.16);
+}
+
+.routine-progress span {
+    display: block;
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--primary), var(--mint));
+    transition: width 220ms ease;
+}
+
+.routine-board .routine-list {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.85rem;
+    margin-top: 0;
+}
+
+.routine-board .routine-list li {
+    padding: 0;
+    background: transparent;
+}
+
+.routine-list button {
+    width: 100%;
+    min-height: 8.2rem;
+    display: grid;
+    align-content: start;
+    gap: 0.45rem;
+    padding: 0.85rem;
+    border: 1px solid rgba(53, 121, 215, 0.14);
+    border-radius: 0.95rem;
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.76);
+    text-align: left;
+    cursor: pointer;
+    transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.routine-list button:hover {
+    transform: translateY(-0.12rem);
+    border-color: rgba(53, 121, 215, 0.28);
+}
+
+.routine-list button span {
+    width: 2.8rem;
+    min-height: 2.1rem;
+    display: inline-grid;
+    place-items: center;
+    border-radius: 0.75rem;
+    color: var(--primary-dark);
+    background: rgba(100, 181, 255, 0.16);
+    font-size: 0.76rem;
+    font-weight: 950;
+}
+
+.routine-list button strong {
+    font-size: 1rem;
+}
+
+.routine-list button small {
+    color: var(--muted);
+    line-height: 1.35;
+    font-weight: 750;
+}
+
+.routine-list button.is-current {
+    border-color: rgba(36, 95, 176, 0.38);
+    background: rgba(231, 246, 255, 0.92);
+}
+
+.routine-list button.is-done {
+    border-color: rgba(40, 124, 95, 0.28);
+    background: rgba(232, 251, 242, 0.92);
+}
+
+.routine-list button.is-done span {
+    color: #ffffff;
+    background: var(--mint);
+}
+
+.routine-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.routine-button {
+    min-height: 2.9rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 1rem;
+    border: 1px solid rgba(53, 121, 215, 0.18);
+    border-radius: 0.85rem;
+    color: var(--primary-dark);
+    background: rgba(255, 255, 255, 0.82);
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.routine-button--primary {
+    color: #ffffff;
+    border-color: transparent;
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+}
+
 @media (max-width: 62rem) {
     .platform-shell {
         grid-template-columns: 1fr;
@@ -2567,10 +2813,12 @@ button {
 @media (max-width: 48rem) {
     .overview-grid,
     .game-grid,
+    .mood-checkin,
     .report-summary,
     .report-grid,
     .report-action-grid,
     .report-metrics-grid,
+    .routine-board .routine-list,
     .two-column,
     .form-grid,
     .nav-menu,
@@ -2638,7 +2886,20 @@ button {
     }
 
     .math-options,
-    .math-report-grid {
+    .math-report-grid,
+    .mood-options {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .routine-hero {
+        grid-template-columns: 1fr;
+    }
+
+    .routine-actions {
+        display: grid;
+    }
+
+    .routine-button {
+        width: 100%;
     }
 }

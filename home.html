@@ -51,6 +51,20 @@
                     </div>
                 </div>
 
+                <section class="mood-checkin" aria-labelledby="moodCheckinTitle">
+                    <div>
+                        <p class="eyebrow">Check-in</p>
+                        <h3 id="moodCheckinTitle">Como voc&ecirc; est&aacute; hoje?</h3>
+                        <p id="moodFeedback">Escolha uma carinha para registrar como voc&ecirc; se sente agora.</p>
+                    </div>
+                    <div class="mood-options" aria-label="Op&ccedil;&otilde;es de humor">
+                        <button type="button" data-mood="feliz" data-mood-label="Feliz" data-mood-feedback="Que bom ver voc&ecirc; feliz. Vamos aproveitar essa energia."><span aria-hidden="true">😊</span><strong>Feliz</strong></button>
+                        <button type="button" data-mood="triste" data-mood-label="Triste" data-mood-feedback="Tudo bem ficar triste. Vamos fazer as atividades com calma."><span aria-hidden="true">😢</span><strong>Triste</strong></button>
+                        <button type="button" data-mood="doente" data-mood-label="Doente" data-mood-feedback="Sinto muito. Hoje podemos ir devagar e fazer pausas."><span aria-hidden="true">🤒</span><strong>Doente</strong></button>
+                        <button type="button" data-mood="bravo" data-mood-label="Bravo" data-mood-feedback="Entendi. Vamos respirar e escolher uma atividade tranquila."><span aria-hidden="true">😠</span><strong>Bravo</strong></button>
+                    </div>
+                </section>
+
                 <div class="overview-grid">
                 <article class="overview-card">
                     <span class="overview-icon overview-icon--blue">1</span>
@@ -502,15 +516,39 @@
                 </div>
             </section>
 
-                <article class="section-block platform-view" id="rotina" data-view="rotina">
-                    <p class="eyebrow">Rotina</p>
-                    <h2>Meu dia</h2>
-                    <ol class="routine-list">
-                        <li>Boas-vindas</li>
-                        <li>Jogo educativo</li>
-                        <li>Pausa sensorial</li>
-                        <li>Atividade de comunica&ccedil;&atilde;o</li>
+                <article class="section-block platform-view routine-board" id="rotina" data-view="rotina">
+                    <div class="section-heading">
+                        <div>
+                            <p class="eyebrow">Rotina</p>
+                            <h2>Meu dia</h2>
+                        </div>
+                        <span class="routine-status" id="routineStatus">Come&ccedil;ar rotina</span>
+                    </div>
+
+                    <div class="routine-hero" aria-live="polite">
+                        <span class="routine-hero__icon" id="routineCurrentIcon" aria-hidden="true">Oi</span>
+                        <div>
+                            <span>Etapa atual</span>
+                            <strong id="routineCurrentTitle">Boas-vindas</strong>
+                            <p id="routineCurrentText">Comece com acolhimento, combinados simples e uma orienta&ccedil;&atilde;o curta.</p>
+                        </div>
+                    </div>
+
+                    <div class="routine-progress" aria-label="Progresso da rotina">
+                        <span id="routineProgressBar"></span>
+                    </div>
+
+                    <ol class="routine-list" id="routineList">
+                        <li><button type="button" data-routine-step="0"><span>Oi</span><strong>Boas-vindas</strong><small>Acolher e combinar a atividade.</small></button></li>
+                        <li><button type="button" data-routine-step="1"><span>Jogo</span><strong>Jogo educativo</strong><small>Escolher uma atividade curta.</small></button></li>
+                        <li><button type="button" data-routine-step="2"><span>Pausa</span><strong>Pausa sensorial</strong><small>Respirar, beber &aacute;gua ou descansar.</small></button></li>
+                        <li><button type="button" data-routine-step="3"><span>Fala</span><strong>Comunica&ccedil;&atilde;o</strong><small>Registrar escolha, palavra ou gesto.</small></button></li>
                     </ol>
+
+                    <div class="routine-actions">
+                        <button class="routine-button routine-button--primary" id="routineNextButton" type="button">Pr&oacute;xima etapa</button>
+                        <button class="routine-button" id="routineResetButton" type="button">Reiniciar</button>
+                    </div>
                 </article>
 
                 <article class="section-block platform-view" id="apoio" data-view="apoio">

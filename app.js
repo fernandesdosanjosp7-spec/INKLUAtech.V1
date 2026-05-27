@@ -67,6 +67,156 @@ window.addEventListener("popstate", () => {
     showPlatformView(getViewFromHash());
 });
 
+const moodStorageKey = "inklua_daily_mood_v1";
+const moodFeedback = document.getElementById("moodFeedback");
+const moodButtons = document.querySelectorAll("[data-mood]");
+
+const getTodayKey = () => new Date().toISOString().slice(0, 10);
+
+const saveMood = (button) => {
+    const payload = {
+        date: getTodayKey(),
+        mood: button.dataset.mood || "",
+        label: button.dataset.moodLabel || "",
+        feedback: button.dataset.moodFeedback || ""
+    };
+
+    localStorage.setItem(moodStorageKey, JSON.stringify(payload));
+    renderMood(payload);
+};
+
+const readMood = () => {
+    try {
+        const savedMood = JSON.parse(localStorage.getItem(moodStorageKey)) || {};
+        return savedMood.date === getTodayKey() ? savedMood : null;
+    } catch (error) {
+        return null;
+    }
+};
+
+const renderMood = (mood) => {
+    moodButtons.forEach((button) => {
+        const isSelected = mood?.mood && button.dataset.mood === mood.mood;
+        button.classList.toggle("is-selected", Boolean(isSelected));
+        button.setAttribute("aria-pressed", isSelected ? "true" : "false");
+    });
+
+    if (moodFeedback && mood?.feedback) {
+        moodFeedback.textContent = mood.feedback;
+    }
+};
+
+moodButtons.forEach((button) => {
+    button.setAttribute("aria-pressed", "false");
+    button.addEventListener("click", () => saveMood(button));
+});
+
+renderMood(readMood());
+
+const routineStorageKey = "inklua_routine_step_v1";
+const routineSteps = [
+    {
+        icon: "Oi",
+        title: "Boas-vindas",
+        text: "Comece com acolhimento, combinados simples e uma orientacao curta."
+    },
+    {
+        icon: "Jogo",
+        title: "Jogo educativo",
+        text: "Escolha uma atividade curta e observe interesse, foco e autonomia."
+    },
+    {
+        icon: "Pausa",
+        title: "Pausa sensorial",
+        text: "Faca uma pausa breve para respirar, beber agua ou reduzir estimulos."
+    },
+    {
+        icon: "Fala",
+        title: "Comunicacao",
+        text: "Registre uma escolha, palavra, gesto ou preferencia expressa pelo aluno."
+    }
+];
+
+const routineElements = {
+    status: document.getElementById("routineStatus"),
+    icon: document.getElementById("routineCurrentIcon"),
+    title: document.getElementById("routineCurrentTitle"),
+    text: document.getElementById("routineCurrentText"),
+    progress: document.getElementById("routineProgressBar"),
+    list: document.getElementById("routineList"),
+    next: document.getElementById("routineNextButton"),
+    reset: document.getElementById("routineResetButton")
+};
+
+const clampNumber = (value, min, max) => Math.min(Math.max(value, min), max);
+
+const getSavedRoutineStep = () => {
+    const savedStep = Number(localStorage.getItem(routineStorageKey));
+    return Number.isInteger(savedStep) ? clampNumber(savedStep, 0, routineSteps.length - 1) : 0;
+};
+
+let currentRoutineStep = getSavedRoutineStep();
+
+const renderRoutine = () => {
+    if (!routineElements.list) {
+        return;
+    }
+
+    const step = routineSteps[currentRoutineStep];
+    const isLastStep = currentRoutineStep === routineSteps.length - 1;
+    const progress = ((currentRoutineStep + 1) / routineSteps.length) * 100;
+
+    routineElements.icon?.replaceChildren(document.createTextNode(step.icon));
+    routineElements.title?.replaceChildren(document.createTextNode(step.title));
+    routineElements.text?.replaceChildren(document.createTextNode(step.text));
+    routineElements.status?.replaceChildren(document.createTextNode(isLastStep ? "Rotina concluida" : `Etapa ${currentRoutineStep + 1} de ${routineSteps.length}`));
+
+    if (routineElements.progress instanceof HTMLElement) {
+        routineElements.progress.style.width = `${progress}%`;
+    }
+
+    routineElements.next?.replaceChildren(document.createTextNode(isLastStep ? "Concluir de novo" : "Proxima etapa"));
+
+    routineElements.list.querySelectorAll("[data-routine-step]").forEach((button) => {
+        const stepIndex = Number(button.getAttribute("data-routine-step"));
+        button.classList.toggle("is-current", stepIndex === currentRoutineStep);
+        button.classList.toggle("is-done", stepIndex < currentRoutineStep || isLastStep);
+
+        if (stepIndex === currentRoutineStep) {
+            button.setAttribute("aria-current", "step");
+            return;
+        }
+
+        button.removeAttribute("aria-current");
+    });
+};
+
+const setRoutineStep = (stepIndex) => {
+    currentRoutineStep = clampNumber(stepIndex, 0, routineSteps.length - 1);
+    localStorage.setItem(routineStorageKey, String(currentRoutineStep));
+    renderRoutine();
+};
+
+routineElements.list?.addEventListener("click", (event) => {
+    const button = event.target instanceof Element ? event.target.closest("[data-routine-step]") : null;
+
+    if (!(button instanceof HTMLElement)) {
+        return;
+    }
+
+    setRoutineStep(Number(button.dataset.routineStep) || 0);
+});
+
+routineElements.next?.addEventListener("click", () => {
+    setRoutineStep(currentRoutineStep === routineSteps.length - 1 ? 0 : currentRoutineStep + 1);
+});
+
+routineElements.reset?.addEventListener("click", () => {
+    setRoutineStep(0);
+});
+
+renderRoutine();
+
 const activityContent = {
     cores: {
         title: "Jogo das Cores",
