@@ -68,6 +68,14 @@ const labels = {
     division: "Divisao"
 };
 
+const positiveFeedbackMessages = [
+    "Muito bem!",
+    "Voce conseguiu!",
+    "Excelente trabalho!",
+    "Parabens!",
+    "Resposta certa!"
+];
+
 let state = {
     difficulty: 1,
     correct: 0,
@@ -83,6 +91,7 @@ let state = {
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const shuffle = (items) => [...items].sort(() => Math.random() - 0.5);
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+const getPositiveFeedback = () => positiveFeedbackMessages[randomInt(0, positiveFeedbackMessages.length - 1)];
 let speechRequestId = 0;
 
 const normalizeVoiceText = (value) => String(value || "")
@@ -276,8 +285,10 @@ const createQuestion = () => {
 
 const renderObjects = (count, removed = false) => {
     return Array.from({ length: Math.abs(count) }, () => `
-        <span class="math-object math-object--apple ${removed ? "is-removed" : ""}" role="img" aria-label="maca">
-            <span></span>
+        <span class="math-object math-object--apple math-object--real-apple ${removed ? "is-removed" : ""}" role="img" aria-label="maca">
+            <span class="math-apple__body"></span>
+            <span class="math-apple__leaf"></span>
+            <span class="math-apple__stem"></span>
         </span>
     `).join("");
 };
@@ -331,6 +342,7 @@ const renderQuestion = () => {
     elements.expression.textContent = state.current.expression;
     elements.feedback.textContent = "";
     elements.guide.textContent = "Observe os objetos e escolha a resposta.";
+    elements.scene.classList.remove("is-celebrating", "is-helping");
     elements.next.disabled = true;
 
     renderScene();
@@ -363,9 +375,12 @@ const answerQuestion = (answer, button) => {
     button.classList.add(correct ? "is-correct" : "is-wrong");
 
     if (correct) {
+        const feedback = getPositiveFeedback();
         state.correct += 1;
-        elements.feedback.textContent = "Muito bem. Voce conseguiu.";
-        elements.guide.textContent = "Resposta certa. Vamos para a proxima.";
+        elements.feedback.textContent = feedback;
+        elements.guide.textContent = feedback;
+        elements.scene.classList.add("is-celebrating");
+        window.setTimeout(() => elements.scene.classList.remove("is-celebrating"), 900);
     } else {
         state.wrong += 1;
         elements.feedback.textContent = `Quase. A resposta era ${state.current.answer}.`;
@@ -375,7 +390,7 @@ const answerQuestion = (answer, button) => {
     state.answeredQuestions += 1;
     state.difficulty = clamp(Math.floor(state.answeredQuestions / 5) + 1, 1, 4);
     playTone(correct);
-    speak(correct ? "Muito bem. Voce conseguiu." : `Quase. A resposta era ${state.current.answer}.`);
+    speak(correct ? elements.feedback.textContent : `Quase. A resposta era ${state.current.answer}.`);
     recordProgress(correct);
     updatePanel();
     elements.next.disabled = false;

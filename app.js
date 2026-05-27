@@ -705,8 +705,9 @@ const getGameDevelopmentScore = (game) => {
     const itemProgress = exploredItems / totalItems;
     const accuracy = answered ? (game.correct || 0) / answered : itemProgress;
     const completion = game.completed ? 1 : 0;
+    const score = Math.round((itemProgress * 44) + (accuracy * 36) + (Math.min(Number(game.level) || 1, 4) * 5) + (completion * 10));
 
-    return Math.round((itemProgress * 44) + (accuracy * 36) + (Math.min(Number(game.level) || 1, 4) * 5) + (completion * 10));
+    return Math.min(Math.max(score, 0), 100);
 };
 
 const getAreaDevelopmentScore = (gameMap, gameIds) => {

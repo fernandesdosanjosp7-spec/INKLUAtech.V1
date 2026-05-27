@@ -41,7 +41,6 @@
                 <div class="welcome-panel">
                     <p class="eyebrow">Boas-vindas</p>
                     <h2><span id="welcomeGreeting">Ol&aacute;</span>, <span id="welcomeName">aluno</span>!</h2>
-                    <p>Hoje separamos atividades curtas para praticar comunica&ccedil;&atilde;o, percep&ccedil;&atilde;o e autonomia com calma.</p>
                     <div class="welcome-actions" aria-label="Atalhos de in&iacute;cio">
                         <a href="#jogos">Come&ccedil;ar pelos jogos</a>
                         <a href="#formulario">Atualizar perfil</a>
@@ -52,8 +51,8 @@
                 <section class="mood-checkin" aria-labelledby="moodCheckinTitle">
                     <div>
                         <p class="eyebrow">Check-in</p>
-                        <h3 id="moodCheckinTitle">Como voc&ecirc; est&aacute; hoje?</h3>
-                        <p id="moodFeedback">Escolha uma carinha para registrar como voc&ecirc; se sente agora.</p>
+                        <h3 id="moodCheckinTitle">Hoje</h3>
+                        <p id="moodFeedback" class="visually-hidden">Escolha uma op&ccedil;&atilde;o.</p>
                     </div>
                     <div class="mood-options" aria-label="Op&ccedil;&otilde;es de humor">
                         <button type="button" data-mood="feliz" data-mood-label="Feliz" data-mood-feedback="Que bom ver voc&ecirc; feliz. Vamos aproveitar essa energia."><span aria-hidden="true">😊</span><strong>Feliz</strong></button>
@@ -330,21 +329,18 @@
                         <span class="report-card__number">6</span>
                         <div>
                             <strong>Jogos educativos</strong>
-                            <p>Cores, alfabeto, vogais, s&iacute;labas, n&uacute;meros e matem&aacute;tica visual.</p>
                         </div>
                     </article>
                     <article class="report-card">
                         <span class="report-card__number">3</span>
                         <div>
                             <strong>Jogos de apoio</strong>
-                            <p>Comunica&ccedil;&atilde;o, matem&aacute;tica visual e leitura com imagens dentro dos jogos.</p>
                         </div>
                     </article>
                     <article class="report-card">
                         <span class="report-card__number">4</span>
                         <div>
                             <strong>Perfil do aluno</strong>
-                            <p>Prefer&ecirc;ncias, sensibilidades, comunica&ccedil;&atilde;o e recursos registrados.</p>
                         </div>
                     </article>
                 </div>
@@ -375,98 +371,48 @@
                         </div>
                     </article>
 
-                    <article class="report-panel">
-                        <h3>Pr&oacute;ximos passos do acompanhamento</h3>
-                        <ul class="report-timeline">
-                            <li>Observar quais jogos geram mais participa&ccedil;&atilde;o e repetir essas atividades em sess&otilde;es curtas.</li>
-                            <li>Registrar conquistas simples, como escolhas aut&ocirc;nomas, respostas corretas e tempo de foco.</li>
-                            <li>Usar o relat&oacute;rio completo para comparar evolu&ccedil;&atilde;o, comportamento e habilidades trabalhadas.</li>
-                        </ul>
-                    </article>
                 </div>
 
                 <article class="report-panel report-panel--wide">
-                    <h3>Consolida&ccedil;&atilde;o de dados da plataforma</h3>
+                    <h3>Resumo</h3>
                     <div class="report-metrics-grid" aria-label="Resumo consolidado dos jogos">
                         <article class="report-metric-card">
                             <span>Tentativas</span>
                             <strong id="attemptsMetric">0</strong>
-                            <p id="attemptsMetricText">Respostas registradas nos jogos.</p>
                         </article>
                         <article class="report-metric-card">
                             <span>Acertos</span>
                             <strong id="correctMetric">0</strong>
-                            <p>Respostas corretas acumuladas.</p>
                         </article>
                         <article class="report-metric-card">
                             <span>Erros</span>
                             <strong id="wrongMetric">0</strong>
-                            <p>Itens para revisar com calma.</p>
                         </article>
                         <article class="report-metric-card">
                             <span>Taxa de acerto</span>
                             <strong id="accuracyMetric">0%</strong>
-                            <p id="accuracyMetricText">Maior n&iacute;vel: aguardando.</p>
                         </article>
                         <article class="report-metric-card">
                             <span>Tempo na plataforma</span>
                             <strong id="platformTimeMetric">0s</strong>
-                            <p id="platformTimeText">Tempo ativo registrado.</p>
                         </article>
                         <article class="report-metric-card">
                             <span>Tempo respondendo</span>
                             <strong id="answerTimeMetric">0s</strong>
-                            <p id="answerTimeText">M&eacute;dia por resposta: 0s.</p>
                         </article>
                         <article class="report-metric-card">
                             <span>Atividades conclu&iacute;das</span>
                             <strong id="completedActivitiesMetric">0 de 6</strong>
-                            <p id="completedActivitiesText">Acompanhamento das atividades finalizadas.</p>
                         </article>
                         <article class="report-metric-card">
                             <span>Frequ&ecirc;ncia de uso</span>
                             <strong id="usageFrequencyMetric">Sem uso recente</strong>
-                            <p id="usageFrequencyText">Uso registrado nos &uacute;ltimos 7 dias.</p>
                         </article>
                         <article class="report-metric-card">
                             <span>Desenvolvimento</span>
                             <strong id="developmentMetric">Aguardando dados</strong>
-                            <p id="developmentMetricText">Leitura geral do progresso do aluno.</p>
                         </article>
                     </div>
-
-                    <p class="report-insight-text" id="qualitativeDevelopmentText">
-                        Ao usar os jogos, a plataforma vai consolidar evid&ecirc;ncias de participa&ccedil;&atilde;o, const&acirc;ncia e habilidades trabalhadas.
-                    </p>
-                </article>
-
-                <article class="report-panel report-panel--wide">
-                    <h3>Plano sugerido pela plataforma</h3>
-                    <div class="report-action-grid" id="reportRecommendations" aria-live="polite">
-                        <article class="report-action-card">
-                            <strong>Preencha o formul&aacute;rio</strong>
-                            <p>As recomenda&ccedil;&otilde;es aparecem aqui com base em comunica&ccedil;&atilde;o, aprendizagem, sensibilidades e prioridades.</p>
-                            <a href="#formulario">Ir para o formul&aacute;rio</a>
-                        </article>
-                    </div>
-                </article>
-
-                <article class="report-panel report-panel--wide">
-                    <h3>Alinhamento &agrave; BNCC</h3>
-                    <ul class="report-timeline">
-                        <li><strong>Direitos de aprendizagem:</strong> conviver, brincar, participar, explorar, expressar e conhecer-se.</li>
-                        <li><strong>Campos de experi&ecirc;ncia:</strong> o eu, o outro e o n&oacute;s; corpo, gestos e movimentos; tra&ccedil;os, sons, cores e formas; escuta, fala, pensamento e imagina&ccedil;&atilde;o; espa&ccedil;os, tempos, quantidades, rela&ccedil;&otilde;es e transforma&ccedil;&otilde;es.</li>
-                        <li><strong>Compet&ecirc;ncias gerais:</strong> comunica&ccedil;&atilde;o, pensamento criativo, autoconhecimento, empatia, coopera&ccedil;&atilde;o e autonomia.</li>
-                    </ul>
-                </article>
-
-                <article class="report-panel report-panel--wide">
-                    <h3>Como acompanhar dentro da plataforma</h3>
-                    <ul class="report-timeline">
-                        <li><strong>Jogos:</strong> observe interesse, autonomia e reconhecimento em cores, letras, vogais, s&iacute;labas, n&uacute;meros e matem&aacute;tica visual.</li>
-                        <li><strong>Aprendizado:</strong> use as trilhas de comunica&ccedil;&atilde;o alternativa, matem&aacute;tica visual e leitura com imagens para refor&ccedil;ar habilidades.</li>
-                        <li><strong>Perfil do aluno:</strong> compare o desempenho com as prefer&ecirc;ncias, sensibilidades e estrat&eacute;gias registradas no formul&aacute;rio.</li>
-                    </ul>
                 </article>
             </section>
 
@@ -474,7 +420,7 @@
                 <div class="section-heading">
                     <div>
                         <p class="eyebrow">Jogos educativos</p>
-                        <h2 id="games-title">Escolha uma atividade para come&ccedil;ar</h2>
+                        <h2 id="games-title">Jogos</h2>
                     </div>
                 </div>
 
