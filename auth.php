@@ -173,8 +173,16 @@ try {
         }
 
         $profile = collectProfileData($_POST);
+        $alunoIdade = $_POST["aluno_idade"] ?? null;
+        $alunoIdade = $alunoIdade === "" ? null : $alunoIdade;
+
         $stmt = $pdo->prepare("
             UPDATE usuarios SET
+                nome = :nome,
+                responsavel_nome = :responsavel_nome,
+                responsavel_vinculo = :responsavel_vinculo,
+                aluno_nome = :aluno_nome,
+                aluno_idade = :aluno_idade,
                 sensibilidades = :sensibilidades,
                 comunicacao = :comunicacao,
                 rotina = :rotina,
@@ -200,6 +208,11 @@ try {
         ");
 
         $stmt->execute([
+            ":nome" => $_POST["responsavel_nome"] ?? "",
+            ":responsavel_nome" => $_POST["responsavel_nome"] ?? "",
+            ":responsavel_vinculo" => $_POST["responsavel_vinculo"] ?? "",
+            ":aluno_nome" => $_POST["aluno_nome"] ?? "",
+            ":aluno_idade" => $alunoIdade,
             ":sensibilidades" => $profile["sensibilidades"],
             ":comunicacao" => $profile["comunicacao"],
             ":rotina" => $profile["rotina"],

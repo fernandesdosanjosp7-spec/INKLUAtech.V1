@@ -375,13 +375,6 @@ textarea {
     font-weight: 700;
 }
 
-.two-column {
-    display: grid;
-    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-    gap: 1rem;
-    margin-top: 1.25rem;
-}
-
 .games-report {
     margin-top: 1.25rem;
 }
@@ -430,142 +423,14 @@ textarea {
     font-weight: 800;
 }
 
-.bncc-section {
-    margin-top: 1.25rem;
-}
-
-.bncc-note {
-    max-width: 62rem;
-    margin: 0 0 1rem;
-    color: var(--muted);
-    line-height: 1.7;
-    font-weight: 600;
-}
-
-.bncc-rights {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.55rem;
-    margin-bottom: 1rem;
-}
-
-.bncc-rights span {
-    min-height: 2.15rem;
-    display: inline-flex;
-    align-items: center;
-    padding: 0 0.75rem;
-    border: 1px solid rgba(91, 183, 240, 0.16);
-    border-radius: 0.8rem;
-    color: var(--primary-dark);
-    background: var(--blue-soft);
-    font-size: 0.78rem;
-    font-weight: 800;
-}
-
-.bncc-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.9rem;
-}
-
-.bncc-card {
-    display: grid;
-    gap: 0.8rem;
-    padding: 1rem;
-    border: 1px solid rgba(91, 183, 240, 0.14);
-    border-radius: 1.05rem;
-    background: rgba(255, 255, 255, 0.78);
-}
-
-.bncc-card__tag {
-    width: fit-content;
-    min-height: 1.75rem;
-    display: inline-flex;
-    align-items: center;
-    padding: 0 0.6rem;
-    border-radius: 999px;
-    color: #287c5f;
-    background: var(--green-soft);
-    font-size: 0.72rem;
-    font-weight: 800;
-}
-
-.bncc-card h3 {
-    margin: 0;
-    font-size: 1rem;
-}
-
-.bncc-card dl {
-    display: grid;
-    gap: 0.72rem;
-    margin: 0;
-}
-
-.bncc-card dt {
-    color: var(--primary-dark);
-    font-size: 0.72rem;
-    font-weight: 800;
-    text-transform: uppercase;
-}
-
-.bncc-card dd {
-    margin: 0.2rem 0 0;
-    color: var(--muted);
-    font-size: 0.86rem;
-    line-height: 1.55;
-    font-weight: 600;
-}
-
-.behavior-card h2,
 .ai-card h2 {
     margin-top: 0.25rem;
-}
-
-.tag-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.7rem;
-    margin-top: 1.15rem;
-}
-
-.tag {
-    display: inline-flex;
-    align-items: center;
-    min-height: 2.4rem;
-    padding: 0 0.85rem;
-    border-radius: 999px;
-    font-size: 0.84rem;
-    font-weight: 800;
-}
-
-.tag--blue {
-    color: #2479b6;
-    background: var(--blue-soft);
-}
-
-.tag--green {
-    color: #287c5f;
-    background: var(--green-soft);
-}
-
-.tag--purple {
-    color: #6751b8;
-    background: var(--purple-soft);
-}
-
-.tag--yellow {
-    color: #8b6b16;
-    background: var(--yellow-soft);
-}
-
-.tag--pink {
-    color: #a24b70;
-    background: var(--pink-soft);
 }
 
 .ai-card {
     position: relative;
     overflow: hidden;
+    margin-top: 1.25rem;
 }
 
 .ai-card p:last-child {
@@ -657,15 +522,11 @@ textarea {
 }
 
 .game-report-card,
-.bncc-card,
 .teacher-notes textarea {
     border-radius: var(--radius);
 }
 
-.game-report-card__meta span,
-.bncc-rights span,
-.bncc-card__tag,
-.tag {
+.game-report-card__meta span {
     border-radius: 0.75rem;
 }
 
@@ -687,14 +548,6 @@ textarea {
     content: "\2193";
 }
 
-#shareButton span::before {
-    content: "\2197";
-}
-
-#exportButton span::before {
-    content: "\21D3";
-}
-
 .action-button--ghost span::before {
     content: "\2190";
 }
@@ -714,15 +567,13 @@ textarea {
     }
 
     .student-card,
-    .charts-grid,
-    .two-column {
+    .charts-grid {
         grid-template-columns: 1fr;
     }
 
     .student-info,
     .evolution-grid,
-    .games-report-grid,
-    .bncc-grid {
+    .games-report-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
@@ -741,8 +592,7 @@ textarea {
 
     .student-info,
     .evolution-grid,
-    .games-report-grid,
-    .bncc-grid {
+    .games-report-grid {
         grid-template-columns: 1fr;
     }
 

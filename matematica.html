@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INKLUAtech | Matem&aacute;tica Visual</title>
+    <link rel="stylesheet" href="home.css">
+</head>
+<body class="math-page">
+    <main class="math-shell">
+        <header class="math-topbar">
+            <a class="brand" href="home.html">
+                <img src="assets/ink-logo.png" alt="Logo Inklua Tech">
+                <span>Inklua Tech</span>
+            </a>
+            <a class="topbar-button" href="home.html#jogos">Voltar aos jogos</a>
+        </header>
+
+        <section class="math-focus" aria-labelledby="math-title">
+            <div class="math-intro">
+                <p class="eyebrow">Jogo adaptativo</p>
+                <h1 id="math-title">Matem&aacute;tica Visual</h1>
+                <p>Resolva atividades com objetos, fases, voz suave opcional e apoio visual.</p>
+            </div>
+
+            <div class="math-layout">
+                <section class="math-board" aria-labelledby="mathQuestionTitle">
+                    <div class="math-guide" aria-live="polite">
+                        <span aria-hidden="true">IA</span>
+                        <strong id="guideMessage">Observe os objetos e escolha a resposta.</strong>
+                    </div>
+
+                    <div class="math-progress" aria-label="Progresso da fase">
+                        <span id="mathProgressBar"></span>
+                    </div>
+
+                    <div class="math-question">
+                        <span id="mathModeLabel">Contagem</span>
+                        <h2 id="mathQuestionTitle">Quantos objetos aparecem?</h2>
+                        <p id="mathExpression">Conte com calma.</p>
+                    </div>
+
+                    <div class="math-visual-scene" id="visualScene" aria-label="Objetos da atividade"></div>
+                    <div class="math-options" id="mathOptions" aria-label="Op&ccedil;&otilde;es de resposta"></div>
+                    <p class="game-feedback" id="mathFeedback" aria-live="polite"></p>
+
+                    <div class="math-action-row">
+                        <button class="math-soft-button" id="helpButton" type="button">Ajuda visual</button>
+                        <button class="math-soft-button" id="repeatButton" type="button">Ouvir de novo</button>
+                        <button class="math-soft-button" id="nextButton" type="button">Pr&oacute;xima atividade</button>
+                    </div>
+                </section>
+
+                <aside class="math-side-panel" aria-label="Prefer&ecirc;ncias e progresso">
+                    <section>
+                        <h2>Prefer&ecirc;ncias</h2>
+                        <label for="themeSelect">Figura</label>
+                        <select id="themeSelect">
+                            <option value="macas">Ma&ccedil;&atilde;s</option>
+                        </select>
+
+                        <label><input type="checkbox" id="voiceToggle" checked> Narra&ccedil;&atilde;o suave</label>
+                        <label><input type="checkbox" id="soundToggle" checked> Sons suaves</label>
+                        <label for="volumeControl">Volume</label>
+                        <input id="volumeControl" type="range" min="0" max="1" step="0.1" value="0.6">
+                    </section>
+
+                    <section>
+                        <h2>Acompanhamento</h2>
+                        <div class="math-report-grid">
+                            <div><span>Fase</span><strong id="panelLevel">1</strong></div>
+                            <div><span>Acertos</span><strong id="panelCorrect">0</strong></div>
+                            <div><span>Erros</span><strong id="panelWrong">0</strong></div>
+                            <div><span>Acerto</span><strong id="panelAccuracy">0%</strong></div>
+                            <div><span>Dificuldade</span><strong id="panelDifficulty">1</strong></div>
+                            <div><span>Medalha</span><strong id="panelMedal">Inicio</strong></div>
+                        </div>
+                    </section>
+                </aside>
+            </div>
+        </section>
+    </main>
+
+    <script src="game-progress.js"></script>
+    <script src="matematica.js"></script>
+</body>
+</html>

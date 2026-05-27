@@ -19,7 +19,6 @@
                 <a href="#formulario">Formul&aacute;rio</a>
                 <a href="#relatorio">Relat&oacute;rio</a>
                 <a href="#jogos">Jogos</a>
-                <a href="#aprendizado">Aprendizado</a>
                 <a href="#rotina">Rotina</a>
                 <a href="#apoio">Apoio</a>
             </nav>
@@ -48,7 +47,7 @@
                     <div class="welcome-actions" aria-label="Atalhos de in&iacute;cio">
                         <a href="#jogos">Come&ccedil;ar pelos jogos</a>
                         <a href="#rotina">Ver rotina</a>
-                        <a href="#aprendizado">Trilhas educativas</a>
+                        <a href="#jogos">Ver jogos</a>
                     </div>
                 </div>
 
@@ -57,7 +56,7 @@
                     <span class="overview-icon overview-icon--blue">1</span>
                     <div>
                         <strong>Atividades de hoje</strong>
-                        <p>9 jogos recomendados</p>
+                        <p>6 jogos recomendados</p>
                     </div>
                 </article>
                 <article class="overview-card">
@@ -86,6 +85,41 @@
                 </div>
 
                 <form class="platform-form" action="#formulario" method="get" data-local-form>
+                    <h3 class="form-subtitle">Dados do respons&aacute;vel</h3>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="platform-responsavel-nome">Nome completo</label>
+                            <input type="text" id="platform-responsavel-nome" name="responsavel_nome" placeholder="Nome do respons&aacute;vel" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="platform-responsavel-vinculo">V&iacute;nculo com o aluno</label>
+                            <select id="platform-responsavel-vinculo" name="responsavel_vinculo">
+                                <option value="">Selecione</option>
+                                <option value="mae">M&atilde;e</option>
+                                <option value="pai">Pai</option>
+                                <option value="responsavel">Respons&aacute;vel legal</option>
+                                <option value="terapeuta">Terapeuta</option>
+                                <option value="professor">Professor(a)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <h3 class="form-subtitle">Perfil do aluno</h3>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="platform-aluno-nome">Nome do aluno</label>
+                            <input type="text" id="platform-aluno-nome" name="aluno_nome" placeholder="Nome do aluno" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="platform-aluno-idade">Idade</label>
+                            <input type="number" id="platform-aluno-idade" name="aluno_idade" min="1" max="99" placeholder="Idade">
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <label for="platform-nivel-suporte">1&deg; Qual o n&iacute;vel de suporte do estudante?</label>
                         <select id="platform-nivel-suporte" name="nivel_suporte">
@@ -95,6 +129,21 @@
                             <option value="nivel-3">N&iacute;vel 3 - necessita de apoio muito substancial</option>
                             <option value="nao-informado">N&atilde;o sei informar</option>
                         </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="platform-forma-aprendizado">Forma de aprendizado registrada no cadastro</label>
+                        <textarea id="platform-forma-aprendizado" name="forma_aprendizado" rows="3" placeholder="Ex.: imagens, sons, textos curtos, jogos, atividades pr&aacute;ticas"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="platform-comunicacao">Comunica&ccedil;&atilde;o registrada no cadastro</label>
+                        <textarea id="platform-comunicacao" name="comunicacao" rows="3" placeholder="Ex.: fala, gestos, figuras, escrita, comunica&ccedil;&atilde;o alternativa"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="platform-desconfortos">Situa&ccedil;&otilde;es de desconforto, ansiedade ou distra&ccedil;&atilde;o</label>
+                        <textarea id="platform-desconfortos" name="desconfortos" rows="3" placeholder="Ex.: barulho, mudan&ccedil;a de rotina, espera, excesso de comandos, telas muito cheias"></textarea>
                     </div>
 
                     <div class="form-group">
@@ -228,7 +277,7 @@
                     </div>
 
                     <div class="form-group">
-                        <span class="form-label">16&deg; Quais habilidades o respons&aacute;vel, professor ou terapeuta deseja desenvolver com maior prioridade?</span>
+                        <span class="form-label">16&deg; Quais habilidades o respons&aacute;vel, professor ou terapeuta precisa desenvolver com maior prioridade?</span>
                         <div class="check-grid">
                             <label><input type="checkbox" name="prioridades[]" value="fala"> Fala</label>
                             <label><input type="checkbox" name="prioridades[]" value="coordenacao"> Coordena&ccedil;&atilde;o</label>
@@ -266,17 +315,17 @@
 
                 <div class="report-summary">
                     <article class="report-card">
-                        <span class="report-card__number">8</span>
+                        <span class="report-card__number">6</span>
                         <div>
                             <strong>Jogos educativos</strong>
-                            <p>Emo&ccedil;&otilde;es, rotina, cores, formas, alfabeto, vogais, s&iacute;labas e n&uacute;meros.</p>
+                            <p>Cores, alfabeto, vogais, s&iacute;labas, n&uacute;meros e matem&aacute;tica visual.</p>
                         </div>
                     </article>
                     <article class="report-card">
                         <span class="report-card__number">3</span>
                         <div>
-                            <strong>Trilhas educativas</strong>
-                            <p>Comunica&ccedil;&atilde;o alternativa, matem&aacute;tica visual e leitura com imagens.</p>
+                            <strong>Jogos de apoio</strong>
+                            <p>Comunica&ccedil;&atilde;o, matem&aacute;tica visual e leitura com imagens dentro dos jogos.</p>
                         </div>
                     </article>
                     <article class="report-card">
@@ -291,26 +340,26 @@
                 <div class="report-grid">
                     <article class="report-panel">
                         <h3>Desenvolvimento por &aacute;rea</h3>
-                        <div class="skill-progress">
+                        <div class="skill-progress" data-development-area="percepcao">
                             <div class="skill-progress__row">
                                 <span>Jogos de percep&ccedil;&atilde;o</span>
-                                <strong>70%</strong>
+                                <strong data-development-value>0%</strong>
                             </div>
-                            <span class="skill-progress__bar"><span style="width: 70%"></span></span>
+                            <span class="skill-progress__bar"><span data-development-bar style="width: 0%"></span></span>
                         </div>
-                        <div class="skill-progress">
+                        <div class="skill-progress" data-development-area="linguagem">
                             <div class="skill-progress__row">
-                                <span>Comunica&ccedil;&atilde;o e emo&ccedil;&otilde;es</span>
-                                <strong>60%</strong>
+                                <span>Comunica&ccedil;&atilde;o e linguagem</span>
+                                <strong data-development-value>0%</strong>
                             </div>
-                            <span class="skill-progress__bar"><span style="width: 60%"></span></span>
+                            <span class="skill-progress__bar"><span data-development-bar style="width: 0%"></span></span>
                         </div>
-                        <div class="skill-progress">
+                        <div class="skill-progress" data-development-area="matematica">
                             <div class="skill-progress__row">
-                                <span>Rotina e autonomia</span>
-                                <strong>45%</strong>
+                                <span>Matem&aacute;tica e n&uacute;meros</span>
+                                <strong data-development-value>0%</strong>
                             </div>
-                            <span class="skill-progress__bar"><span style="width: 45%"></span></span>
+                            <span class="skill-progress__bar"><span data-development-bar style="width: 0%"></span></span>
                         </div>
                     </article>
 
@@ -329,7 +378,7 @@
                     <div class="report-metrics-grid" aria-label="Resumo consolidado dos jogos">
                         <article class="report-metric-card">
                             <span>Atividades conclu&iacute;das</span>
-                            <strong id="completedActivitiesMetric">0 de 8</strong>
+                            <strong id="completedActivitiesMetric">0 de 6</strong>
                             <p id="completedActivitiesText">Acompanhamento das atividades finalizadas.</p>
                         </article>
                         <article class="report-metric-card">
@@ -372,7 +421,7 @@
                 <article class="report-panel report-panel--wide">
                     <h3>Como acompanhar dentro da plataforma</h3>
                     <ul class="report-timeline">
-                        <li><strong>Jogos:</strong> observe interesse, autonomia e reconhecimento em emo&ccedil;&otilde;es, cores, formas, letras, vogais, s&iacute;labas e n&uacute;meros.</li>
+                        <li><strong>Jogos:</strong> observe interesse, autonomia e reconhecimento em cores, letras, vogais, s&iacute;labas, n&uacute;meros e matem&aacute;tica visual.</li>
                         <li><strong>Aprendizado:</strong> use as trilhas de comunica&ccedil;&atilde;o alternativa, matem&aacute;tica visual e leitura com imagens para refor&ccedil;ar habilidades.</li>
                         <li><strong>Rotina e apoio:</strong> compare o desempenho com as prefer&ecirc;ncias, sensibilidades e estrat&eacute;gias registradas no formul&aacute;rio.</li>
                     </ul>
@@ -389,35 +438,11 @@
 
                 <div class="game-grid">
                     <article class="game-card">
-                        <span class="game-visual game-visual--emotions" aria-hidden="true">:)</span>
-                        <span class="game-badge">Emo&ccedil;&otilde;es</span>
-                        <h3><span class="card-icon card-icon--emotion" aria-hidden="true"></span>Jogo das Emo&ccedil;&otilde;es</h3>
-                        <p>Associe express&otilde;es, sentimentos e situa&ccedil;&otilde;es do cotidiano.</p>
-                        <a class="game-button" href="emocoes.html">Jogar</a>
-                    </article>
-
-                    <article class="game-card">
-                        <span class="game-visual game-visual--routine" aria-hidden="true">1-2</span>
-                        <span class="game-badge game-badge--mint">Rotina</span>
-                        <h3><span class="card-icon card-icon--routine" aria-hidden="true"></span>Sequ&ecirc;ncia da Rotina</h3>
-                        <p>Organize passos como chegada, atividade, pausa e finaliza&ccedil;&atilde;o.</p>
-                        <a class="game-button" href="rotina-jogo.html">Jogar</a>
-                    </article>
-
-                    <article class="game-card">
                         <span class="game-visual game-visual--colors" aria-hidden="true"></span>
                         <span class="game-badge game-badge--yellow">Percep&ccedil;&atilde;o</span>
                         <h3><span class="card-icon card-icon--colors" aria-hidden="true"></span>Jogo das Cores</h3>
                         <p>Toque em uma cor para ouvir seu nome em voz alta.</p>
                         <a class="game-button" href="cores.html">Jogar</a>
-                    </article>
-
-                    <article class="game-card">
-                        <span class="game-visual game-visual--shapes" aria-hidden="true"></span>
-                        <span class="game-badge game-badge--yellow">Formas</span>
-                        <h3><span class="card-icon card-icon--shapes" aria-hidden="true"></span>Formas Faladas</h3>
-                        <p>Toque em uma forma geom&eacute;trica para ouvir seu nome.</p>
-                        <a class="game-button" href="formas.html">Jogar</a>
                     </article>
 
                     <article class="game-card">
@@ -453,33 +478,26 @@
                     </article>
 
                     <article class="game-card">
-                        <span class="game-visual game-visual--math" aria-hidden="true">2+3</span>
+                        <span class="game-visual game-visual--math" aria-hidden="true">
+                            <span class="game-math-scene">
+                                <span class="game-math-group">
+                                    <span></span>
+                                    <span></span>
+                                </span>
+                                <span class="game-math-symbol">+</span>
+                                <span class="game-math-group game-math-group--second">
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                </span>
+                                <span class="game-math-symbol">=</span>
+                                <span class="game-math-result">5</span>
+                            </span>
+                        </span>
                         <span class="game-badge game-badge--mint">Matem&aacute;tica</span>
                         <h3><span class="card-icon card-icon--math" aria-hidden="true"></span>Matem&aacute;tica Visual</h3>
                         <p>Resolva contagem, opera&ccedil;&otilde;es e sequ&ecirc;ncias com apoio visual adaptativo.</p>
                         <a class="game-button" href="matematica.html">Jogar</a>
-                    </article>
-                </div>
-            </section>
-
-            <section class="section-block platform-view" id="aprendizado" data-view="aprendizado" aria-labelledby="learning-title">
-                <p class="eyebrow">Aprendizado</p>
-                <h2 id="learning-title">Trilhas educativas</h2>
-                <div class="learning-list">
-                    <article>
-                        <span class="learning-visual learning-visual--communication" aria-hidden="true">Oi</span>
-                        <strong><span class="card-icon card-icon--communication" aria-hidden="true"></span>Comunica&ccedil;&atilde;o alternativa</strong>
-                        <p>Cart&otilde;es visuais para expressar necessidades e escolhas.</p>
-                    </article>
-                    <article>
-                        <span class="learning-visual learning-visual--math" aria-hidden="true">5</span>
-                        <strong><span class="card-icon card-icon--math" aria-hidden="true"></span>Matem&aacute;tica visual</strong>
-                        <p>Contagem, compara&ccedil;&atilde;o e associa&ccedil;&atilde;o com apoio visual.</p>
-                    </article>
-                    <article>
-                        <span class="learning-visual learning-visual--reading" aria-hidden="true">A</span>
-                        <strong><span class="card-icon card-icon--reading" aria-hidden="true"></span>Leitura e imagens</strong>
-                        <p>Palavras, figuras e frases curtas com refor&ccedil;o positivo.</p>
                     </article>
                 </div>
             </section>

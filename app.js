@@ -8,7 +8,7 @@ const gameCards = document.querySelectorAll("[data-activity]");
 const platformViews = document.querySelectorAll("[data-view]");
 const navLinks = document.querySelectorAll(".nav-menu a[href^='#']");
 
-const availableViews = ["inicio", "formulario", "relatorio", "jogos", "aprendizado", "rotina", "apoio"];
+const availableViews = ["inicio", "formulario", "relatorio", "jogos", "rotina", "apoio"];
 
 const showPlatformView = (viewName = "inicio") => {
     const nextView = availableViews.includes(viewName) ? viewName : "inicio";
@@ -68,16 +68,6 @@ window.addEventListener("popstate", () => {
 });
 
 const activityContent = {
-    emocoes: {
-        title: "Jogo das Emo&ccedil;&otilde;es",
-        text: "Escolha como a pessoa pode estar se sentindo nesta situa&ccedil;&atilde;o: chegou em um lugar com muito barulho.",
-        choices: ["Feliz", "Assustado", "Com sono", "Com fome"]
-    },
-    rotina: {
-        title: "Sequ&ecirc;ncia da Rotina",
-        text: "Organize mentalmente a rotina de hoje. Qual etapa vem depois da chegada?",
-        choices: ["Pausa", "Atividade", "Ir embora", "Dormir"]
-    },
     cores: {
         title: "Jogo das Cores",
         text: "Toque em uma cor para ouvir seu nome em voz alta.",
@@ -471,16 +461,16 @@ const renderReportRecommendations = (answers) => {
     if (includesAny(answers.prioridades, ["fala", "leitura", "socializacao"]) || includesAny(answers.comunicacao_melhor, ["fala", "gestos", "imagens", "comunicacao-alternativa"])) {
         recommendations.push({
             title: "Comunica\u00e7\u00e3o e express\u00e3o",
-            text: "Priorize emo\u00e7\u00f5es, vogais, s\u00edlabas e alfabeto para trabalhar escolhas, escuta, fala e comunica\u00e7\u00e3o alternativa.",
+            text: "Priorize vogais, s\u00edlabas e alfabeto para trabalhar escolhas, escuta, fala e comunica\u00e7\u00e3o alternativa.",
             href: "#jogos",
             action: "Ver jogos"
         });
     }
 
-    if (includesAny(answers.conteudos_reconhecidos, ["cores", "formas", "numeros"]) || includesAny(answers.atividade_funciona, ["associacao-imagens", "jogos"])) {
+    if (includesAny(answers.conteudos_reconhecidos, ["cores", "numeros"]) || includesAny(answers.atividade_funciona, ["associacao-imagens", "jogos"])) {
         recommendations.push({
             title: "Percep\u00e7\u00e3o visual e matem\u00e1tica",
-            text: "Use cores, formas e n\u00fameros para refor\u00e7ar reconhecimento, associa\u00e7\u00e3o, contagem e compara\u00e7\u00e3o.",
+            text: "Use cores, n\u00fameros e matem\u00e1tica visual para refor\u00e7ar reconhecimento, associa\u00e7\u00e3o, contagem e compara\u00e7\u00e3o.",
             href: "#jogos",
             action: "Praticar percep\u00e7\u00e3o"
         });
@@ -526,6 +516,15 @@ const readGameProgress = () => {
     } catch (error) {
         return { games: {}, sessions: [] };
     }
+};
+
+const hiddenGameIds = ["emocoes", "checkin-emocional", "rotina", "formas"];
+const isVisibleGame = (game) => !hiddenGameIds.includes(game.id || game.gameId || "");
+
+const developmentAreas = {
+    percepcao: ["cores"],
+    linguagem: ["alfabeto", "vogais", "silabas"],
+    matematica: ["numeros", "matematica-visual"]
 };
 
 const getDaysBetween = (dateString) => {
@@ -620,12 +619,51 @@ const updateProgressCountFromGames = (completedGames) => {
     }
 };
 
+const getGameDevelopmentScore = (game) => {
+    if (!game) {
+        return 0;
+    }
+
+    const totalItems = Math.max(Number(game.totalItems) || 1, 1);
+    const exploredItems = Math.min(game.items?.length || 0, totalItems);
+    const itemProgress = exploredItems / totalItems;
+    const answered = (game.correct || 0) + (game.wrong || 0);
+    const accuracy = answered ? (game.correct || 0) / answered : itemProgress;
+    const completion = game.completed ? 1 : 0;
+
+    return Math.round((itemProgress * 50) + (accuracy * 30) + (completion * 20));
+};
+
+const getAreaDevelopmentScore = (gameMap, gameIds) => {
+    const scores = gameIds.map((gameId) => getGameDevelopmentScore(gameMap.get(gameId)));
+    const total = scores.reduce((sum, score) => sum + score, 0);
+
+    return Math.round(total / Math.max(scores.length, 1));
+};
+
+const renderDevelopmentAreas = (games) => {
+    const gameMap = new Map(games.map((game) => [game.id, game]));
+
+    document.querySelectorAll("[data-development-area]").forEach((area) => {
+        const areaName = area.dataset.developmentArea || "";
+        const score = getAreaDevelopmentScore(gameMap, developmentAreas[areaName] || []);
+        const value = area.querySelector("[data-development-value]");
+        const bar = area.querySelector("[data-development-bar]");
+
+        value?.replaceChildren(document.createTextNode(`${score}%`));
+
+        if (bar instanceof HTMLElement) {
+            bar.style.width = `${score}%`;
+        }
+    });
+};
+
 const renderConsolidatedReport = () => {
     const progress = readGameProgress();
-    const games = Object.values(progress.games || {});
-    const sessions = progress.sessions || [];
+    const games = Object.values(progress.games || {}).filter(isVisibleGame);
+    const sessions = (progress.sessions || []).filter(isVisibleGame);
     const completedGames = games.filter((game) => game.completed).length;
-    const totalGames = Math.max(games.length, 8);
+    const totalGames = Math.max(games.length, 6);
     const answeredSessions = sessions.filter((session) => typeof session.correct === "boolean");
     const correctSessions = answeredSessions.filter((session) => session.correct).length;
     const accuracy = answeredSessions.length ? Math.round((correctSessions / answeredSessions.length) * 100) : 0;
@@ -661,6 +699,7 @@ const renderConsolidatedReport = () => {
         mostUsedSkill
     })));
 
+    renderDevelopmentAreas(games);
     updateProgressCountFromGames(completedGames);
 };
 

@@ -16,8 +16,10 @@ const readGameProgress = () => {
 };
 
 const gameProgress = readGameProgress();
-const games = Object.values(gameProgress.games || {});
-const sessions = gameProgress.sessions || [];
+const hiddenGameIds = ["emocoes", "checkin-emocional", "rotina", "formas"];
+const isVisibleGame = (game) => !hiddenGameIds.includes(game.id || game.gameId || "");
+const games = Object.values(gameProgress.games || {}).filter(isVisibleGame);
+const sessions = (gameProgress.sessions || []).filter(isVisibleGame);
 
 const readSavedProfile = () => {
     try {
@@ -57,7 +59,6 @@ const supportLabels = {
 const studentProfile = {
     name: firstFilled(serverProfile.aluno_nome, savedProfile.aluno_nome, "Aluno"),
     age: firstFilled(serverProfile.aluno_idade, savedProfile.aluno_idade),
-    grade: firstFilled(serverProfile.serie, savedProfile.serie, "Nao informado"),
     supportLevel: supportLabels[firstFilled(serverProfile.nivel_suporte, savedProfile.nivel_suporte)] || firstFilled(serverProfile.nivel_suporte, savedProfile.nivel_suporte, "Nao informado"),
     guardian: firstFilled(serverProfile.responsavel_nome, savedProfile.responsavel_nome, "Responsavel nao informado"),
     reportDate: firstFilled(serverProfile.report_date, new Date().toLocaleDateString("pt-BR")),
@@ -90,7 +91,6 @@ const renderStudentProfile = () => {
     setText("studentInitials", getInitials(studentProfile.name));
     setText("student-name", studentProfile.name);
     setText("studentAge", studentProfile.age ? `${studentProfile.age} anos` : "Nao informado");
-    setText("studentGrade", studentProfile.grade);
     setText("studentSupport", studentProfile.supportLevel);
     setText("studentGuardian", studentProfile.guardian);
     setText("reportDate", studentProfile.reportDate);
@@ -98,7 +98,7 @@ const renderStudentProfile = () => {
     const studentSummary = document.getElementById("studentSummary");
     if (studentSummary) {
         const learningText = formatList(studentProfile.learningStyle) || "atividades visuais e jogos educativos";
-        studentSummary.textContent = `Relatorio pedagogico de ${studentProfile.name}, com acompanhamento de ${learningText} e indicadores de desenvolvimento dentro da plataforma.`;
+        studentSummary.textContent = `Resumo pedagogico de ${studentProfile.name}, com acompanhamento de ${learningText}.`;
     }
 
     const teacherNotes = document.getElementById("teacherNotes");
@@ -114,28 +114,6 @@ const renderStudentProfile = () => {
             teacherNotes.value = notes;
         }
     }
-};
-
-const renderBehaviorTags = () => {
-    const tagList = document.getElementById("behaviorTags");
-
-    if (!tagList) {
-        return;
-    }
-
-    const profileTags = [
-        ...normalizeList(studentProfile.learningStyle).slice(0, 2),
-        ...normalizeList(studentProfile.attentionElements).slice(0, 2),
-        ...normalizeList(studentProfile.sensitivities).slice(0, 2),
-        ...normalizeList(studentProfile.communication).slice(0, 2)
-    ];
-
-    const tags = profileTags.length ? profileTags : ["Calmo", "Focado", "Interativo", "Dificuldade sensorial", "Comunicacao ativa"];
-    const classes = ["tag--blue", "tag--green", "tag--purple", "tag--yellow", "tag--pink"];
-
-    tagList.innerHTML = tags.slice(0, 6).map((tag, index) => `
-        <span class="tag ${classes[index % classes.length]}">${tag.replace(/-/g, " ")}</span>
-    `).join("");
 };
 
 const renderAutomaticReport = () => {
@@ -204,44 +182,10 @@ const getWeeklyEvolution = () => {
     });
 };
 
-const bnccAlignment = [
-    {
-        title: "Comunicacao, escuta e expressao",
-        activities: "Emocoes, silabas, alfabeto, vogais e comunicacao alternativa",
-        bncc: "Competencia geral 4: comunicacao. Campos de experiencia: escuta, fala, pensamento e imaginacao; o eu, o outro e o nos.",
-        evidence: "Observa escolhas, respostas a comandos curtos, nomeacao de letras/sons e expressao de sentimentos."
-    },
-    {
-        title: "Pensamento matematico e percepcao visual",
-        activities: "Numeros, cores, formas e matematica visual",
-        bncc: "Competencia geral 2: pensamento cientifico, critico e criativo. Campo de experiencia: espacos, tempos, quantidades, relacoes e transformacoes.",
-        evidence: "Observa reconhecimento, comparacao, associacao visual, contagem e resolucao de pequenas escolhas."
-    },
-    {
-        title: "Autonomia, rotina e autorregulacao",
-        activities: "Sequencia da rotina, pausa sensorial e apoio visual",
-        bncc: "Competencias gerais 8 e 10: autoconhecimento, autocuidado, responsabilidade e cidadania. Campo de experiencia: o eu, o outro e o nos.",
-        evidence: "Observa previsibilidade, transicao entre etapas, necessidade de apoio e estrategias que favorecem participacao."
-    },
-    {
-        title: "Corpo, gestos e interacao",
-        activities: "Jogos de toque, escolha, coordenacao e participacao",
-        bncc: "Competencia geral 9: empatia e cooperacao. Campo de experiencia: corpo, gestos e movimentos.",
-        evidence: "Observa iniciativa, atencao compartilhada, interacao com o adulto e resposta motora aos estimulos da tela."
-    },
-    {
-        title: "Tracos, sons, cores e formas",
-        activities: "Cores, formas, sons de letras e atividades com audio",
-        bncc: "Campo de experiencia: tracos, sons, cores e formas. Competencia geral 3: repertorio cultural.",
-        evidence: "Observa exploracao sensorial, discriminacao visual/auditiva e preferencia por estimulos suaves ou personagens."
-    }
-];
-
 const reportData = {
     student: {
         name: "Lucas Andrade",
         age: "8 anos",
-        grade: "3º ano",
         supportLevel: "Nível 1",
         guardian: "Mariana Andrade",
         date: "25/05/2026"
@@ -256,7 +200,6 @@ const reportData = {
     ],
     weekly: getWeeklyEvolution(),
     activities: getActivityDistribution(),
-    bnccAlignment,
     skills: [
         getSkillScore("Comunicação"),
         getSkillScore("Coordenação motora"),
@@ -270,7 +213,6 @@ const reportData = {
 reportData.student = {
     name: studentProfile.name,
     age: studentProfile.age,
-    grade: studentProfile.grade,
     supportLevel: studentProfile.supportLevel,
     guardian: studentProfile.guardian,
     date: studentProfile.reportDate,
@@ -278,7 +220,6 @@ reportData.student = {
 };
 
 renderStudentProfile();
-renderBehaviorTags();
 renderAutomaticReport();
 
 const icons = {
@@ -372,38 +313,13 @@ if (gamesReportGrid) {
         gamesReportGrid.innerHTML = `
             <article class="game-report-card">
                 <strong>Nenhum jogo registrado ainda</strong>
-                <p>Ao jogar cores, formas, letras, silabas, numeros, rotina ou emocoes, os dados aparecerao automaticamente neste relatorio.</p>
+                <p>Ao jogar cores, letras, silabas, numeros ou matematica visual, os dados aparecerao automaticamente neste relatorio.</p>
                 <div class="game-report-card__meta">
                     <span>Aguardando atividades</span>
                 </div>
             </article>
         `;
     }
-}
-
-const bnccGrid = document.getElementById("bnccGrid");
-
-if (bnccGrid) {
-    bnccGrid.innerHTML = bnccAlignment.map((item) => `
-        <article class="bncc-card">
-            <span class="bncc-card__tag">BNCC</span>
-            <h3>${item.title}</h3>
-            <dl>
-                <div>
-                    <dt>Atividades relacionadas</dt>
-                    <dd>${item.activities}</dd>
-                </div>
-                <div>
-                    <dt>Referencia BNCC</dt>
-                    <dd>${item.bncc}</dd>
-                </div>
-                <div>
-                    <dt>Evidencias observaveis</dt>
-                    <dd>${item.evidence}</dd>
-                </div>
-            </dl>
-        </article>
-    `).join("");
 }
 
 const chartOptions = {
@@ -518,42 +434,6 @@ const createCharts = () => {
 
 createCharts();
 
-const getNotes = () => document.getElementById("teacherNotes")?.value.trim() || "";
-
 document.getElementById("pdfButton")?.addEventListener("click", () => {
     window.print();
-});
-
-document.getElementById("shareButton")?.addEventListener("click", async () => {
-    const shareData = {
-        title: "Relatório Educacional INKLUA Tech",
-        text: `Relatório educacional de ${reportData.student.name}.`,
-        url: window.location.href
-    };
-
-    if (navigator.share) {
-        await navigator.share(shareData);
-        return;
-    }
-
-    await navigator.clipboard?.writeText(window.location.href);
-    alert("Link do relatório copiado.");
-});
-
-document.getElementById("exportButton")?.addEventListener("click", () => {
-    const payload = {
-        ...reportData,
-        gameProgress,
-        teacherNotes: getNotes(),
-        exportedAt: new Date().toISOString()
-    };
-
-    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-
-    link.href = url;
-    link.download = "relatorio-educacional-inklua-tech.json";
-    link.click();
-    URL.revokeObjectURL(url);
 });
