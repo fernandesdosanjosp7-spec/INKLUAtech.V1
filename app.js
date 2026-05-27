@@ -43,6 +43,18 @@ const goToPlatformView = (viewName) => {
 
 const getViewFromHash = () => window.location.hash.replace("#", "") || "inicio";
 
+const syncPlatformViewFromHash = () => {
+    const viewName = getViewFromHash();
+
+    showPlatformView(viewName);
+
+    if (viewName === "jogos") {
+        window.setTimeout(() => {
+            document.getElementById("jogos")?.scrollIntoView({ block: "start" });
+        }, 80);
+    }
+};
+
 navLinks.forEach((link) => {
     link.addEventListener("click", (event) => {
         const href = link.getAttribute("href") || "#inicio";
@@ -57,14 +69,14 @@ navLinks.forEach((link) => {
     });
 });
 
-showPlatformView(getViewFromHash());
+syncPlatformViewFromHash();
 
 window.addEventListener("hashchange", () => {
-    showPlatformView(getViewFromHash());
+    syncPlatformViewFromHash();
 });
 
 window.addEventListener("popstate", () => {
-    showPlatformView(getViewFromHash());
+    syncPlatformViewFromHash();
 });
 
 const moodStorageKey = "inklua_daily_mood_v1";
@@ -743,9 +755,15 @@ const renderConsolidatedReport = () => {
     const completedGames = games.filter((game) => game.completed).length;
     const totalGames = Math.max(games.length, 6);
     const answeredSessions = sessions.filter((session) => typeof session.correct === "boolean");
-    const correctSessions = answeredSessions.filter((session) => session.correct).length;
-    const wrongSessions = answeredSessions.filter((session) => session.correct === false).length;
-    const accuracy = answeredSessions.length ? Math.round((correctSessions / answeredSessions.length) * 100) : 0;
+    const correctTotal = games.reduce((sum, game) => sum + Math.max(Number(game.correct) || 0, 0), 0);
+    const wrongTotal = games.reduce((sum, game) => sum + Math.max(Number(game.wrong) || 0, 0), 0);
+    const attemptsTotal = games.reduce((sum, game) => {
+        const correct = Math.max(Number(game.correct) || 0, 0);
+        const wrong = Math.max(Number(game.wrong) || 0, 0);
+
+        return sum + Math.max(Number(game.attempts) || 0, correct + wrong);
+    }, 0);
+    const accuracy = attemptsTotal ? Math.round((correctTotal / attemptsTotal) * 100) : 0;
     const maxLevel = games.reduce((level, game) => Math.max(level, Number(game.level) || 0), 0);
     const gameTimeMs = sessions.reduce((sum, session) => sum + Math.max(Number(session.responseTimeMs) || 0, 0), 0);
     const averageResponseMs = answeredSessions.length ? Math.round(gameTimeMs / answeredSessions.length) : 0;
@@ -768,10 +786,10 @@ const renderConsolidatedReport = () => {
     const usageLabel = getUsageLabel(activeDays, recentSessions.length);
     const developmentSummary = getDevelopmentSummary({ games, completedGames, accuracy, activeDays });
 
-    document.getElementById("attemptsMetric")?.replaceChildren(document.createTextNode(String(answeredSessions.length)));
+    document.getElementById("attemptsMetric")?.replaceChildren(document.createTextNode(String(attemptsTotal)));
     document.getElementById("attemptsMetricText")?.replaceChildren(document.createTextNode(`${games.length} jogo(s) com registro de uso.`));
-    document.getElementById("correctMetric")?.replaceChildren(document.createTextNode(String(correctSessions)));
-    document.getElementById("wrongMetric")?.replaceChildren(document.createTextNode(String(wrongSessions)));
+    document.getElementById("correctMetric")?.replaceChildren(document.createTextNode(String(correctTotal)));
+    document.getElementById("wrongMetric")?.replaceChildren(document.createTextNode(String(wrongTotal)));
     document.getElementById("accuracyMetric")?.replaceChildren(document.createTextNode(`${accuracy}%`));
     document.getElementById("accuracyMetricText")?.replaceChildren(document.createTextNode(`Maior nivel: ${maxLevel || "aguardando"}.`));
     document.getElementById("platformTimeMetric")?.replaceChildren(document.createTextNode(formatDuration(platformTimeMs)));

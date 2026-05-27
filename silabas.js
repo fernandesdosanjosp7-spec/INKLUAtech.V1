@@ -2,6 +2,7 @@ const syllableLetters = document.getElementById("syllableLetters");
 const syllableQuestion = document.getElementById("syllableQuestion");
 const syllableOptions = document.getElementById("syllableOptions");
 const syllableFeedback = document.getElementById("syllableFeedback");
+const syllablePrompt = document.getElementById("syllablePrompt");
 const syllableStep = document.getElementById("syllableStep");
 const syllableTotal = document.getElementById("syllableTotal");
 const nextSyllable = document.getElementById("nextSyllable");
@@ -28,6 +29,18 @@ const syllableRounds = [
     { letters: "G + O", answer: "GO", options: ["CO", "GU", "GO", "GA"], word: "go" },
     { letters: "J + A", answer: "JA", options: ["JA", "ZA", "JO", "GA"], word: "ja" },
     { letters: "V + E", answer: "VE", options: ["FE", "VE", "VA", "VO"], word: "ve" },
+    { letters: "BO + LA", answer: "BOLA", options: ["BOLA", "BOLO", "BALA", "BELA"], word: "bola", type: "word" },
+    { letters: "CA + SA", answer: "CASA", options: ["CASA", "CAMA", "CARA", "CAPA"], word: "casa", type: "word" },
+    { letters: "PA + TO", answer: "PATO", options: ["PATO", "POTE", "PATA", "GATO"], word: "pato", type: "word" },
+    { letters: "MA + LA", answer: "MALA", options: ["MALA", "MOLA", "MILA", "MATA"], word: "mala", type: "word" },
+    { letters: "BO + CA", answer: "BOCA", options: ["BOCA", "BOLA", "BOTA", "BOLO"], word: "boca", type: "word" },
+    { letters: "LU + A", answer: "LUA", options: ["LUA", "LIA", "LUAU", "RUA"], word: "lua", type: "word" },
+    { letters: "ME + SA", answer: "MESA", options: ["MESA", "MALA", "MUSA", "MOLA"], word: "mesa", type: "word" },
+    { letters: "DA + DO", answer: "DADO", options: ["DADO", "DEDO", "DIA", "DONA"], word: "dado", type: "word" },
+    { letters: "SA + PO", answer: "SAPO", options: ["SAPO", "SOPA", "SACO", "SINO"], word: "sapo", type: "word" },
+    { letters: "PI + PA", answer: "PIPA", options: ["PIPA", "PATO", "PIPO", "PENA"], word: "pipa", type: "word" },
+    { letters: "FO + CA", answer: "FOCA", options: ["FOCA", "FACA", "FITA", "FOTO"], word: "foca", type: "word" },
+    { letters: "VA + CA", answer: "VACA", options: ["VACA", "VILA", "VAGA", "VELA"], word: "vaca", type: "word" },
     { letters: "Z + I", answer: "ZI", options: ["SI", "ZA", "ZI", "ZO"], word: "zi" },
     { letters: "CH + A", answer: "CHA", options: ["CA", "CHA", "XA", "JA"], word: "cha" },
     { letters: "LH + O", answer: "LHO", options: ["LO", "LHO", "RO", "LHA"], word: "lho" },
@@ -62,10 +75,15 @@ const speakSyllable = (text) => {
 
     window.speechSynthesis.cancel();
 
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "pt-BR";
+    if (window.InkluaSpeech?.speak) {
+        window.InkluaSpeech.speak(text);
+        return;
+    }
+
+    const utterance = window.InkluaSpeech?.createUtterance(text) || new SpeechSynthesisUtterance(text);
+    utterance.lang = utterance.lang || "pt-BR";
     utterance.rate = 0.82;
-    utterance.pitch = 1;
+    utterance.pitch = 1.16;
     window.speechSynthesis.speak(utterance);
 };
 
@@ -87,11 +105,19 @@ const recordSyllable = (round, selected, isCorrect, completed = false) => {
 
 const renderRound = () => {
     const round = syllableRounds[currentRound];
+    const isWordRound = round.type === "word";
 
     canContinue = false;
     questionStartedAt = Date.now();
     syllableLetters.textContent = round.letters;
-    syllableQuestion.textContent = `Nivel ${getLevel()} - ${round.letters} forma...`;
+    if (syllablePrompt) {
+        syllablePrompt.textContent = isWordRound ? "Qual palavra forma?" : "Qual silaba forma?";
+    }
+    syllableQuestion.innerHTML = `
+        <span class="game-level-pill">Nivel ${getLevel()}</span>
+        <strong>${round.letters}</strong>
+        <small>${isWordRound ? "junta e forma..." : "forma..."}</small>
+    `;
     syllableFeedback.textContent = "";
     syllableStep.textContent = String(currentRound + 1);
     syllableTotal.textContent = String(syllableRounds.length);
@@ -101,7 +127,7 @@ const renderRound = () => {
         <button class="syllable-option" type="button" data-option="${option}">${option}</button>
     `).join("");
 
-    speakSyllable(`${round.letters}. Qual som forma?`);
+    speakSyllable(`${round.letters}. ${isWordRound ? "Qual palavra forma?" : "Qual som forma?"}`);
 };
 
 const finishGame = () => {

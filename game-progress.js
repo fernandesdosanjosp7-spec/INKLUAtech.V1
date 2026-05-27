@@ -1,9 +1,29 @@
 (function () {
     const storageKey = "inklua_game_progress_v1";
 
+    const normalizeProgress = (progress) => {
+        const normalized = progress || { games: {}, sessions: [] };
+        normalized.games = normalized.games || {};
+        normalized.sessions = Array.isArray(normalized.sessions) ? normalized.sessions : [];
+
+        Object.values(normalized.games).forEach((game) => {
+            const gameSessions = normalized.sessions.filter((session) => session.gameId === game.id && typeof session.correct === "boolean");
+            const sessionCorrect = gameSessions.filter((session) => session.correct === true).length;
+            const sessionWrong = gameSessions.filter((session) => session.correct === false).length;
+            const storedCorrect = Math.max(Number(game.correct) || 0, 0);
+            const storedWrong = Math.max(Number(game.wrong) || 0, 0);
+
+            game.correct = Math.max(storedCorrect, sessionCorrect);
+            game.wrong = Math.max(storedWrong, sessionWrong);
+            game.attempts = Math.max(Number(game.attempts) || 0, game.correct + game.wrong, gameSessions.length);
+        });
+
+        return normalized;
+    };
+
     const readProgress = () => {
         try {
-            return JSON.parse(localStorage.getItem(storageKey)) || { games: {}, sessions: [] };
+            return normalizeProgress(JSON.parse(localStorage.getItem(storageKey)) || { games: {}, sessions: [] });
         } catch (error) {
             return { games: {}, sessions: [] };
         }
@@ -36,6 +56,9 @@
             totalItems: payload.totalItems || 1,
             lastPlayed: null
         };
+        const previousCorrect = Math.max(Number(currentGame.correct) || 0, 0);
+        const previousWrong = Math.max(Number(currentGame.wrong) || 0, 0);
+        const previousAttempts = Math.max(Number(currentGame.attempts) || previousCorrect + previousWrong, previousCorrect + previousWrong, 0);
 
         currentGame.title = payload.title || currentGame.title;
         currentGame.skill = payload.skill || currentGame.skill;
@@ -43,9 +66,12 @@
         currentGame.maxLevel = payload.maxLevel || currentGame.maxLevel || 4;
         currentGame.interactions += 1;
         currentGame.lastPlayed = new Date().toISOString();
+        currentGame.correct = previousCorrect;
+        currentGame.wrong = previousWrong;
+        currentGame.attempts = previousAttempts;
 
         if (typeof payload.correct === "boolean") {
-            currentGame.attempts = (currentGame.attempts || 0) + 1;
+            currentGame.attempts += 1;
         }
 
         if (payload.item && payload.correct !== false && payload.item !== "finalizado") {

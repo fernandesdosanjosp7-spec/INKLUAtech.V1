@@ -2486,71 +2486,20 @@ button {
         linear-gradient(180deg, rgba(239, 248, 255, 0.78), rgba(255, 255, 255, 0.82));
 }
 
-.syllable-boy {
+.inklua-student-avatar {
     position: absolute;
     left: min(16%, 8rem);
-    bottom: 1.2rem;
-    width: 8.6rem;
-    height: 13rem;
-}
-
-.syllable-boy__hair,
-.syllable-boy__head,
-.syllable-boy__body,
-.syllable-boy__arm {
-    position: absolute;
-    display: block;
-}
-
-.syllable-boy__head {
-    left: 2.15rem;
-    top: 0.9rem;
-    width: 4.3rem;
+    bottom: 0.4rem;
+    width: clamp(8rem, 19vw, 12rem);
     aspect-ratio: 1;
-    border-radius: 50%;
-    background:
-        radial-gradient(circle at 34% 42%, #1f3348 0 0.16rem, transparent 0.18rem),
-        radial-gradient(circle at 64% 42%, #1f3348 0 0.16rem, transparent 0.18rem),
-        radial-gradient(ellipse at 50% 66%, transparent 0 0.62rem, rgba(31, 51, 72, 0.72) 0.65rem 0.75rem, transparent 0.78rem),
-        #ffd4b8;
-    box-shadow: inset 0 -0.45rem 0 rgba(221, 145, 105, 0.2);
+    filter: drop-shadow(0 1.1rem 1.3rem rgba(47, 73, 98, 0.16));
 }
 
-.syllable-boy__hair {
-    z-index: 1;
-    left: 2rem;
-    top: 0.45rem;
-    width: 4.6rem;
-    height: 2rem;
-    border-radius: 2rem 2rem 1rem 1rem;
-    background: #394b5f;
-}
-
-.syllable-boy__body {
-    left: 1.55rem;
-    top: 5.25rem;
-    width: 5.6rem;
-    height: 6.4rem;
-    border-radius: 1.5rem 1.5rem 0.75rem 0.75rem;
-    background: linear-gradient(135deg, var(--primary), #7fc9f8);
-}
-
-.syllable-boy__arm {
-    top: 6rem;
-    width: 4.2rem;
-    height: 1rem;
-    border-radius: 999px;
-    background: #ffd4b8;
-}
-
-.syllable-boy__arm--left {
-    left: 0;
-    transform: rotate(-24deg);
-}
-
-.syllable-boy__arm--right {
-    right: 0;
-    transform: rotate(24deg);
+.inklua-student-avatar img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
 }
 
 .syllable-board {
@@ -2589,8 +2538,53 @@ button {
     right: 20%;
 }
 
-.syllable-question h2 {
-    margin: 0.25rem 0 0;
+.syllable-question {
+    display: grid;
+    gap: 0.65rem;
+}
+
+.syllable-question .eyebrow {
+    width: fit-content;
+    margin: 0;
+    padding: 0.48rem 0.72rem;
+    border-radius: 999px;
+    color: #245fb0;
+    background: rgba(100, 181, 255, 0.16);
+}
+
+.syllable-question-card {
+    display: grid;
+    justify-items: center;
+    gap: 0.42rem;
+    padding: 1rem;
+    border: 1px solid rgba(53, 121, 215, 0.16);
+    border-radius: 1rem;
+    background:
+        radial-gradient(circle at 16% 22%, rgba(255, 226, 122, 0.24), transparent 7rem),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(239, 248, 255, 0.84));
+    box-shadow: 0 12px 26px rgba(47, 73, 98, 0.08);
+}
+
+.syllable-question-card strong {
+    color: #1f3348;
+    font-size: clamp(2rem, 6vw, 3.8rem);
+    font-weight: 950;
+    line-height: 1;
+}
+
+.syllable-question-card small {
+    color: var(--muted);
+    font-size: 1rem;
+    font-weight: 850;
+}
+
+.syllable-options {
+    gap: 0.85rem;
+}
+
+.syllable-option {
+    min-height: clamp(4rem, 10vw, 5.2rem);
+    font-size: clamp(1.45rem, 4vw, 2.25rem);
 }
 
 .syllable-option.is-correct {
@@ -2856,9 +2850,9 @@ button {
         width: 100%;
     }
 
-    .syllable-boy {
+    .inklua-student-avatar {
         left: -1.2rem;
-        opacity: 0.38;
+        opacity: 0.52;
     }
 
     .syllable-board {

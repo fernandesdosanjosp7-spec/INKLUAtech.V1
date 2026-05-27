@@ -13,10 +13,15 @@ const speakNumber = (number) => {
 
     window.speechSynthesis.cancel();
 
-    const utterance = new SpeechSynthesisUtterance(String(number));
-    utterance.lang = "pt-BR";
+    if (window.InkluaSpeech?.speak) {
+        window.InkluaSpeech.speak(String(number));
+        return;
+    }
+
+    const utterance = window.InkluaSpeech?.createUtterance(String(number)) || new SpeechSynthesisUtterance(String(number));
+    utterance.lang = utterance.lang || "pt-BR";
     utterance.rate = 0.82;
-    utterance.pitch = 1;
+    utterance.pitch = 1.16;
     window.speechSynthesis.speak(utterance);
 };
 

@@ -21,10 +21,15 @@ const speakVowel = (letter) => {
 
     window.speechSynthesis.cancel();
 
-    const utterance = new SpeechSynthesisUtterance(`${vowelNames[letter] || letter}.`);
-    utterance.lang = "pt-BR";
+    if (window.InkluaSpeech?.speak) {
+        window.InkluaSpeech.speak(`${vowelNames[letter] || letter}.`);
+        return;
+    }
+
+    const utterance = window.InkluaSpeech?.createUtterance(`${vowelNames[letter] || letter}.`) || new SpeechSynthesisUtterance(`${vowelNames[letter] || letter}.`);
+    utterance.lang = utterance.lang || "pt-BR";
     utterance.rate = 0.82;
-    utterance.pitch = 1;
+    utterance.pitch = 1.16;
     window.speechSynthesis.speak(utterance);
 };
 

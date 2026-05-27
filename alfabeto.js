@@ -43,10 +43,15 @@ const speakLetter = (letter) => {
     window.speechSynthesis.cancel();
 
     const letterName = letterNames[letter] || letter;
-    const utterance = new SpeechSynthesisUtterance(`${letterName}.`);
-    utterance.lang = "pt-BR";
+    if (window.InkluaSpeech?.speak) {
+        window.InkluaSpeech.speak(`${letterName}.`);
+        return;
+    }
+
+    const utterance = window.InkluaSpeech?.createUtterance(`${letterName}.`) || new SpeechSynthesisUtterance(`${letterName}.`);
+    utterance.lang = utterance.lang || "pt-BR";
     utterance.rate = 0.82;
-    utterance.pitch = 1;
+    utterance.pitch = 1.16;
     window.speechSynthesis.speak(utterance);
 };
 

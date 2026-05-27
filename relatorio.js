@@ -254,11 +254,12 @@ const getOverallMetrics = () => {
 
 const reportData = {
     student: {
-        name: "Lucas Andrade",
-        age: "8 anos",
-        supportLevel: "Nível 1",
-        guardian: "Mariana Andrade",
-        date: "25/05/2026"
+        name: studentProfile.name,
+        age: studentProfile.age,
+        supportLevel: studentProfile.supportLevel,
+        guardian: studentProfile.guardian,
+        date: studentProfile.reportDate,
+        characteristics: studentProfile
     },
     evolution: [
         { label: "Comunicação", value: getSkillScore("Comunicação"), color: "#5bb7f0", soft: "#e7f6ff", icon: "message" },
@@ -278,15 +279,6 @@ const reportData = {
         getSkillScore("Alfabetização"),
         getSkillScore("Atenção e foco")
     ]
-};
-
-reportData.student = {
-    name: studentProfile.name,
-    age: studentProfile.age,
-    supportLevel: studentProfile.supportLevel,
-    guardian: studentProfile.guardian,
-    date: studentProfile.reportDate,
-    characteristics: studentProfile
 };
 
 renderStudentProfile();
