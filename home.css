@@ -691,6 +691,41 @@ button {
     min-height: 5rem;
 }
 
+.age-stepper {
+    display: grid;
+    grid-template-columns: 3.15rem minmax(0, 1fr) 3.15rem;
+    align-items: stretch;
+    gap: 0.45rem;
+}
+
+.form-group .age-stepper__input {
+    min-width: 0;
+    text-align: center;
+    font-weight: 850;
+}
+
+.age-stepper__button {
+    min-height: 3.15rem;
+    border: 1px solid rgba(112, 139, 166, 0.28);
+    border-radius: 0.85rem;
+    color: var(--primary-dark);
+    background: #ffffff;
+    font: inherit;
+    font-size: 1.35rem;
+    font-weight: 900;
+    line-height: 1;
+    cursor: pointer;
+    transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.age-stepper__button:hover,
+.age-stepper__button:focus-visible {
+    border-color: rgba(53, 121, 215, 0.68);
+    box-shadow: 0 0 0 4px rgba(95, 227, 177, 0.2);
+    transform: translateY(-1px);
+    outline: none;
+}
+
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {

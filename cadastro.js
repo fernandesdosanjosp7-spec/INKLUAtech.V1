@@ -26,6 +26,101 @@ const collectRegisterAnswers = (form) => {
     return answers;
 };
 
+const setupAgeInput = (input) => {
+    if (input.dataset.ageStepperReady === "true") {
+        return;
+    }
+
+    const min = Number(input.min) || 1;
+    const max = Number(input.max) || 99;
+
+    input.dataset.ageStepperReady = "true";
+    input.type = "text";
+    input.step = "1";
+    input.inputMode = "numeric";
+    input.autocomplete = "off";
+
+    const clampAge = (value) => {
+        const number = Number.parseInt(String(value || "").replace(/\D/g, ""), 10);
+
+        if (Number.isNaN(number)) {
+            return "";
+        }
+
+        return String(Math.min(Math.max(number, min), max));
+    };
+
+    const setAge = (value) => {
+        input.value = clampAge(value);
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+        input.dispatchEvent(new Event("change", { bubbles: true }));
+    };
+
+    const stepAge = (direction) => {
+        const currentAge = Number.parseInt(clampAge(input.value), 10);
+        const baseAge = Number.isNaN(currentAge) ? min : currentAge;
+        setAge(baseAge + direction);
+        input.focus();
+    };
+
+    const wrapper = document.createElement("div");
+    const decreaseButton = document.createElement("button");
+    const increaseButton = document.createElement("button");
+
+    wrapper.className = "age-stepper";
+    decreaseButton.className = "age-stepper__button";
+    increaseButton.className = "age-stepper__button";
+    decreaseButton.type = "button";
+    increaseButton.type = "button";
+    decreaseButton.textContent = "-";
+    increaseButton.textContent = "+";
+    decreaseButton.setAttribute("aria-label", "Diminuir idade");
+    increaseButton.setAttribute("aria-label", "Aumentar idade");
+
+    input.classList.add("age-stepper__input");
+    input.parentNode?.insertBefore(wrapper, input);
+    wrapper.append(decreaseButton, input, increaseButton);
+
+    decreaseButton.addEventListener("click", () => stepAge(-1));
+    increaseButton.addEventListener("click", () => stepAge(1));
+
+    input.addEventListener("input", () => {
+        const normalizedAge = clampAge(input.value);
+
+        if (input.value !== normalizedAge) {
+            input.value = normalizedAge;
+        }
+    });
+
+    input.addEventListener("blur", () => {
+        input.value = clampAge(input.value);
+    });
+
+    input.addEventListener("keydown", (event) => {
+        if (["e", "E", "+", "-", ".", ","].includes(event.key)) {
+            event.preventDefault();
+            return;
+        }
+
+        if (event.key === "ArrowUp") {
+            event.preventDefault();
+            stepAge(1);
+            return;
+        }
+
+        if (event.key === "ArrowDown") {
+            event.preventDefault();
+            stepAge(-1);
+        }
+    });
+
+    input.addEventListener("wheel", (event) => {
+        if (document.activeElement === input) {
+            event.preventDefault();
+        }
+    }, { passive: false });
+};
+
 registerForm?.addEventListener("submit", (event) => {
     localStorage.setItem(formStorageKey, JSON.stringify(collectRegisterAnswers(registerForm)));
 
@@ -43,3 +138,5 @@ entryLoginForm?.addEventListener("submit", (event) => {
         window.location.href = "home.html";
     }
 });
+
+document.querySelectorAll('input[name="aluno_idade"]').forEach(setupAgeInput);

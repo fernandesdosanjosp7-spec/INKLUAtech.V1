@@ -1,87 +1,127 @@
 const numberDisplay = document.getElementById("numberDisplay");
 const numberButtons = document.querySelectorAll(".number-button");
-const numbers = Array.from(numberButtons).map((button) => button.dataset.number || button.textContent.trim());
+let selectedVoice = null;
+let speechWarmed = false;
 
-let currentTarget = "0";
-let questionStartedAt = Date.now();
-let answeredQuestions = Number(window.InkluaGameProgress?.read?.()?.games?.numeros?.attempts) || 0;
+const selectFastVoice = () => {
+    if (!("speechSynthesis" in window)) return null;
+
+    const voices = window.speechSynthesis.getVoices();
+    const normalizeVoiceText = (value) => String(value || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
+    const femaleNames = ["ana", "beatriz", "camila", "carolina", "francisca", "fernanda", "helena", "luciana", "maria", "patricia", "raquel", "vitoria"];
+    const maleNames = ["antonio", "bruno", "carlos", "daniel", "felipe", "joaquim", "paulo", "ricardo", "thiago"];
+    const scoreVoice = (voice) => {
+        const text = normalizeVoiceText(`${voice.name} ${voice.voiceURI}`);
+        let score = 0;
+
+        if (voice.lang?.toLowerCase() === "pt-br") score += 70;
+        if (voice.lang?.toLowerCase().startsWith("pt")) score += 40;
+        if (femaleNames.some((name) => text.includes(name))) score += 500;
+        if (maleNames.some((name) => text.includes(name))) score -= 1000;
+        if (text.includes("female") || text.includes("feminina") || text.includes("woman")) score += 450;
+        if (text.includes("male") || text.includes("masculina") || text.includes("homem")) score -= 1000;
+
+        return score;
+    };
+
+    return window.InkluaSpeech?.getFemaleVoice?.()
+        || [...voices].sort((first, second) => scoreVoice(second) - scoreVoice(first))[0]
+        || null;
+};
+
+const refreshVoice = () => {
+    selectedVoice = selectFastVoice() || selectedVoice;
+};
+
+const createFastUtterance = (text) => {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = selectedVoice?.lang || "pt-BR";
+    utterance.rate = 1;
+    utterance.pitch = 1.16;
+
+    if (selectedVoice) {
+        utterance.voice = selectedVoice;
+    }
+
+    return utterance;
+};
+
+const warmSpeech = () => {
+    if (speechWarmed || !("speechSynthesis" in window)) {
+        return;
+    }
+
+    speechWarmed = true;
+    refreshVoice();
+
+    const utterance = createFastUtterance(".");
+    utterance.volume = 0;
+    utterance.rate = 1.4;
+    window.speechSynthesis.speak(utterance);
+    window.setTimeout(() => window.speechSynthesis.cancel(), 60);
+};
+
+window.speechSynthesis?.addEventListener?.("voiceschanged", refreshVoice);
+refreshVoice();
 
 const speakNumber = (number) => {
     if (!("speechSynthesis" in window)) {
         return;
     }
 
-    window.speechSynthesis.cancel();
+    const utterance = createFastUtterance(String(number));
 
-    if (window.InkluaSpeech?.speak) {
-        window.InkluaSpeech.speak(String(number));
-        return;
+    if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+        window.speechSynthesis.cancel();
     }
 
-    const utterance = window.InkluaSpeech?.createUtterance(String(number)) || new SpeechSynthesisUtterance(String(number));
-    utterance.lang = utterance.lang || "pt-BR";
-    utterance.rate = 0.82;
-    utterance.pitch = 1.16;
+    window.speechSynthesis.resume?.();
     window.speechSynthesis.speak(utterance);
 };
 
-const shuffle = (items) => [...items].sort(() => Math.random() - 0.5);
-const getLevel = () => Math.min(Math.floor(answeredQuestions / 5) + 1, 6);
-const getLevelNumbers = () => numbers.slice(0, [4, 7, 11, 15, 18, 21][getLevel() - 1]);
-
-const renderQuestion = () => {
-    const levelNumbers = getLevelNumbers();
-    currentTarget = shuffle(levelNumbers)[0] || "0";
-    questionStartedAt = Date.now();
-
+const showNumber = (number) => {
     if (numberDisplay) {
-        numberDisplay.innerHTML = `
-            <span class="game-level-pill">Nivel ${getLevel()} - Pergunta ${(answeredQuestions % 5) + 1}/5</span>
-            <strong>${currentTarget}</strong>
-        `;
+        numberDisplay.innerHTML = `<strong>${number}</strong>`;
     }
+};
 
+const clearSelection = () => {
     numberButtons.forEach((button) => {
-        const number = button.dataset.number || button.textContent.trim();
-        button.hidden = !levelNumbers.includes(number);
+        button.hidden = false;
         button.classList.remove("is-selected", "is-correct", "is-wrong");
     });
+};
 
-    speakNumber(currentTarget);
+const selectNumber = (button) => {
+    const number = button.dataset.number || button.textContent.trim();
+
+    clearSelection();
+    button.classList.add("is-selected", "is-correct");
+    showNumber(number);
+    speakNumber(number);
 };
 
 numberButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-        const number = button.dataset.number || button.textContent.trim();
-        const isCorrect = number === currentTarget;
-
-        numberButtons.forEach((item) => item.classList.remove("is-selected"));
-        button.classList.add("is-selected", isCorrect ? "is-correct" : "is-wrong");
-
-        if (numberDisplay) {
-            numberDisplay.innerHTML = `
-                <span class="game-level-pill">Nivel ${getLevel()}</span>
-                <strong>${isCorrect ? "Acertou" : `Era ${currentTarget}`}</strong>
-            `;
+    button.style.touchAction = "manipulation";
+    button.addEventListener("pointerenter", (event) => {
+        if (event.pointerType !== "touch") {
+            warmSpeech();
         }
-
-        speakNumber(isCorrect ? number : currentTarget);
-        window.InkluaGameProgress?.record("numeros", {
-            title: "Numeros Falados",
-            skill: "Atencao e foco",
-            item: currentTarget,
-            selected: number,
-            question: `Encontre o numero ${currentTarget}`,
-            correct: isCorrect,
-            level: getLevel(),
-            maxLevel: 6,
-            totalItems: 30,
-            responseTimeMs: Date.now() - questionStartedAt
-        });
-
-        answeredQuestions += 1;
-        window.setTimeout(renderQuestion, 850);
+    });
+    button.addEventListener("focus", warmSpeech);
+    button.addEventListener("pointerdown", () => {
+        refreshVoice();
+        selectNumber(button);
+    });
+    button.addEventListener("click", (event) => {
+        if (event.detail === 0) {
+            selectNumber(button);
+        }
     });
 });
 
-renderQuestion();
+clearSelection();
+showNumber("0");

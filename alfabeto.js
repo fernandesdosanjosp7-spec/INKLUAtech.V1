@@ -1,117 +1,157 @@
 const alphabetDisplay = document.getElementById("alphabetDisplay");
 const alphabetButtons = document.querySelectorAll(".alphabet-letter");
-const alphabetLetters = Array.from(alphabetButtons).map((button) => button.dataset.letter || button.textContent.trim());
+let selectedVoice = null;
+let speechWarmed = false;
 
 const letterNames = {
     A: "a",
-    B: "be",
-    C: "ce",
-    D: "de",
-    E: "e",
+    B: "b\u00ea",
+    C: "c\u00ea",
+    D: "d\u00ea",
+    E: "\u00e9",
     F: "efe",
-    G: "ge",
-    H: "aga",
+    G: "g\u00ea",
+    H: "ag\u00e1",
     I: "i",
     J: "jota",
     K: "ca",
     L: "ele",
     M: "eme",
     N: "ene",
-    O: "o",
-    P: "pe",
-    Q: "que",
+    O: "\u00f3",
+    P: "p\u00ea",
+    Q: "qu\u00ea",
     R: "erre",
     S: "esse",
-    T: "te",
+    T: "t\u00ea",
     U: "u",
-    V: "ve",
+    V: "v\u00ea",
     W: "dablio",
     X: "xis",
     Y: "ipsilon",
     Z: "ze"
 };
 
-let currentTarget = "A";
-let questionStartedAt = Date.now();
-let answeredQuestions = Number(window.InkluaGameProgress?.read?.()?.games?.alfabeto?.attempts) || 0;
+const selectFastVoice = () => {
+    if (!("speechSynthesis" in window)) return null;
+
+    const voices = window.speechSynthesis.getVoices();
+    const normalizeVoiceText = (value) => String(value || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
+    const femaleNames = ["ana", "beatriz", "camila", "carolina", "francisca", "fernanda", "helena", "luciana", "maria", "patricia", "raquel", "vitoria"];
+    const maleNames = ["antonio", "bruno", "carlos", "daniel", "felipe", "joaquim", "paulo", "ricardo", "thiago"];
+    const scoreVoice = (voice) => {
+        const text = normalizeVoiceText(`${voice.name} ${voice.voiceURI}`);
+        let score = 0;
+
+        if (voice.lang?.toLowerCase() === "pt-br") score += 70;
+        if (voice.lang?.toLowerCase().startsWith("pt")) score += 40;
+        if (femaleNames.some((name) => text.includes(name))) score += 500;
+        if (maleNames.some((name) => text.includes(name))) score -= 1000;
+        if (text.includes("female") || text.includes("feminina") || text.includes("woman")) score += 450;
+        if (text.includes("male") || text.includes("masculina") || text.includes("homem")) score -= 1000;
+
+        return score;
+    };
+
+    return window.InkluaSpeech?.getFemaleVoice?.()
+        || [...voices].sort((first, second) => scoreVoice(second) - scoreVoice(first))[0]
+        || null;
+};
+
+const refreshVoice = () => {
+    selectedVoice = selectFastVoice() || selectedVoice;
+};
+
+const createFastUtterance = (text) => {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = selectedVoice?.lang || "pt-BR";
+    utterance.rate = 1;
+    utterance.pitch = 1.16;
+
+    if (selectedVoice) {
+        utterance.voice = selectedVoice;
+    }
+
+    return utterance;
+};
+
+const warmSpeech = () => {
+    if (speechWarmed || !("speechSynthesis" in window)) {
+        return;
+    }
+
+    speechWarmed = true;
+    refreshVoice();
+
+    const utterance = createFastUtterance(".");
+    utterance.volume = 0;
+    utterance.rate = 1.4;
+    window.speechSynthesis.speak(utterance);
+    window.setTimeout(() => window.speechSynthesis.cancel(), 60);
+};
+
+window.speechSynthesis?.addEventListener?.("voiceschanged", refreshVoice);
+refreshVoice();
 
 const speakLetter = (letter) => {
     if (!("speechSynthesis" in window)) {
         return;
     }
 
-    window.speechSynthesis.cancel();
-
     const letterName = letterNames[letter] || letter;
-    if (window.InkluaSpeech?.speak) {
-        window.InkluaSpeech.speak(`${letterName}.`);
-        return;
+    const utterance = createFastUtterance(letterName);
+
+    if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+        window.speechSynthesis.cancel();
     }
 
-    const utterance = window.InkluaSpeech?.createUtterance(`${letterName}.`) || new SpeechSynthesisUtterance(`${letterName}.`);
-    utterance.lang = utterance.lang || "pt-BR";
-    utterance.rate = 0.82;
-    utterance.pitch = 1.16;
+    window.speechSynthesis.resume?.();
     window.speechSynthesis.speak(utterance);
 };
 
-const shuffle = (items) => [...items].sort(() => Math.random() - 0.5);
-const getLevel = () => Math.min(Math.floor(answeredQuestions / 5) + 1, 6);
-const getLevelLetters = () => alphabetLetters.slice(0, [5, 9, 13, 17, 21, 26][getLevel() - 1]);
-
-const renderQuestion = () => {
-    const letters = getLevelLetters();
-    currentTarget = shuffle(letters)[0] || "A";
-    questionStartedAt = Date.now();
-
+const showLetter = (letter) => {
     if (alphabetDisplay) {
-        alphabetDisplay.innerHTML = `
-            <span class="game-level-pill">Nivel ${getLevel()} - Pergunta ${(answeredQuestions % 5) + 1}/5</span>
-            <strong>${currentTarget}</strong>
-        `;
+        alphabetDisplay.innerHTML = `<strong>${letter}</strong>`;
     }
+};
 
+const clearSelection = () => {
     alphabetButtons.forEach((button) => {
-        const letter = button.dataset.letter || button.textContent.trim();
-        button.hidden = !letters.includes(letter);
+        button.hidden = false;
         button.classList.remove("is-selected", "is-correct", "is-wrong");
     });
+};
 
-    speakLetter(currentTarget);
+const selectLetter = (button) => {
+    const letter = button.dataset.letter || button.textContent.trim();
+
+    clearSelection();
+    button.classList.add("is-selected", "is-correct");
+    showLetter(letter);
+    speakLetter(letter);
 };
 
 alphabetButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-        const letter = button.dataset.letter || button.textContent.trim();
-        const isCorrect = letter === currentTarget;
-
-        alphabetButtons.forEach((item) => item.classList.remove("is-selected"));
-        button.classList.add("is-selected", isCorrect ? "is-correct" : "is-wrong");
-
-        if (alphabetDisplay) {
-            alphabetDisplay.innerHTML = `
-                <span class="game-level-pill">Nivel ${getLevel()}</span>
-                <strong>${isCorrect ? "Acertou" : `Era ${currentTarget}`}</strong>
-            `;
+    button.style.touchAction = "manipulation";
+    button.addEventListener("pointerenter", (event) => {
+        if (event.pointerType !== "touch") {
+            warmSpeech();
         }
-
-        speakLetter(isCorrect ? letter : currentTarget);
-        window.InkluaGameProgress?.record("alfabeto", {
-            title: "Alfabeto Falado",
-            skill: "Alfabetizacao",
-            item: currentTarget,
-            selected: letter,
-            question: `Encontre a letra ${currentTarget}`,
-            correct: isCorrect,
-            level: getLevel(),
-            maxLevel: 6,
-            totalItems: 30,
-            responseTimeMs: Date.now() - questionStartedAt
-        });
-
-        answeredQuestions += 1;
-        window.setTimeout(renderQuestion, 850);
+    });
+    button.addEventListener("focus", warmSpeech);
+    button.addEventListener("pointerdown", () => {
+        refreshVoice();
+        selectLetter(button);
+    });
+    button.addEventListener("click", (event) => {
+        if (event.detail === 0) {
+            selectLetter(button);
+        }
     });
 });
 
-renderQuestion();
+clearSelection();
+showLetter("A");

@@ -195,6 +195,19 @@ const speak = (text) => {
     window.setTimeout(speakNow, 450);
 };
 
+const formatExpressionForSpeech = (expression) => String(expression || "")
+    .replace(/\s*\+\s*/g, " mais ")
+    .replace(/\s*-\s*/g, " menos ")
+    .replace(/\s*x\s*/gi, " vezes ")
+    .replace(/\s*\/\s*/g, " dividido por ")
+    .replace(/\?/g, "qual numero")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const speakCurrentQuestion = () => {
+    speak(`${labels[state.current.mode]}. ${elements.title.textContent}. ${formatExpressionForSpeech(state.current.expression)}.`);
+};
+
 const playTone = (correct) => {
     if (!elements.sound.checked || !window.AudioContext) return;
 
@@ -349,7 +362,7 @@ const renderQuestion = () => {
     elements.options.innerHTML = state.current.options.map((option) => `<button class="math-option" type="button" data-answer="${option}">${option}</button>`).join("");
     elements.options.querySelectorAll(".math-option").forEach((button) => button.addEventListener("click", () => answerQuestion(Number(button.dataset.answer), button)));
     updatePanel();
-    speak(`${labels[state.current.mode]}. ${elements.title.textContent}. ${state.current.expression}.`);
+    speakCurrentQuestion();
 };
 
 const recordProgress = (correct) => {
@@ -404,7 +417,7 @@ elements.help.addEventListener("click", () => {
     window.setTimeout(() => elements.scene.classList.remove("is-helping"), 900);
 });
 
-elements.repeat.addEventListener("click", () => speak(`${labels[state.current.mode]}. ${elements.title.textContent}. ${state.current.expression}.`));
+elements.repeat.addEventListener("click", speakCurrentQuestion);
 elements.next.addEventListener("click", renderQuestion);
 [elements.theme, elements.voice, elements.sound, elements.volume].forEach((input) => input.addEventListener("change", savePreferences));
 

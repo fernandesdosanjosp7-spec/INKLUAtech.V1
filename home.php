@@ -552,6 +552,7 @@ function checkedValue(array $user, string $key, string $value): string
     </main>
 
     <script src="platform-time.js"></script>
+    <script src="inklua-speech.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
