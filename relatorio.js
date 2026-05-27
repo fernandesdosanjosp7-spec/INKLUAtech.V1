@@ -7,6 +7,10 @@ const defaultEvolution = {
     "Atenção e foco": 69
 };
 
+Object.keys(defaultEvolution).forEach((key) => {
+    defaultEvolution[key] = 0;
+});
+
 const readGameProgress = () => {
     try {
         return JSON.parse(localStorage.getItem("inklua_game_progress_v1")) || { games: {}, sessions: [] };
@@ -15,11 +19,44 @@ const readGameProgress = () => {
     }
 };
 
+const readPlatformTime = () => {
+    window.InkluaPlatformTime?.commit?.();
+
+    try {
+        return JSON.parse(localStorage.getItem("inklua_platform_time_v1")) || { totalMs: 0, visits: 0 };
+    } catch (error) {
+        return { totalMs: 0, visits: 0 };
+    }
+};
+
+const formatDuration = (milliseconds) => {
+    const totalSeconds = Math.max(Math.round((Number(milliseconds) || 0) / 1000), 0);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    if (hours > 0) {
+        return `${hours}h ${minutes}min`;
+    }
+
+    if (minutes > 0) {
+        return `${minutes}min ${seconds}s`;
+    }
+
+    return `${seconds}s`;
+};
+
 const gameProgress = readGameProgress();
+const platformTime = readPlatformTime();
 const hiddenGameIds = ["emocoes", "checkin-emocional", "rotina", "formas"];
 const isVisibleGame = (game) => !hiddenGameIds.includes(game.id || game.gameId || "");
 const games = Object.values(gameProgress.games || {}).filter(isVisibleGame);
 const sessions = (gameProgress.sessions || []).filter(isVisibleGame);
+
+const normalizeSkillName = (value) => String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
 
 const readSavedProfile = () => {
     try {
@@ -127,25 +164,32 @@ const renderAutomaticReport = () => {
     const learningStyle = formatList(studentProfile.learningStyle) || "atividades visuais e jogos educativos";
     const sensitivities = formatList(studentProfile.sensitivities);
     const strategies = studentProfile.strategies || "manter instrucoes curtas, reforco positivo e previsibilidade";
+    const metrics = getOverallMetrics();
+    const performanceText = metrics.attempts
+        ? `Nos jogos, ha ${metrics.attempts} respostas registradas, com ${metrics.correct} acertos, ${metrics.wrong} erros e ${metrics.accuracy}% de acerto geral. O maior nivel alcancado foi ${metrics.maxLevel}. O tempo ativo na plataforma foi ${formatDuration(metrics.platformTimeMs)}. `
+        : "";
 
-    automaticReportText.textContent = `${studentProfile.name} apresenta acompanhamento direcionado para ${priorities}. O perfil indica melhor resposta a ${learningStyle}. ${sensitivities ? `Atencao especial para ${sensitivities}. ` : ""}Recomenda-se ${strategies}.`;
+    automaticReportText.textContent = `${studentProfile.name} apresenta acompanhamento direcionado para ${priorities}. O perfil indica melhor resposta a ${learningStyle}. ${performanceText}${sensitivities ? `Atencao especial para ${sensitivities}. ` : ""}Recomenda-se ${strategies}.`;
 };
 
 const getSkillScore = (skillName) => {
-    const relatedGames = games.filter((game) => game.skill === skillName);
+    const normalizedSkill = normalizeSkillName(skillName);
+    const relatedGames = games.filter((game) => normalizeSkillName(game.skill) === normalizedSkill);
 
     if (!relatedGames.length) {
         return defaultEvolution[skillName];
     }
 
     const score = relatedGames.reduce((sum, game) => {
-        const totalItems = Math.max(Number(game.totalItems) || 1, 1);
-        const itemProgress = Math.min((game.items?.length || 0) / totalItems, 1);
-        const answered = (game.correct || 0) + (game.wrong || 0);
+        const attempts = Number(game.attempts) || (Number(game.correct) || 0) + (Number(game.wrong) || 0);
+        const totalItems = Math.max(Number(game.totalItems) || attempts || 1, 1);
+        const itemProgress = Math.min(attempts / totalItems, 1);
+        const answered = attempts;
         const accuracy = answered ? (game.correct || 0) / answered : itemProgress;
-        const completionBoost = game.completed ? 10 : 0;
+        const levelBoost = Math.min((Number(game.level) || 1) * 4, 16);
+        const completionBoost = game.completed ? 8 : 0;
 
-        return sum + Math.min(Math.round((itemProgress * 65) + (accuracy * 25) + completionBoost), 100);
+        return sum + Math.min(Math.round((itemProgress * 46) + (accuracy * 34) + levelBoost + completionBoost), 100);
     }, 0);
 
     return Math.round(score / relatedGames.length);
@@ -153,11 +197,11 @@ const getSkillScore = (skillName) => {
 
 const getActivityDistribution = () => {
     if (!games.length) {
-        return [34, 10, 6];
+        return [0, 0, 0];
     }
 
     const completed = games.filter((game) => game.completed).length;
-    const inProgress = games.filter((game) => !game.completed && (game.items?.length || 0) > 0).length;
+    const inProgress = games.filter((game) => !game.completed && ((game.attempts || 0) > 0 || (game.items?.length || 0) > 0)).length;
     const review = games.filter((game) => (game.wrong || 0) > 0).length;
 
     return [completed, inProgress, review];
@@ -165,7 +209,7 @@ const getActivityDistribution = () => {
 
 const getWeeklyEvolution = () => {
     if (!sessions.length) {
-        return [42, 48, 55, 61, 66, 72, 78];
+        return [0, 0, 0, 0, 0, 0, 0];
     }
 
     const today = new Date();
@@ -176,10 +220,36 @@ const getWeeklyEvolution = () => {
         const dayKey = day.toISOString().slice(0, 10);
         const daySessions = sessions.filter((session) => (session.createdAt || "").slice(0, 10) === dayKey);
         const correct = daySessions.filter((session) => session.correct === true).length;
-        const completed = daySessions.filter((session) => session.completed).length;
+        const wrong = daySessions.filter((session) => session.correct === false).length;
+        const answered = correct + wrong;
+        const accuracy = answered ? Math.round((correct / answered) * 100) : 0;
 
-        return Math.min(100, 35 + (daySessions.length * 7) + (correct * 4) + (completed * 8));
+        return answered ? Math.min(100, Math.round((accuracy * 0.72) + (daySessions.length * 4))) : 0;
     });
+};
+
+const getOverallMetrics = () => {
+    const totals = games.reduce((summary, game) => {
+        const correct = Number(game.correct) || 0;
+        const wrong = Number(game.wrong) || 0;
+        const attempts = Number(game.attempts) || correct + wrong;
+
+        summary.correct += correct;
+        summary.wrong += wrong;
+        summary.attempts += attempts;
+        summary.maxLevel = Math.max(summary.maxLevel, Number(game.level) || 1);
+        return summary;
+    }, { correct: 0, wrong: 0, attempts: 0, maxLevel: 0 });
+
+    totals.gameTimeMs = sessions.reduce((sum, session) => {
+        return sum + Math.max(Number(session.responseTimeMs) || 0, 0);
+    }, 0);
+
+    totals.accuracy = totals.attempts ? Math.round((totals.correct / totals.attempts) * 100) : 0;
+    totals.averageResponseMs = totals.attempts ? Math.round(totals.gameTimeMs / totals.attempts) : 0;
+    totals.platformTimeMs = Math.max(Number(platformTime.totalMs) || 0, totals.gameTimeMs);
+    totals.visits = Number(platformTime.visits) || 0;
+    return totals;
 };
 
 const reportData = {
@@ -284,22 +354,68 @@ if (evolutionGrid) {
 
 const gamesReportGrid = document.getElementById("gamesReportGrid");
 const gamesReportStatus = document.getElementById("gamesReportStatus");
+const gameMetricsGrid = document.getElementById("gameMetricsGrid");
+const overallMetrics = getOverallMetrics();
+
+if (gameMetricsGrid) {
+    gameMetricsGrid.innerHTML = `
+        <article class="game-metric-card">
+            <span>Tentativas</span>
+            <strong>${overallMetrics.attempts}</strong>
+            <p>Respostas registradas nos jogos.</p>
+        </article>
+        <article class="game-metric-card">
+            <span>Acertos</span>
+            <strong>${overallMetrics.correct}</strong>
+            <p>Respostas corretas acumuladas.</p>
+        </article>
+        <article class="game-metric-card">
+            <span>Erros</span>
+            <strong>${overallMetrics.wrong}</strong>
+            <p>Itens para revisar com calma.</p>
+        </article>
+        <article class="game-metric-card">
+            <span>Acerto geral</span>
+            <strong>${overallMetrics.accuracy}%</strong>
+            <p>Maior nivel: ${overallMetrics.maxLevel || "Aguardando"}</p>
+        </article>
+        <article class="game-metric-card">
+            <span>Tempo na plataforma</span>
+            <strong>${formatDuration(overallMetrics.platformTimeMs)}</strong>
+            <p>${overallMetrics.visits} acessos registrados.</p>
+        </article>
+        <article class="game-metric-card">
+            <span>Tempo em respostas</span>
+            <strong>${formatDuration(overallMetrics.gameTimeMs)}</strong>
+            <p>Media: ${formatDuration(overallMetrics.averageResponseMs)} por resposta.</p>
+        </article>
+    `;
+}
 
 if (gamesReportGrid) {
     if (games.length) {
         gamesReportGrid.innerHTML = games.map((game) => {
-            const totalItems = Math.max(Number(game.totalItems) || 1, 1);
-            const explored = Math.min(game.items?.length || 0, totalItems);
-            const accuracyTotal = (game.correct || 0) + (game.wrong || 0);
-            const accuracy = accuracyTotal ? Math.round(((game.correct || 0) / accuracyTotal) * 100) : 100;
+            const attempts = Number(game.attempts) || (Number(game.correct) || 0) + (Number(game.wrong) || 0);
+            const correct = Number(game.correct) || 0;
+            const wrong = Number(game.wrong) || 0;
+            const totalItems = Math.max(Number(game.totalItems) || attempts || 1, 1);
+            const explored = Math.min(attempts, totalItems);
+            const accuracy = attempts ? Math.round((correct / attempts) * 100) : 0;
+            const progress = Math.min(Math.round((explored / totalItems) * 100), 100);
+            const gameSessions = sessions.filter((session) => session.gameId === game.id);
+            const gameTimeMs = gameSessions.reduce((sum, session) => sum + Math.max(Number(session.responseTimeMs) || 0, 0), 0);
 
             return `
                 <article class="game-report-card">
                     <strong>${game.title}</strong>
-                    <p>${game.skill}</p>
+                    <p>${game.skill} - nivel ${game.level || 1}</p>
+                    <span class="game-report-card__bar" aria-hidden="true"><span style="width: ${progress}%"></span></span>
                     <div class="game-report-card__meta">
-                        <span>${explored}/${totalItems} itens</span>
+                        <span>${explored}/${totalItems} perguntas</span>
+                        <span>${correct} acertos</span>
+                        <span>${wrong} erros</span>
                         <span>${accuracy}% acerto</span>
+                        <span>${formatDuration(gameTimeMs)} respondendo</span>
                         <span>${game.completed ? "Concluido" : "Em andamento"}</span>
                     </div>
                 </article>
@@ -307,7 +423,7 @@ if (gamesReportGrid) {
         }).join("");
 
         if (gamesReportStatus) {
-            gamesReportStatus.textContent = `${games.length} jogos com dados`;
+            gamesReportStatus.textContent = `${overallMetrics.attempts} respostas em ${games.length} jogos`;
         }
     } else {
         gamesReportGrid.innerHTML = `

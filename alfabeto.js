@@ -1,34 +1,39 @@
 const alphabetDisplay = document.getElementById("alphabetDisplay");
 const alphabetButtons = document.querySelectorAll(".alphabet-letter");
+const alphabetLetters = Array.from(alphabetButtons).map((button) => button.dataset.letter || button.textContent.trim());
 
 const letterNames = {
     A: "a",
-    B: "b\u00ea",
-    C: "c\u00ea",
-    D: "d\u00ea",
-    E: "\u00e9",
-    F: "\u00e9fe",
-    G: "g\u00ea",
-    H: "ag\u00e1",
+    B: "be",
+    C: "ce",
+    D: "de",
+    E: "e",
+    F: "efe",
+    G: "ge",
+    H: "aga",
     I: "i",
     J: "jota",
-    K: "c\u00e1",
-    L: "\u00e9le",
-    M: "\u00eame",
-    N: "\u00eane",
-    O: "\u00f3",
-    P: "p\u00ea",
-    Q: "qu\u00ea",
-    R: "\u00e9rre",
-    S: "\u00e9sse",
-    T: "t\u00ea",
+    K: "ca",
+    L: "ele",
+    M: "eme",
+    N: "ene",
+    O: "o",
+    P: "pe",
+    Q: "que",
+    R: "erre",
+    S: "esse",
+    T: "te",
     U: "u",
-    V: "v\u00ea",
-    W: "d\u00e1blio",
+    V: "ve",
+    W: "dablio",
     X: "xis",
-    Y: "\u00edpsilon",
-    Z: "z\u00ea"
+    Y: "ipsilon",
+    Z: "ze"
 };
+
+let currentTarget = "A";
+let questionStartedAt = Date.now();
+let answeredQuestions = Number(window.InkluaGameProgress?.read?.()?.games?.alfabeto?.attempts) || 0;
 
 const speakLetter = (letter) => {
     if (!("speechSynthesis" in window)) {
@@ -45,24 +50,63 @@ const speakLetter = (letter) => {
     window.speechSynthesis.speak(utterance);
 };
 
+const shuffle = (items) => [...items].sort(() => Math.random() - 0.5);
+const getLevel = () => Math.min(Math.floor(answeredQuestions / 5) + 1, 4);
+const getLevelLetters = () => alphabetLetters.slice(0, [6, 12, 18, 26][getLevel() - 1]);
+
+const renderQuestion = () => {
+    const letters = getLevelLetters();
+    currentTarget = shuffle(letters)[0] || "A";
+    questionStartedAt = Date.now();
+
+    if (alphabetDisplay) {
+        alphabetDisplay.innerHTML = `
+            <span class="game-level-pill">Nivel ${getLevel()} - Pergunta ${(answeredQuestions % 5) + 1}/5</span>
+            <strong>${currentTarget}</strong>
+        `;
+    }
+
+    alphabetButtons.forEach((button) => {
+        const letter = button.dataset.letter || button.textContent.trim();
+        button.hidden = !letters.includes(letter);
+        button.classList.remove("is-selected", "is-correct", "is-wrong");
+    });
+
+    speakLetter(currentTarget);
+};
+
 alphabetButtons.forEach((button) => {
     button.addEventListener("click", () => {
         const letter = button.dataset.letter || button.textContent.trim();
+        const isCorrect = letter === currentTarget;
 
         alphabetButtons.forEach((item) => item.classList.remove("is-selected"));
-        button.classList.add("is-selected");
+        button.classList.add("is-selected", isCorrect ? "is-correct" : "is-wrong");
 
         if (alphabetDisplay) {
-            alphabetDisplay.textContent = letter;
+            alphabetDisplay.innerHTML = `
+                <span class="game-level-pill">Nivel ${getLevel()}</span>
+                <strong>${isCorrect ? "Acertou" : `Era ${currentTarget}`}</strong>
+            `;
         }
 
-        speakLetter(letter);
+        speakLetter(isCorrect ? letter : currentTarget);
         window.InkluaGameProgress?.record("alfabeto", {
             title: "Alfabeto Falado",
-            skill: "Alfabetização",
-            item: letter,
-            correct: true,
-            totalItems: 26
+            skill: "Alfabetizacao",
+            item: currentTarget,
+            selected: letter,
+            question: `Encontre a letra ${currentTarget}`,
+            correct: isCorrect,
+            level: getLevel(),
+            maxLevel: 4,
+            totalItems: 20,
+            responseTimeMs: Date.now() - questionStartedAt
         });
+
+        answeredQuestions += 1;
+        window.setTimeout(renderQuestion, 850);
     });
 });
+
+renderQuestion();

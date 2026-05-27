@@ -385,6 +385,41 @@ textarea {
     gap: 0.9rem;
 }
 
+.game-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.game-metric-card {
+    display: grid;
+    gap: 0.3rem;
+    padding: 0.95rem 1rem;
+    border: 1px solid rgba(91, 183, 240, 0.14);
+    border-radius: 0.9rem;
+    background: rgba(255, 255, 255, 0.78);
+}
+
+.game-metric-card span {
+    color: var(--muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.game-metric-card strong {
+    color: var(--primary-dark);
+    font-size: clamp(1.45rem, 3vw, 2rem);
+    line-height: 1;
+}
+
+.game-metric-card p {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.45;
+}
+
 .game-report-card {
     padding: 1rem;
     border: 1px solid rgba(91, 183, 240, 0.14);
@@ -530,6 +565,21 @@ textarea {
     border-radius: 0.75rem;
 }
 
+.game-report-card__bar {
+    height: 0.58rem;
+    overflow: hidden;
+    margin-top: 0.85rem;
+    border-radius: 999px;
+    background: rgba(112, 139, 166, 0.16);
+}
+
+.game-report-card__bar span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--primary), #7ccdb1);
+}
+
 .ai-badge {
     border-radius: 0.85rem;
 }
@@ -576,6 +626,10 @@ textarea {
     .games-report-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+
+    .game-metrics-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
 @media (max-width: 42rem) {
@@ -593,6 +647,10 @@ textarea {
     .student-info,
     .evolution-grid,
     .games-report-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .game-metrics-grid {
         grid-template-columns: 1fr;
     }
 

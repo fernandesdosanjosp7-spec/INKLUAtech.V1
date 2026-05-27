@@ -32,6 +32,7 @@ try {
     if (($_GET["status"] ?? "") === "profile_saved") {
         $savedMessage = "Formulario salvo com sucesso.";
     }
+
 } catch (Throwable $e) {
     $databaseError = $e->getMessage();
 }
@@ -50,17 +51,6 @@ function checkedValue(array $user, string $key, string $value): string
 {
     $values = array_map("trim", explode(",", $user[$key] ?? ""));
     return in_array($value, $values, true) ? " checked" : "";
-}
-
-function reportValue(array $user, string $key, string $fallback): string
-{
-    $value = trim((string) ($user[$key] ?? ""));
-
-    if ($value === "") {
-        return $fallback;
-    }
-
-    return h(str_replace("-", " ", $value));
 }
 ?>
 <!DOCTYPE html>
@@ -84,8 +74,6 @@ function reportValue(array $user, string $key, string $fallback): string
                 <a href="#formulario">Formul&aacute;rio</a>
                 <a href="#relatorio">Relat&oacute;rio</a>
                 <a href="#jogos">Jogos</a>
-                <a href="#rotina">Rotina</a>
-                <a href="#apoio">Apoio</a>
             </nav>
 
             <div class="student-card">
@@ -116,10 +104,10 @@ function reportValue(array $user, string $key, string $fallback): string
                 <div class="welcome-panel">
                     <p class="eyebrow">Boas-vindas</p>
                     <h2><span id="welcomeGreeting">Ol&aacute;</span>, <?php echo h($user["aluno_nome"] ?: "aluno"); ?>!</h2>
-                    <p>Hoje separamos atividades curtas para praticar comunica&ccedil;&atilde;o, rotina e percep&ccedil;&atilde;o com calma.</p>
+                    <p>Hoje separamos atividades curtas para praticar comunica&ccedil;&atilde;o, percep&ccedil;&atilde;o e autonomia com calma.</p>
                     <div class="welcome-actions" aria-label="Atalhos de in&iacute;cio">
                         <a href="#jogos">Come&ccedil;ar pelos jogos</a>
-                        <a href="#rotina">Ver rotina</a>
+                        <a href="#formulario">Atualizar perfil</a>
                         <a href="#jogos">Ver jogos</a>
                     </div>
                 </div>
@@ -150,7 +138,7 @@ function reportValue(array $user, string $key, string $fallback): string
                     <span class="overview-icon overview-icon--mint">2</span>
                     <div>
                         <strong>Objetivo</strong>
-                        <p>Comunica&ccedil;&atilde;o e rotina</p>
+                        <p>Comunica&ccedil;&atilde;o e autonomia</p>
                     </div>
                 </article>
                 <article class="overview-card">
@@ -419,8 +407,8 @@ function reportValue(array $user, string $key, string $fallback): string
                     <article class="report-card">
                         <span class="report-card__number">4</span>
                         <div>
-                            <strong>Rotina do dia</strong>
-                            <p>Boas-vindas, jogo educativo, pausa sensorial e comunica&ccedil;&atilde;o.</p>
+                            <strong>Perfil do aluno</strong>
+                            <p>Prefer&ecirc;ncias, sensibilidades, comunica&ccedil;&atilde;o e recursos registrados.</p>
                         </div>
                     </article>
                 </div>
@@ -462,6 +450,61 @@ function reportValue(array $user, string $key, string $fallback): string
                 </div>
 
                 <article class="report-panel report-panel--wide">
+                    <h3>Consolida&ccedil;&atilde;o de dados da plataforma</h3>
+                    <div class="report-metrics-grid" aria-label="Resumo consolidado dos jogos">
+                        <article class="report-metric-card">
+                            <span>Tentativas</span>
+                            <strong id="attemptsMetric">0</strong>
+                            <p id="attemptsMetricText">Respostas registradas nos jogos.</p>
+                        </article>
+                        <article class="report-metric-card">
+                            <span>Acertos</span>
+                            <strong id="correctMetric">0</strong>
+                            <p>Respostas corretas acumuladas.</p>
+                        </article>
+                        <article class="report-metric-card">
+                            <span>Erros</span>
+                            <strong id="wrongMetric">0</strong>
+                            <p>Itens para revisar com calma.</p>
+                        </article>
+                        <article class="report-metric-card">
+                            <span>Taxa de acerto</span>
+                            <strong id="accuracyMetric">0%</strong>
+                            <p id="accuracyMetricText">Maior n&iacute;vel: aguardando.</p>
+                        </article>
+                        <article class="report-metric-card">
+                            <span>Tempo na plataforma</span>
+                            <strong id="platformTimeMetric">0s</strong>
+                            <p id="platformTimeText">Tempo ativo registrado.</p>
+                        </article>
+                        <article class="report-metric-card">
+                            <span>Tempo respondendo</span>
+                            <strong id="answerTimeMetric">0s</strong>
+                            <p id="answerTimeText">M&eacute;dia por resposta: 0s.</p>
+                        </article>
+                        <article class="report-metric-card">
+                            <span>Atividades conclu&iacute;das</span>
+                            <strong id="completedActivitiesMetric">0 de 6</strong>
+                            <p id="completedActivitiesText">Acompanhamento das atividades finalizadas.</p>
+                        </article>
+                        <article class="report-metric-card">
+                            <span>Frequ&ecirc;ncia de uso</span>
+                            <strong id="usageFrequencyMetric">Sem uso recente</strong>
+                            <p id="usageFrequencyText">Uso registrado nos &uacute;ltimos 7 dias.</p>
+                        </article>
+                        <article class="report-metric-card">
+                            <span>Desenvolvimento</span>
+                            <strong id="developmentMetric">Aguardando dados</strong>
+                            <p id="developmentMetricText">Leitura geral do progresso do aluno.</p>
+                        </article>
+                    </div>
+
+                    <p class="report-insight-text" id="qualitativeDevelopmentText">
+                        Ao usar os jogos, a plataforma vai consolidar evid&ecirc;ncias de participa&ccedil;&atilde;o, const&acirc;ncia e habilidades trabalhadas.
+                    </p>
+                </article>
+
+                <article class="report-panel report-panel--wide">
                     <h3>Plano sugerido pela plataforma</h3>
                     <div class="report-action-grid">
                         <article class="report-action-card">
@@ -475,9 +518,9 @@ function reportValue(array $user, string $key, string $fallback): string
                             <a href="#jogos">Praticar percep&ccedil;&atilde;o</a>
                         </article>
                         <article class="report-action-card">
-                            <strong>Rotina e autonomia</strong>
-                            <p>Use rotina visual, pausas e instru&ccedil;&otilde;es curtas para apoiar previsibilidade e participa&ccedil;&atilde;o.</p>
-                            <a href="#rotina">Ver rotina</a>
+                            <strong>Autonomia e participa&ccedil;&atilde;o</strong>
+                            <p>Use pausas, instru&ccedil;&otilde;es curtas e recursos do perfil para apoiar previsibilidade e participa&ccedil;&atilde;o.</p>
+                            <a href="#formulario">Atualizar perfil</a>
                         </article>
                     </div>
                 </article>
@@ -496,7 +539,7 @@ function reportValue(array $user, string $key, string $fallback): string
                     <ul class="report-timeline">
                         <li><strong>Jogos:</strong> observe interesse, autonomia e reconhecimento em cores, letras, vogais, s&iacute;labas, n&uacute;meros e matem&aacute;tica visual.</li>
                         <li><strong>Aprendizado:</strong> use as trilhas de comunica&ccedil;&atilde;o alternativa, matem&aacute;tica visual e leitura com imagens para refor&ccedil;ar habilidades.</li>
-                        <li><strong>Rotina e apoio:</strong> compare o desempenho com as prefer&ecirc;ncias, sensibilidades e estrat&eacute;gias registradas no formul&aacute;rio.</li>
+                        <li><strong>Perfil do aluno:</strong> compare o desempenho com as prefer&ecirc;ncias, sensibilidades e estrat&eacute;gias registradas no formul&aacute;rio.</li>
                     </ul>
                 </article>
             </section>
@@ -575,51 +618,10 @@ function reportValue(array $user, string $key, string $fallback): string
                 </div>
             </section>
 
-                <article class="section-block platform-view routine-board" id="rotina" data-view="rotina">
-                    <div class="section-heading">
-                        <div>
-                            <p class="eyebrow">Rotina</p>
-                            <h2>Meu dia</h2>
-                        </div>
-                        <span class="routine-status" id="routineStatus">Come&ccedil;ar rotina</span>
-                    </div>
-
-                    <div class="routine-hero" aria-live="polite">
-                        <span class="routine-hero__icon" id="routineCurrentIcon" aria-hidden="true">Oi</span>
-                        <div>
-                            <span>Etapa atual</span>
-                            <strong id="routineCurrentTitle">Boas-vindas</strong>
-                            <p id="routineCurrentText">Comece com acolhimento, combinados simples e uma orienta&ccedil;&atilde;o curta.</p>
-                        </div>
-                    </div>
-
-                    <div class="routine-progress" aria-label="Progresso da rotina">
-                        <span id="routineProgressBar"></span>
-                    </div>
-
-                    <ol class="routine-list" id="routineList">
-                        <li><button type="button" data-routine-step="0"><span>Oi</span><strong>Boas-vindas</strong><small>Acolher e combinar a atividade.</small></button></li>
-                        <li><button type="button" data-routine-step="1"><span>Jogo</span><strong>Jogo educativo</strong><small>Escolher uma atividade curta.</small></button></li>
-                        <li><button type="button" data-routine-step="2"><span>Pausa</span><strong>Pausa sensorial</strong><small>Respirar, beber &aacute;gua ou descansar.</small></button></li>
-                        <li><button type="button" data-routine-step="3"><span>Fala</span><strong>Comunica&ccedil;&atilde;o</strong><small>Registrar escolha, palavra ou gesto.</small></button></li>
-                    </ol>
-
-                    <div class="routine-actions">
-                        <button class="routine-button routine-button--primary" id="routineNextButton" type="button">Pr&oacute;xima etapa</button>
-                        <button class="routine-button" id="routineResetButton" type="button">Reiniciar</button>
-                    </div>
-                </article>
-
-                <article class="section-block platform-view" id="apoio" data-view="apoio">
-                    <p class="eyebrow">Apoio</p>
-                    <h2>Prefer&ecirc;ncias do aluno</h2>
-                    <p class="support-text">
-                        Use as informa&ccedil;&otilde;es do cadastro para adaptar atividades, reduzir sobrecarga sensorial e registrar estrat&eacute;gias que ajudam.
-                    </p>
-                </article>
         </section>
     </main>
 
+    <script src="platform-time.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

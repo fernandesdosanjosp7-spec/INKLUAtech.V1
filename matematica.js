@@ -72,6 +72,7 @@ let state = {
     difficulty: 1,
     correct: 0,
     wrong: 0,
+    answeredQuestions: Number(window.InkluaGameProgress?.read?.()?.games?.[gameId]?.attempts) || 0,
     streak: 0,
     current: null,
     answered: false,
@@ -306,8 +307,8 @@ const updatePanel = () => {
     const game = progress?.games?.[gameId];
     const correct = Number(game?.correct) || state.correct;
     const wrong = Number(game?.wrong) || state.wrong;
-    const total = correct + wrong;
-    const level = Number(game?.level) || Math.floor(correct / 5) + 1;
+    const total = Number(game?.attempts) || correct + wrong;
+    const level = Number(game?.level) || Math.floor(total / 5) + 1;
 
     elements.level.textContent = level;
     elements.correct.textContent = correct;
@@ -315,10 +316,11 @@ const updatePanel = () => {
     elements.accuracy.textContent = total ? `${Math.round((correct / total) * 100)}%` : "0%";
     elements.difficulty.textContent = state.difficulty;
     elements.medal.textContent = correct >= 15 ? "Ouro" : correct >= 8 ? "Prata" : correct >= 4 ? "Bronze" : "Inicio";
-    elements.progress.style.width = `${Math.min((correct % 5) * 20, 100)}%`;
+    elements.progress.style.width = `${Math.min((total % 5) * 20, 100)}%`;
 };
 
 const renderQuestion = () => {
+    state.difficulty = clamp(Math.floor(state.answeredQuestions / 5) + 1, 1, 4);
     state.current = createQuestion();
     state.answered = false;
     state.helped = false;
@@ -345,6 +347,8 @@ const recordProgress = (correct) => {
         item: labels[state.current.mode],
         correct,
         totalItems,
+        level: state.difficulty,
+        maxLevel: 4,
         difficulty: `Nivel ${state.difficulty}`,
         responseTimeMs: Date.now() - state.startedAt,
         helpUsed: state.helped
@@ -360,21 +364,16 @@ const answerQuestion = (answer, button) => {
 
     if (correct) {
         state.correct += 1;
-        state.streak += 1;
-        if (state.streak >= 4) {
-            state.difficulty = clamp(state.difficulty + 1, 1, 4);
-            state.streak = 0;
-        }
         elements.feedback.textContent = "Muito bem. Voce conseguiu.";
         elements.guide.textContent = "Resposta certa. Vamos para a proxima.";
     } else {
         state.wrong += 1;
-        state.streak = 0;
-        state.difficulty = clamp(state.difficulty - 1, 1, 4);
         elements.feedback.textContent = `Quase. A resposta era ${state.current.answer}.`;
         elements.options.querySelector(`[data-answer="${state.current.answer}"]`)?.classList.add("is-correct");
     }
 
+    state.answeredQuestions += 1;
+    state.difficulty = clamp(Math.floor(state.answeredQuestions / 5) + 1, 1, 4);
     playTone(correct);
     speak(correct ? "Muito bem. Voce conseguiu." : `Quase. A resposta era ${state.current.answer}.`);
     recordProgress(correct);
