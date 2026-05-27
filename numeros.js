@@ -21,8 +21,8 @@ const speakNumber = (number) => {
 };
 
 const shuffle = (items) => [...items].sort(() => Math.random() - 0.5);
-const getLevel = () => Math.min(Math.floor(answeredQuestions / 5) + 1, 3);
-const getLevelNumbers = () => numbers.slice(0, [4, 7, 11][getLevel() - 1]);
+const getLevel = () => Math.min(Math.floor(answeredQuestions / 5) + 1, 6);
+const getLevelNumbers = () => numbers.slice(0, [4, 7, 11, 15, 18, 21][getLevel() - 1]);
 
 const renderQuestion = () => {
     const levelNumbers = getLevelNumbers();
@@ -69,8 +69,8 @@ numberButtons.forEach((button) => {
             question: `Encontre o numero ${currentTarget}`,
             correct: isCorrect,
             level: getLevel(),
-            maxLevel: 3,
-            totalItems: 15,
+            maxLevel: 6,
+            totalItems: 30,
             responseTimeMs: Date.now() - questionStartedAt
         });
 

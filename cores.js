@@ -24,8 +24,8 @@ const speakColor = (colorName) => {
 };
 
 const shuffle = (items) => [...items].sort(() => Math.random() - 0.5);
-const getLevel = () => Math.min(Math.floor(answeredQuestions / 5) + 1, 4);
-const getLevelColors = () => colors.slice(0, Math.min(3 + (getLevel() * 2), colors.length));
+const getLevel = () => Math.min(Math.floor(answeredQuestions / 5) + 1, 6);
+const getLevelColors = () => colors.slice(0, Math.min(2 + (getLevel() * 2), colors.length));
 
 const renderQuestion = () => {
     const levelColors = getLevelColors();
@@ -75,8 +75,8 @@ colorButtons.forEach((button) => {
             question: `Encontre ${currentTarget?.name || colorName}`,
             correct: isCorrect,
             level: getLevel(),
-            maxLevel: 4,
-            totalItems: 20,
+            maxLevel: 6,
+            totalItems: 30,
             responseTimeMs: Date.now() - questionStartedAt
         });
 

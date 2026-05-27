@@ -22,15 +22,38 @@ const syllableRounds = [
     { letters: "F + E", answer: "FE", options: ["VE", "FA", "FE", "FO"], word: "fe" },
     { letters: "N + I", answer: "NI", options: ["MI", "NA", "NO", "NI"], word: "ni" },
     { letters: "R + O", answer: "RO", options: ["RO", "LO", "RA", "RU"], word: "ro" },
-    { letters: "S + U", answer: "SU", options: ["SU", "SO", "ZU", "SA"], word: "su" }
+    { letters: "S + U", answer: "SU", options: ["SU", "SO", "ZU", "SA"], word: "su" },
+    { letters: "B + E", answer: "BE", options: ["BE", "BA", "PE", "DE"], word: "be" },
+    { letters: "D + A", answer: "DA", options: ["BA", "DA", "DE", "TA"], word: "da" },
+    { letters: "G + O", answer: "GO", options: ["CO", "GU", "GO", "GA"], word: "go" },
+    { letters: "J + A", answer: "JA", options: ["JA", "ZA", "JO", "GA"], word: "ja" },
+    { letters: "V + E", answer: "VE", options: ["FE", "VE", "VA", "VO"], word: "ve" },
+    { letters: "Z + I", answer: "ZI", options: ["SI", "ZA", "ZI", "ZO"], word: "zi" },
+    { letters: "CH + A", answer: "CHA", options: ["CA", "CHA", "XA", "JA"], word: "cha" },
+    { letters: "LH + O", answer: "LHO", options: ["LO", "LHO", "RO", "LHA"], word: "lho" },
+    { letters: "NH + A", answer: "NHA", options: ["NA", "NHA", "MA", "NHO"], word: "nha" },
+    { letters: "BR + A", answer: "BRA", options: ["BA", "BRA", "BAR", "PRA"], word: "bra" },
+    { letters: "PR + E", answer: "PRE", options: ["PE", "PER", "PRE", "BRE"], word: "pre" },
+    { letters: "TR + I", answer: "TRI", options: ["TI", "TRI", "TIR", "DRI"], word: "tri" },
+    { letters: "CL + O", answer: "CLO", options: ["CO", "CLO", "COL", "GLO"], word: "clo" },
+    { letters: "FL + U", answer: "FLU", options: ["FU", "FUL", "FLU", "VLU"], word: "flu" },
+    { letters: "GR + A", answer: "GRA", options: ["GA", "GAR", "GRA", "CRA"], word: "gra" },
+    { letters: "PL + E", answer: "PLE", options: ["PE", "PLE", "PEL", "BLE"], word: "ple" },
+    { letters: "DR + O", answer: "DRO", options: ["DO", "DRO", "DOR", "TRO"], word: "dro" },
+    { letters: "FR + A", answer: "FRA", options: ["FA", "FRA", "FAR", "VRA"], word: "fra" },
+    { letters: "CR + U", answer: "CRU", options: ["CU", "CUR", "CRU", "GRU"], word: "cru" },
+    { letters: "BL + I", answer: "BLI", options: ["BI", "BIL", "BLI", "PLI"], word: "bli" },
+    { letters: "GL + A", answer: "GLA", options: ["GA", "GLA", "GAL", "CLA"], word: "gla" },
+    { letters: "VR + O", answer: "VRO", options: ["VO", "VOR", "VRO", "FRO"], word: "vro" },
+    { letters: "QU + E", answer: "QUE", options: ["QE", "QUE", "CE", "GUE"], word: "que" }
 ];
 
 let currentRound = 0;
 let canContinue = false;
-let answeredQuestions = Number(window.InkluaGameProgress?.read?.()?.games?.silabas?.attempts) || 0;
+let answeredQuestions = 0;
 let questionStartedAt = Date.now();
 
-const getLevel = () => Math.min(Math.floor(answeredQuestions / 5) + 1, 3);
+const getLevel = () => Math.min(Math.floor(answeredQuestions / 5) + 1, 8);
 
 const speakSyllable = (text) => {
     if (!("speechSynthesis" in window)) {
@@ -57,7 +80,7 @@ const recordSyllable = (round, selected, isCorrect, completed = false) => {
         completed,
         totalItems: syllableRounds.length,
         level: getLevel(),
-        maxLevel: 3,
+        maxLevel: 8,
         responseTimeMs: Date.now() - questionStartedAt
     });
 };
@@ -96,7 +119,7 @@ const finishGame = () => {
         completed: true,
         totalItems: syllableRounds.length,
         level: getLevel(),
-        maxLevel: 3
+        maxLevel: 8
     });
 
     speakSyllable("Atividade concluida. Muito bem!");

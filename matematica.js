@@ -1,5 +1,5 @@
 const gameId = "matematica-visual";
-const totalItems = 36;
+const totalItems = 60;
 const preferencesKey = "inklua_math_preferences_v1";
 
 const elements = {

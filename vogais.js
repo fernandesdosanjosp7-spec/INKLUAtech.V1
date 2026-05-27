@@ -29,8 +29,8 @@ const speakVowel = (letter) => {
 };
 
 const shuffle = (items) => [...items].sort(() => Math.random() - 0.5);
-const getLevel = () => Math.min(Math.floor(answeredQuestions / 5) + 1, 3);
-const getLevelVowels = () => vowels.slice(0, [3, 4, 5][getLevel() - 1]);
+const getLevel = () => Math.min(Math.floor(answeredQuestions / 5) + 1, 6);
+const getLevelVowels = () => vowels.slice(0, [2, 3, 4, 5, 5, 5][getLevel() - 1]);
 
 const renderQuestion = () => {
     const levelVowels = getLevelVowels();
@@ -77,8 +77,8 @@ vowelButtons.forEach((button) => {
             question: `Encontre a vogal ${currentTarget}`,
             correct: isCorrect,
             level: getLevel(),
-            maxLevel: 3,
-            totalItems: 15,
+            maxLevel: 6,
+            totalItems: 30,
             responseTimeMs: Date.now() - questionStartedAt
         });
 

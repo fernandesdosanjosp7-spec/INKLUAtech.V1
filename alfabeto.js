@@ -51,8 +51,8 @@ const speakLetter = (letter) => {
 };
 
 const shuffle = (items) => [...items].sort(() => Math.random() - 0.5);
-const getLevel = () => Math.min(Math.floor(answeredQuestions / 5) + 1, 4);
-const getLevelLetters = () => alphabetLetters.slice(0, [6, 12, 18, 26][getLevel() - 1]);
+const getLevel = () => Math.min(Math.floor(answeredQuestions / 5) + 1, 6);
+const getLevelLetters = () => alphabetLetters.slice(0, [5, 9, 13, 17, 21, 26][getLevel() - 1]);
 
 const renderQuestion = () => {
     const letters = getLevelLetters();
@@ -99,8 +99,8 @@ alphabetButtons.forEach((button) => {
             question: `Encontre a letra ${currentTarget}`,
             correct: isCorrect,
             level: getLevel(),
-            maxLevel: 4,
-            totalItems: 20,
+            maxLevel: 6,
+            totalItems: 30,
             responseTimeMs: Date.now() - questionStartedAt
         });
 

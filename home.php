@@ -557,7 +557,6 @@ function checkedValue(array $user, string $key, string $value): string
                         <span class="game-visual game-visual--colors" aria-hidden="true"></span>
                         <span class="game-badge game-badge--yellow">Percep&ccedil;&atilde;o</span>
                         <h3><span class="card-icon card-icon--colors" aria-hidden="true"></span>Jogo das Cores</h3>
-                        <p>Toque em uma cor para ouvir seu nome em voz alta.</p>
                         <a class="game-button" href="cores.html">Jogar</a>
                     </article>
 
@@ -565,7 +564,6 @@ function checkedValue(array $user, string $key, string $value): string
                         <span class="game-visual game-visual--letters" aria-hidden="true">Aa</span>
                         <span class="game-badge game-badge--pink">Letras</span>
                         <h3><span class="card-icon card-icon--letters" aria-hidden="true"></span>Alfabeto Falado</h3>
-                        <p>Toque em uma letra para ouvir seu nome em voz alta.</p>
                         <a class="game-button" href="alfabeto.html">Jogar</a>
                     </article>
 
@@ -573,7 +571,6 @@ function checkedValue(array $user, string $key, string $value): string
                         <span class="game-visual game-visual--vowels" aria-hidden="true">AEIOU</span>
                         <span class="game-badge game-badge--pink">Vogais</span>
                         <h3><span class="card-icon card-icon--vowels" aria-hidden="true"></span>Jogo das Vogais</h3>
-                        <p>Toque em uma vogal para ouvir qual letra &eacute;.</p>
                         <a class="game-button" href="vogais.html">Jogar</a>
                     </article>
 
@@ -581,7 +578,6 @@ function checkedValue(array $user, string $key, string $value): string
                         <span class="game-visual game-visual--syllables" aria-hidden="true">A+I</span>
                         <span class="game-badge game-badge--pink">S&iacute;labas</span>
                         <h3><span class="card-icon card-icon--letters" aria-hidden="true"></span>Jogo das S&iacute;labas</h3>
-                        <p>Veja as letras na plaquinha e escolha qual som elas formam.</p>
                         <a class="game-button" href="silabas.html">Jogar</a>
                     </article>
 
@@ -589,7 +585,6 @@ function checkedValue(array $user, string $key, string $value): string
                         <span class="game-visual game-visual--numbers" aria-hidden="true">123</span>
                         <span class="game-badge game-badge--mint">N&uacute;meros</span>
                         <h3><span class="card-icon card-icon--numbers" aria-hidden="true"></span>N&uacute;meros Falados</h3>
-                        <p>Toque em um n&uacute;mero de 0 a 10 para ouvir qual n&uacute;mero &eacute;.</p>
                         <a class="game-button" href="numeros.html">Jogar</a>
                     </article>
 
@@ -612,7 +607,6 @@ function checkedValue(array $user, string $key, string $value): string
                         </span>
                         <span class="game-badge game-badge--mint">Matem&aacute;tica</span>
                         <h3><span class="card-icon card-icon--math" aria-hidden="true"></span>Matem&aacute;tica Visual</h3>
-                        <p>Resolva contagem, opera&ccedil;&otilde;es e sequ&ecirc;ncias com apoio visual adaptativo.</p>
                         <a class="game-button" href="matematica.html">Jogar</a>
                     </article>
                 </div>
