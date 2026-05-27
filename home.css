@@ -301,7 +301,7 @@ button {
 .mood-checkin h3 {
     margin: 0.2rem 0 0;
     color: var(--text);
-    font-size: clamp(1.35rem, 3vw, 2rem);
+    font-size: clamp(1.1rem, 2.2vw, 1.45rem);
 }
 
 .mood-checkin p:not(.eyebrow) {
@@ -352,6 +352,16 @@ button {
 
 .mood-options strong {
     font-size: 0.92rem;
+}
+
+#moodFeedback {
+    width: fit-content;
+    margin: 0.55rem 0 0;
+    padding: 0.55rem 0.75rem;
+    border-radius: 0.8rem;
+    color: #176b4d;
+    background: rgba(95, 227, 177, 0.2);
+    font-weight: 850;
 }
 
 .overview-card,

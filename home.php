@@ -118,10 +118,10 @@ function checkedValue(array $user, string $key, string $value): string
                         <p id="moodFeedback" class="visually-hidden">Escolha uma op&ccedil;&atilde;o.</p>
                     </div>
                     <div class="mood-options" aria-label="Op&ccedil;&otilde;es de humor">
-                        <button type="button" data-mood="feliz" data-mood-label="Feliz" data-mood-feedback="Que bom ver voc&ecirc; feliz. Vamos aproveitar essa energia."><span aria-hidden="true">😊</span><strong>Feliz</strong></button>
-                        <button type="button" data-mood="triste" data-mood-label="Triste" data-mood-feedback="Tudo bem ficar triste. Vamos fazer as atividades com calma."><span aria-hidden="true">😢</span><strong>Triste</strong></button>
-                        <button type="button" data-mood="doente" data-mood-label="Doente" data-mood-feedback="Sinto muito. Hoje podemos ir devagar e fazer pausas."><span aria-hidden="true">🤒</span><strong>Doente</strong></button>
-                        <button type="button" data-mood="bravo" data-mood-label="Bravo" data-mood-feedback="Entendi. Vamos respirar e escolher uma atividade tranquila."><span aria-hidden="true">😠</span><strong>Bravo</strong></button>
+                        <button type="button" data-mood="feliz" data-mood-label="Feliz" data-mood-feedback="Que bom. Voc&ecirc; est&aacute; pronto para brilhar."><span aria-hidden="true">😊</span><strong>Feliz</strong></button>
+                        <button type="button" data-mood="triste" data-mood-label="Triste" data-mood-feedback="Tudo bem. Um passo de cada vez."><span aria-hidden="true">😢</span><strong>Triste</strong></button>
+                        <button type="button" data-mood="doente" data-mood-label="Doente" data-mood-feedback="Voc&ecirc; consegue. Hoje vamos com calma."><span aria-hidden="true">🤒</span><strong>Doente</strong></button>
+                        <button type="button" data-mood="bravo" data-mood-label="Bravo" data-mood-feedback="Respire. Voc&ecirc; consegue tentar de novo."><span aria-hidden="true">😠</span><strong>Bravo</strong></button>
                     </div>
                 </section>
 

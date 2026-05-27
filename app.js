@@ -103,6 +103,7 @@ const renderMood = (mood) => {
 
     if (moodFeedback && mood?.feedback) {
         moodFeedback.textContent = mood.feedback;
+        moodFeedback.classList.remove("visually-hidden");
     }
 };
 
