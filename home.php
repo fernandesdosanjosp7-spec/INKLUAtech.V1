@@ -11,6 +11,7 @@ if (empty($_SESSION["user_id"])) {
 $databaseError = "";
 $savedMessage = "";
 $user = [];
+$serverGameProgress = ["games" => [], "sessions" => []];
 
 try {
     $pdo = getDatabase();
@@ -23,6 +24,15 @@ try {
         session_destroy();
         header("Location: Index.html#login");
         exit;
+    }
+
+    $progressStmt = $pdo->prepare("SELECT dados FROM progresso_jogos WHERE user_id = :id LIMIT 1");
+    $progressStmt->execute([":id" => $_SESSION["user_id"]]);
+    $progressData = $progressStmt->fetchColumn();
+    $decodedProgress = $progressData ? json_decode($progressData, true) : null;
+
+    if (is_array($decodedProgress)) {
+        $serverGameProgress = $decodedProgress;
     }
 
     if (($_GET["status"] ?? "") === "registered") {
@@ -439,11 +449,45 @@ function checkedValue(array $user, string $key, string $value): string
                 </div>
 
                 <article class="report-panel report-panel--wide">
+<<<<<<< HEAD
                     <h3>Resumo</h3>
                     <div class="report-metrics-grid" aria-label="Resumo consolidado dos jogos">
                         <article class="report-metric-card">
                             <span>Tentativas</span>
                             <strong id="attemptsMetric">0</strong>
+=======
+                    <h3>Consolida&ccedil;&atilde;o de dados da plataforma</h3>
+                    <div class="report-metrics-grid" aria-label="Resumo consolidado dos jogos">
+                        <article class="report-metric-card">
+                            <span>Perguntas respondidas</span>
+                            <strong id="completedActivitiesMetric">0 acertos</strong>
+                            <p id="completedActivitiesText">0 erros registrados nos jogos.</p>
+                        </article>
+                        <article class="report-metric-card">
+                            <span>Tempo na plataforma</span>
+                            <strong id="usageFrequencyMetric">0s</strong>
+                            <p id="usageFrequencyText">Uso acumulado entre home, jogos e relat&oacute;rio.</p>
+                        </article>
+                        <article class="report-metric-card">
+                            <span>Desenvolvimento</span>
+                            <strong id="developmentMetric">Aguardando dados</strong>
+                            <p id="developmentMetricText">Leitura geral do progresso do aluno.</p>
+                        </article>
+                    </div>
+
+                    <p class="report-insight-text" id="qualitativeDevelopmentText">
+                        Ao usar os jogos, a plataforma vai consolidar evid&ecirc;ncias de participa&ccedil;&atilde;o, const&acirc;ncia e habilidades trabalhadas.
+                    </p>
+                </article>
+
+                <article class="report-panel report-panel--wide">
+                    <h3>Plano sugerido pela plataforma</h3>
+                    <div class="report-action-grid">
+                        <article class="report-action-card">
+                            <strong>Comunica&ccedil;&atilde;o e express&atilde;o</strong>
+                            <p>Use jogos de emo&ccedil;&otilde;es, vogais, s&iacute;labas e alfabeto para ampliar escolhas, fala, escuta e comunica&ccedil;&atilde;o alternativa.</p>
+                            <a href="#jogos">Ver jogos</a>
+>>>>>>> origin/main
                         </article>
                         <article class="report-metric-card">
                             <span>Acertos</span>
@@ -563,8 +607,15 @@ function checkedValue(array $user, string $key, string $value): string
         </section>
     </main>
 
+<<<<<<< HEAD
     <script src="platform-time.js"></script>
     <script src="inklua-speech.js"></script>
+=======
+    <script>
+        window.InkluaServerGameProgress = <?php echo json_encode($serverGameProgress, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
+    </script>
+    <script src="game-progress.js"></script>
+>>>>>>> origin/main
     <script src="app.js"></script>
 </body>
 </html>

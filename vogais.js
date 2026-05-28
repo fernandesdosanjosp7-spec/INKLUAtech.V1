@@ -82,11 +82,15 @@ const speakVowel = (letter) => {
 
     const utterance = createFastUtterance(vowelNames[letter] || letter);
 
+<<<<<<< HEAD
     if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
         window.speechSynthesis.cancel();
     }
 
     window.speechSynthesis.resume?.();
+=======
+    const utterance = window.InkluaSpeech?.createUtterance(`${vowelNames[letter] || letter}.`) || new SpeechSynthesisUtterance(`${vowelNames[letter] || letter}.`);
+>>>>>>> origin/main
     window.speechSynthesis.speak(utterance);
 };
 

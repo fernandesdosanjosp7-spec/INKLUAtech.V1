@@ -97,6 +97,34 @@
             </article>
         </section>
 
+        <section class="section-block platform-summary" aria-labelledby="platform-summary-title">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Resumo da plataforma</p>
+                    <h2 id="platform-summary-title">Tempo e respostas registradas</h2>
+                </div>
+                <span class="status-pill" id="platformSummaryStatus">Sincronizado</span>
+            </div>
+
+            <div class="platform-summary-grid">
+                <article class="platform-summary-card">
+                    <span>Perguntas acertadas</span>
+                    <strong id="correctAnswersMetric">0</strong>
+                    <p id="correctAnswersText">Aguardando respostas dos jogos.</p>
+                </article>
+                <article class="platform-summary-card">
+                    <span>Perguntas erradas</span>
+                    <strong id="wrongAnswersMetric">0</strong>
+                    <p id="wrongAnswersText">Aguardando respostas dos jogos.</p>
+                </article>
+                <article class="platform-summary-card">
+                    <span>Tempo na plataforma</span>
+                    <strong id="platformTimeMetric">0 min</strong>
+                    <p id="platformTimeText">Tempo acumulado entre home, jogos e relatorio.</p>
+                </article>
+            </div>
+        </section>
+
         <section class="section-block games-report" aria-labelledby="games-report-title">
             <div class="section-heading">
                 <div>
@@ -126,11 +154,25 @@
         <section class="section-block teacher-notes" aria-labelledby="notes-title">
             <div class="section-heading">
                 <div>
-                    <p class="eyebrow">Observa&ccedil;&otilde;es do professor</p>
-                    <h2 id="notes-title">Registro pedag&oacute;gico</h2>
+                    <p class="eyebrow">Profissional ou respons&aacute;vel</p>
+                    <h2 id="notes-title">Registro do desenvolvimento do aluno</h2>
                 </div>
             </div>
+<<<<<<< HEAD
             <textarea id="teacherNotes" aria-label="Campo de observa&ccedil;&otilde;es do professor" placeholder="Observa&ccedil;&otilde;es do professor, respons&aacute;vel ou terapeuta."></textarea>
+=======
+            <p class="teacher-notes__intro">
+                Espa&ccedil;o reservado para descrever avan&ccedil;os observados, habilidades desenvolvidas, autonomia, comunica&ccedil;&atilde;o, intera&ccedil;&atilde;o, desafios e encaminhamentos para as pr&oacute;ximas atividades.
+            </p>
+            <div class="teacher-notes__prompts" aria-label="Sugest&otilde;es para o registro">
+                <span>Desenvolvimento geral</span>
+                <span>Habilidades desenvolvidas</span>
+                <span>Comunica&ccedil;&atilde;o e intera&ccedil;&atilde;o</span>
+                <span>Autonomia</span>
+                <span>Pr&oacute;ximos passos</span>
+            </div>
+            <textarea id="teacherNotes" aria-label="Campo de registro do profissional ou respons&aacute;vel" placeholder="Descreva aqui o desenvolvimento do aluno, habilidades desenvolvidas, avan&ccedil;os percebidos, apoios necess&aacute;rios e recomenda&ccedil;&otilde;es para continuidade."></textarea>
+>>>>>>> origin/main
         </section>
 
         <section class="action-bar" aria-label="A&ccedil;&otilde;es do relat&oacute;rio">
@@ -148,6 +190,7 @@
 
     <script src="platform-time.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="game-progress.js"></script>
     <script src="relatorio.js"></script>
 </body>
 </html>

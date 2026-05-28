@@ -57,6 +57,7 @@ const speakColor = (colorName, onEnd) => {
 
     window.speechSynthesis.cancel();
 
+<<<<<<< HEAD
     const utterance = window.InkluaSpeech?.createUtterance(`${colorName}.`, { rate: 0.78 }) || new SpeechSynthesisUtterance(`${colorName}.`);
     utterance.lang = utterance.lang || "pt-BR";
     utterance.rate = 0.78;
@@ -64,6 +65,9 @@ const speakColor = (colorName, onEnd) => {
     utterance.onend = finishSpeech;
     utterance.onerror = utterance.onend;
 
+=======
+    const utterance = window.InkluaSpeech?.createUtterance(`${colorName}.`) || new SpeechSynthesisUtterance(`${colorName}.`);
+>>>>>>> origin/main
     window.speechSynthesis.speak(utterance);
 
     if (typeof onEnd === "function") {

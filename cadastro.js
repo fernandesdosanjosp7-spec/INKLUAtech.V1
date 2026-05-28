@@ -217,6 +217,13 @@ const validateStoredRecovery = () => {
     return true;
 };
 
+const canUsePhpBackend = () => {
+    const protocol = window.location.protocol;
+    const staticServerPorts = new Set(["5500", "5501"]);
+
+    return protocol !== "file:" && !staticServerPorts.has(window.location.port);
+};
+
 const collectRegisterAnswers = (form) => {
     const formData = new FormData(form);
     const answers = {};
@@ -416,6 +423,7 @@ const showBackendResetStatus = () => {
 registerForm?.addEventListener("submit", (event) => {
     localStorage.setItem(formStorageKey, JSON.stringify(collectRegisterAnswers(registerForm)));
 
+<<<<<<< HEAD
     if (!canUsePhpBackend()) {
         event.preventDefault();
         window.location.href = "home.html#formulario";
@@ -438,6 +446,23 @@ entryLoginForm?.addEventListener("submit", (event) => {
         event.preventDefault();
         validateStoredLogin();
     }
+=======
+    if (canUsePhpBackend() && registerForm.method.toLowerCase() === "post" && registerForm.action.includes("auth.php")) {
+        return;
+    }
+
+    event.preventDefault();
+    window.location.href = "home.html#formulario";
+});
+
+entryLoginForm?.addEventListener("submit", (event) => {
+    if (canUsePhpBackend() && entryLoginForm.method.toLowerCase() === "post" && entryLoginForm.action.includes("auth.php")) {
+        return;
+    }
+
+    event.preventDefault();
+    window.location.href = "home.html";
+>>>>>>> origin/main
 });
 
 entryRecoveryForm?.addEventListener("submit", (event) => {

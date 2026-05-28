@@ -74,11 +74,15 @@ const speakNumber = (number) => {
 
     const utterance = createFastUtterance(String(number));
 
+<<<<<<< HEAD
     if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
         window.speechSynthesis.cancel();
     }
 
     window.speechSynthesis.resume?.();
+=======
+    const utterance = window.InkluaSpeech?.createUtterance(String(number)) || new SpeechSynthesisUtterance(String(number));
+>>>>>>> origin/main
     window.speechSynthesis.speak(utterance);
 };
 

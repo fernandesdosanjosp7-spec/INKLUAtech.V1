@@ -229,6 +229,7 @@ const speakText = (text, options = {}) => {
 
     refreshVoice();
 
+<<<<<<< HEAD
     if (window.speechSynthesis.getVoices().length === 0) {
         window.setTimeout(() => speakText(text, options), 300);
         return;
@@ -243,6 +244,10 @@ const speakText = (text, options = {}) => {
     }
 
     window.speechSynthesis.resume?.();
+=======
+    const letterName = letterNames[letter] || letter;
+    const utterance = window.InkluaSpeech?.createUtterance(`${letterName}.`) || new SpeechSynthesisUtterance(`${letterName}.`);
+>>>>>>> origin/main
     window.speechSynthesis.speak(utterance);
 };
 

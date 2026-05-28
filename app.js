@@ -283,6 +283,126 @@ if (initialActivity && activityContent[initialActivity]) {
     }
 }
 
+const scoreSpeechVoice = (voice) => {
+    const name = voice.name.toLowerCase();
+    const uri = String(voice.voiceURI || "").toLowerCase();
+    const normalizeText = (value) => String(value || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
+    const text = normalizeText(`${name} ${uri}`);
+    let score = 0;
+    const femaleNames = [
+        "ana",
+        "beatriz",
+        "bruna",
+        "camila",
+        "carolina",
+        "claudia",
+        "francisca",
+        "fernanda",
+        "gabriela",
+        "helena",
+        "heloisa",
+        "ines",
+        "juliana",
+        "leticia",
+        "livia",
+        "luciana",
+        "maria",
+        "manuela",
+        "joana",
+        "patricia",
+        "sandra",
+        "thalita",
+        "yara",
+        "raquel",
+        "teresa",
+        "catarina",
+        "amalia",
+        "vitoria"
+    ];
+    const maleNames = [
+        "antonio",
+        "daniel",
+        "felipe",
+        "joaquim",
+        "ricardo",
+        "paulo",
+        "thiago",
+        "tiago",
+        "bruno",
+        "carlos",
+        "jorge"
+    ];
+
+    if (voice.lang?.toLowerCase() === "pt-br") score += 40;
+    if (voice.lang?.toLowerCase().startsWith("pt")) score += 25;
+    if (femaleNames.some((femaleName) => text.includes(femaleName))) score += 500;
+    if (maleNames.some((maleName) => text.includes(maleName))) score -= 1000;
+    if (text.includes("female") || text.includes("feminina") || text.includes("mulher") || text.includes("woman")) score += 400;
+    if (text.includes("male") || text.includes("masculina") || text.includes("homem")) score -= 1000;
+    if (text.includes("doce") || text.includes("suave") || text.includes("soft")) score += 100;
+    if (text.includes("natural")) score += 80;
+    if (text.includes("neural")) score += 70;
+    if (text.includes("online")) score += 55;
+    if (voice.localService === false) score += 45;
+    if (text.includes("microsoft")) score += 24;
+    if (text.includes("google")) score += 22;
+    if (text.includes("francisca") || text.includes("maria") || text.includes("luciana") || text.includes("helena")) score += 35;
+    if (text.includes("female") || text.includes("feminina")) score += 10;
+    if (voice.localService === true && !text.includes("natural")) score -= 30;
+
+    return score;
+};
+
+const getPreferredSpeechVoice = () => {
+    if (!("speechSynthesis" in window)) {
+        return null;
+    }
+
+    const voices = window.speechSynthesis.getVoices();
+    const portugueseVoices = voices.filter((voice) => voice.lang?.toLowerCase().startsWith("pt"));
+    const femaleVoice = portugueseVoices
+        .filter((voice) => scoreSpeechVoice(voice) > 450)
+        .sort((first, second) => scoreSpeechVoice(second) - scoreSpeechVoice(first))[0];
+
+    if (femaleVoice) {
+        return femaleVoice;
+    }
+
+    const anyFemaleVoice = voices
+        .filter((voice) => scoreSpeechVoice(voice) > 450)
+        .sort((first, second) => scoreSpeechVoice(second) - scoreSpeechVoice(first))[0];
+
+    if (anyFemaleVoice) {
+        return anyFemaleVoice;
+    }
+
+    return portugueseVoices
+        .sort((first, second) => scoreSpeechVoice(second) - scoreSpeechVoice(first))[0] || null;
+};
+
+const createSoftSpeech = (text) => {
+    const utterance = new SpeechSynthesisUtterance(text);
+    const voice = getPreferredSpeechVoice();
+
+    utterance.lang = voice?.lang || "pt-BR";
+    utterance.rate = 0.86;
+    utterance.pitch = 1.16;
+    utterance.volume = 1;
+
+    if (voice) {
+        utterance.voice = voice;
+    }
+
+    return utterance;
+};
+
+if ("speechSynthesis" in window) {
+    window.speechSynthesis.onvoiceschanged = () => getPreferredSpeechVoice();
+}
+
 const speakLetter = (letter) => {
     if (!("speechSynthesis" in window)) {
         return;
@@ -291,10 +411,14 @@ const speakLetter = (letter) => {
     window.speechSynthesis.cancel();
 
     const letterName = letterNames[letter] || letter;
+<<<<<<< HEAD
     const utterance = window.InkluaSpeech?.createUtterance(`${letterName}.`) || new SpeechSynthesisUtterance(`${letterName}.`);
     utterance.lang = utterance.lang || "pt-BR";
     utterance.rate = 0.82;
     utterance.pitch = 1.16;
+=======
+    const utterance = createSoftSpeech(`${letterName}.`);
+>>>>>>> origin/main
     window.speechSynthesis.speak(utterance);
 };
 
@@ -305,10 +429,14 @@ const speakNumber = (number) => {
 
     window.speechSynthesis.cancel();
 
+<<<<<<< HEAD
     const utterance = window.InkluaSpeech?.createUtterance(String(number)) || new SpeechSynthesisUtterance(String(number));
     utterance.lang = utterance.lang || "pt-BR";
     utterance.rate = 0.82;
     utterance.pitch = 1.16;
+=======
+    const utterance = createSoftSpeech(String(number));
+>>>>>>> origin/main
     window.speechSynthesis.speak(utterance);
 };
 
@@ -319,10 +447,14 @@ const speakColor = (colorName) => {
 
     window.speechSynthesis.cancel();
 
+<<<<<<< HEAD
     const utterance = window.InkluaSpeech?.createUtterance(`${colorName}.`) || new SpeechSynthesisUtterance(`${colorName}.`);
     utterance.lang = utterance.lang || "pt-BR";
     utterance.rate = 0.82;
     utterance.pitch = 1.16;
+=======
+    const utterance = createSoftSpeech(`${colorName}.`);
+>>>>>>> origin/main
     window.speechSynthesis.speak(utterance);
 };
 
@@ -538,6 +670,91 @@ const getSavedFormAnswers = () => {
 
 const savedFormAnswers = getSavedFormAnswers();
 
+const hasVisibleProfileAnswers = (form) => Array.from(form.querySelectorAll("[name]")).some((field) => {
+    if (!(field instanceof HTMLInputElement || field instanceof HTMLSelectElement || field instanceof HTMLTextAreaElement)) {
+        return false;
+    }
+
+    if (field.type === "hidden") {
+        return false;
+    }
+
+    if (field instanceof HTMLInputElement && (field.type === "checkbox" || field.type === "radio")) {
+        return field.checked;
+    }
+
+    return String(field.value || "").trim() !== "";
+});
+
+const setFilteredFormView = (form, shouldFilter) => {
+    form.classList.toggle("is-filtered", shouldFilter);
+
+    form.querySelectorAll(".check-grid").forEach((grid) => {
+        const options = Array.from(grid.querySelectorAll("label"));
+        const hasCheckedOption = options.some((label) => {
+            const input = label.querySelector("input");
+            return input instanceof HTMLInputElement && input.checked;
+        });
+
+        options.forEach((label) => {
+            const input = label.querySelector("input");
+            const shouldHide = shouldFilter && hasCheckedOption && input instanceof HTMLInputElement && !input.checked;
+            label.classList.toggle("is-unselected-option", shouldHide);
+        });
+    });
+
+    form.querySelectorAll(".form-group").forEach((group) => {
+        if (group.querySelector(".check-grid")) {
+            const hasCheckedOption = Array.from(group.querySelectorAll("input[type='checkbox'], input[type='radio']")).some((input) => input.checked);
+            group.classList.toggle("is-empty-answer", shouldFilter && !hasCheckedOption);
+            return;
+        }
+
+        const field = group.querySelector("input:not([type='hidden']), select, textarea");
+        const isEmpty = field instanceof HTMLInputElement || field instanceof HTMLSelectElement || field instanceof HTMLTextAreaElement
+            ? String(field.value || "").trim() === ""
+            : false;
+
+        group.classList.toggle("is-empty-answer", shouldFilter && isEmpty);
+    });
+};
+
+const addFormFilterToggle = (form) => {
+    if (!hasVisibleProfileAnswers(form) || form.querySelector(".form-filter-toggle")) {
+        return;
+    }
+
+    const submitButton = form.querySelector(".form-submit");
+    const toggleButton = document.createElement("button");
+    toggleButton.className = "form-filter-toggle";
+    toggleButton.type = "button";
+    toggleButton.textContent = "Mostrar todas as opcoes";
+    toggleButton.setAttribute("aria-pressed", "false");
+
+    toggleButton.addEventListener("click", () => {
+        const shouldShowAll = toggleButton.getAttribute("aria-pressed") === "false";
+        toggleButton.setAttribute("aria-pressed", String(shouldShowAll));
+        toggleButton.textContent = shouldShowAll ? "Mostrar apenas respostas" : "Mostrar todas as opcoes";
+        setFilteredFormView(form, !shouldShowAll);
+    });
+
+    if (submitButton) {
+        form.insertBefore(toggleButton, submitButton);
+        return;
+    }
+
+    form.appendChild(toggleButton);
+};
+
+const applySavedAnswerView = (form) => {
+    if (!hasVisibleProfileAnswers(form)) {
+        return;
+    }
+
+    setFilteredFormView(form, true);
+    addFormFilterToggle(form);
+};
+
 if (welcomeName && savedFormAnswers.aluno_nome) {
     welcomeName.textContent = savedFormAnswers.aluno_nome;
 }
@@ -674,6 +891,7 @@ const readGameProgress = () => {
     }
 };
 
+<<<<<<< HEAD
 const readPlatformTime = () => {
     window.InkluaPlatformTime?.commit?.();
 
@@ -686,21 +904,34 @@ const readPlatformTime = () => {
 
 const formatDuration = (milliseconds) => {
     const totalSeconds = Math.max(Math.round((Number(milliseconds) || 0) / 1000), 0);
+=======
+const formatDuration = (milliseconds = 0) => {
+    const totalSeconds = Math.max(Math.floor(milliseconds / 1000), 0);
+>>>>>>> origin/main
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
 
     if (hours > 0) {
+<<<<<<< HEAD
         return `${hours}h ${minutes}min`;
     }
 
     if (minutes > 0) {
         return `${minutes}min ${seconds}s`;
+=======
+        return `${hours}h ${String(minutes).padStart(2, "0")}min`;
+    }
+
+    if (minutes > 0) {
+        return `${minutes}min ${String(seconds).padStart(2, "0")}s`;
+>>>>>>> origin/main
     }
 
     return `${seconds}s`;
 };
 
+<<<<<<< HEAD
 const hiddenGameIds = ["emocoes", "checkin-emocional", "rotina", "formas"];
 const isVisibleGame = (game) => !hiddenGameIds.includes(game.id || game.gameId || "");
 
@@ -710,6 +941,8 @@ const developmentAreas = {
     matematica: ["numeros", "matematica-visual"]
 };
 
+=======
+>>>>>>> origin/main
 const getDaysBetween = (dateString) => {
     const date = new Date(dateString);
 
@@ -796,6 +1029,19 @@ const getDevelopmentSummary = ({ games, completedGames, accuracy, activeDays }) 
     };
 };
 
+const getGameLevelFromProgress = (game) => {
+    const correct = Math.max(Number(game?.correct) || 0, 0);
+    return Number(game?.level) || Math.floor(correct / 5) + 1;
+};
+
+const getLevelSummary = (games) => {
+    const levels = games.map(getGameLevelFromProgress);
+    const highestLevel = levels.length ? Math.max(...levels) : 1;
+    const advancedGames = levels.filter((level) => level > 1).length;
+
+    return { highestLevel, advancedGames };
+};
+
 const updateProgressCountFromGames = (completedGames) => {
     if (progressCount) {
         progressCount.textContent = String(completedGames);
@@ -848,7 +1094,16 @@ const renderConsolidatedReport = () => {
     const games = Object.values(progress.games || {}).filter(isVisibleGame);
     const sessions = (progress.sessions || []).filter(isVisibleGame);
     const completedGames = games.filter((game) => game.completed).length;
+<<<<<<< HEAD
     const totalGames = Math.max(games.length, 6);
+=======
+    const totalGames = Math.max(games.length, 8);
+    const correctAnswers = games.reduce((sum, game) => sum + (Number(game.correct) || 0), 0);
+    const wrongAnswers = games.reduce((sum, game) => sum + (Number(game.wrong) || 0), 0);
+    const totalPlatformTime = window.InkluaGameProgress?.getPlatformUsageTime
+        ? window.InkluaGameProgress.getPlatformUsageTime()
+        : Math.max(Number(progress.totalTimeMs) || 0, 0);
+>>>>>>> origin/main
     const answeredSessions = sessions.filter((session) => typeof session.correct === "boolean");
     const correctTotal = games.reduce((sum, game) => sum + Math.max(Number(game.correct) || 0, 0), 0);
     const wrongTotal = games.reduce((sum, game) => sum + Math.max(Number(game.wrong) || 0, 0), 0);
@@ -880,7 +1135,9 @@ const renderConsolidatedReport = () => {
     const mostUsedSkill = Object.entries(skillCount).sort((a, b) => b[1] - a[1])[0]?.[0] || "";
     const usageLabel = getUsageLabel(activeDays, recentSessions.length);
     const developmentSummary = getDevelopmentSummary({ games, completedGames, accuracy, activeDays });
+    const levelSummary = getLevelSummary(games);
 
+<<<<<<< HEAD
     document.getElementById("attemptsMetric")?.replaceChildren(document.createTextNode(String(attemptsTotal)));
     document.getElementById("attemptsMetricText")?.replaceChildren(document.createTextNode(`${games.length} jogo(s) com registro de uso.`));
     document.getElementById("correctMetric")?.replaceChildren(document.createTextNode(String(correctTotal)));
@@ -897,6 +1154,18 @@ const renderConsolidatedReport = () => {
     document.getElementById("usageFrequencyText")?.replaceChildren(document.createTextNode(`${activeDays} dia(s) de uso recente.`));
     document.getElementById("developmentMetric")?.replaceChildren(document.createTextNode(developmentSummary.label));
     document.getElementById("developmentMetricText")?.replaceChildren(document.createTextNode(developmentSummary.text));
+=======
+    document.getElementById("completedActivitiesMetric")?.replaceChildren(document.createTextNode(`${correctAnswers} acerto(s)`));
+    document.getElementById("completedActivitiesText")?.replaceChildren(document.createTextNode(`${wrongAnswers} erro(s). ${completedGames} de ${totalGames} atividades concluidas.`));
+    document.getElementById("usageFrequencyMetric")?.replaceChildren(document.createTextNode(formatDuration(totalPlatformTime)));
+    document.getElementById("usageFrequencyText")?.replaceChildren(document.createTextNode(`${usageLabel}. ${activeDays} dia(s) de uso recente.`));
+    document.getElementById("developmentMetric")?.replaceChildren(document.createTextNode(`Fase ${levelSummary.highestLevel}`));
+    document.getElementById("developmentMetricText")?.replaceChildren(document.createTextNode(
+        games.length
+            ? `${levelSummary.advancedGames} jogo(s) ja avancaram de fase. ${developmentSummary.text}`
+            : developmentSummary.text
+    ));
+>>>>>>> origin/main
     document.getElementById("qualitativeDevelopmentText")?.replaceChildren(document.createTextNode(getQualitativeDevelopment({
         games,
         completedGames,
@@ -937,6 +1206,8 @@ document.querySelectorAll(".platform-form").forEach((form) => {
         fillFormWithSavedAnswers(form, savedFormAnswers);
     }
 
+    applySavedAnswerView(form);
+
     form.addEventListener("submit", (event) => {
         const shouldSubmitToServer = form.method.toLowerCase() === "post" && form.action.includes("auth.php");
 
@@ -950,6 +1221,7 @@ document.querySelectorAll(".platform-form").forEach((form) => {
         const currentAnswers = collectFormAnswers(form);
         updateReportFields(currentAnswers);
         renderReportRecommendations(currentAnswers);
+        applySavedAnswerView(form);
 
         const status = form.querySelector(".form-status");
 

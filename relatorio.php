@@ -9,12 +9,36 @@ if (empty($_SESSION["user_id"])) {
 }
 
 $user = [];
+$serverGameProgress = ["games" => [], "sessions" => []];
+$serverReport = ["teacherNotes" => "", "data" => null, "updatedAt" => null];
 
 try {
     $pdo = getDatabase();
     $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE id = :id LIMIT 1");
     $stmt->execute([":id" => $_SESSION["user_id"]]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
+
+    $progressStmt = $pdo->prepare("SELECT dados FROM progresso_jogos WHERE user_id = :id LIMIT 1");
+    $progressStmt->execute([":id" => $_SESSION["user_id"]]);
+    $progressData = $progressStmt->fetchColumn();
+    $decodedProgress = $progressData ? json_decode($progressData, true) : null;
+
+    if (is_array($decodedProgress)) {
+        $serverGameProgress = $decodedProgress;
+    }
+
+    $reportStmt = $pdo->prepare("SELECT observacoes_professor, dados_json, atualizado_em FROM relatorios WHERE user_id = :id LIMIT 1");
+    $reportStmt->execute([":id" => $_SESSION["user_id"]]);
+    $reportRow = $reportStmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($reportRow) {
+        $decodedReportData = !empty($reportRow["dados_json"]) ? json_decode($reportRow["dados_json"], true) : null;
+        $serverReport = [
+            "teacherNotes" => $reportRow["observacoes_professor"] ?? "",
+            "data" => is_array($decodedReportData) ? $decodedReportData : null,
+            "updatedAt" => $reportRow["atualizado_em"] ?? null
+        ];
+    }
 } catch (Throwable $e) {
     $user = [];
 }
@@ -48,7 +72,7 @@ $profile = [
 ];
 
 $html = file_get_contents(__DIR__ . "/relatorio.html");
-$profileScript = "<script>window.InkluaStudentProfile = " . json_encode($profile, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . ";</script>\n    ";
+$profileScript = "<script>window.InkluaStudentProfile = " . json_encode($profile, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "; window.InkluaServerGameProgress = " . json_encode($serverGameProgress, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "; window.InkluaServerReport = " . json_encode($serverReport, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . ";</script>\n    ";
 
 echo str_replace(
     '<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>',
