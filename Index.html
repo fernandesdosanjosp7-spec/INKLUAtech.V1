@@ -110,6 +110,7 @@
 
                 <form class="entry-login-form" action="auth.php" method="post">
                     <input type="hidden" name="action" value="login">
+                    <input type="hidden" name="login_source" value="Index.html">
                     <div class="entry-login-form__group">
                         <label for="cpf">CPF</label>
                         <input
@@ -119,6 +120,7 @@
                             placeholder="000.000.000-00"
                             autocomplete="username"
                             inputmode="numeric"
+                            aria-describedby="entryLoginError"
                             required
                         >
                     </div>
@@ -131,16 +133,118 @@
                             name="password"
                             placeholder="Digite sua senha"
                             autocomplete="current-password"
+                            aria-describedby="entryLoginError"
                             required
                         >
                     </div>
+
+                    <p class="entry-login-form__error" id="entryLoginError" aria-live="polite"></p>
 
                     <button class="entry-login-form__button" type="submit">Entrar</button>
                 </form>
 
                 <div class="entry-login-card__links">
                     <a href="#cadastro">Criar conta</a>
-                    <a href="#login">Esqueci minha senha</a>
+                    <a href="#recuperar-senha">Esqueci minha senha</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="entry-login-layer" id="recuperar-senha" aria-labelledby="recovery-title">
+            <a class="entry-login-layer__backdrop" href="#login" aria-label="Voltar para o login"></a>
+
+            <div class="entry-login-card" role="dialog" aria-modal="true">
+                <a class="entry-login-card__close" href="#login" aria-label="Voltar para o login">&times;</a>
+
+                <div class="entry-login-card__brand">
+                    <img src="assets/ink-logo.png" alt="Logo Inklua Tech">
+                    <div>
+                        <p>Recupera&ccedil;&atilde;o de acesso</p>
+                        <h2 id="recovery-title">Recuperar senha</h2>
+                    </div>
+                </div>
+
+                <form class="entry-recovery-form" action="auth.php" method="post">
+                    <input type="hidden" name="action" value="recover_password">
+                    <input type="hidden" name="recovery_source" value="Index.html">
+
+                    <div class="entry-login-form__group">
+                        <label for="recovery-email">E-mail cadastrado</label>
+                        <input
+                            type="email"
+                            id="recovery-email"
+                            name="email"
+                            placeholder="seuemail@exemplo.com"
+                            autocomplete="email"
+                            aria-describedby="entryRecoveryMessage"
+                            required
+                        >
+                    </div>
+
+                    <p class="entry-login-form__error entry-recovery-message" id="entryRecoveryMessage" aria-live="polite"></p>
+
+                    <button class="entry-login-form__button" type="submit">Enviar recupera&ccedil;&atilde;o</button>
+                </form>
+
+                <div class="entry-recovery-code" id="entryRecoveryCodePanel" hidden>
+                    <p>C&oacute;digo de recupera&ccedil;&atilde;o</p>
+                    <strong id="entryRecoveryCodePreview"></strong>
+
+                    <div class="entry-login-form__group">
+                        <label for="entryRecoveryCodeInput">Digite o c&oacute;digo recebido</label>
+                        <input
+                            type="text"
+                            id="entryRecoveryCodeInput"
+                            inputmode="numeric"
+                            maxlength="6"
+                            placeholder="000000"
+                            aria-describedby="entryRecoveryCodeMessage"
+                        >
+                    </div>
+
+                    <p class="entry-login-form__error entry-recovery-code__message" id="entryRecoveryCodeMessage" aria-live="polite"></p>
+
+                    <button class="entry-login-form__button" id="entryVerifyRecoveryCode" type="button">Confirmar c&oacute;digo</button>
+                </div>
+
+                <form class="entry-new-password-form" id="entryNewPasswordForm" action="auth.php" method="post" hidden>
+                    <input type="hidden" name="action" value="reset_password">
+                    <input type="hidden" name="reset_source" value="Index.html">
+
+                    <div class="entry-login-form__group">
+                        <label for="entryNewPassword">Nova senha</label>
+                        <input
+                            type="password"
+                            id="entryNewPassword"
+                            name="new_password"
+                            placeholder="Crie uma nova senha"
+                            autocomplete="new-password"
+                            aria-describedby="entryNewPasswordMessage"
+                            required
+                        >
+                    </div>
+
+                    <div class="entry-login-form__group">
+                        <label for="entryConfirmNewPassword">Confirmar nova senha</label>
+                        <input
+                            type="password"
+                            id="entryConfirmNewPassword"
+                            name="confirm_password"
+                            placeholder="Digite a senha novamente"
+                            autocomplete="new-password"
+                            aria-describedby="entryNewPasswordMessage"
+                            required
+                        >
+                    </div>
+
+                    <p class="entry-login-form__error entry-new-password-message" id="entryNewPasswordMessage" aria-live="polite"></p>
+
+                    <button class="entry-login-form__button" id="entrySaveNewPasswordButton" type="submit">Confirmar nova senha</button>
+                </form>
+
+                <div class="entry-login-card__links">
+                    <a href="#login">Voltar para o login</a>
+                    <a href="#cadastro">Criar conta</a>
                 </div>
             </div>
         </section>
@@ -194,6 +298,18 @@
                                     name="senha"
                                     placeholder="Crie uma senha"
                                     autocomplete="new-password"
+                                    required
+                                >
+                            </div>
+
+                            <div class="entry-login-form__group">
+                                <label for="register-email">E-mail</label>
+                                <input
+                                    type="email"
+                                    id="register-email"
+                                    name="email"
+                                    placeholder="seuemail@exemplo.com"
+                                    autocomplete="email"
                                     required
                                 >
                             </div>
@@ -330,6 +446,9 @@
                         </div>
 
                         <div class="entry-login-form__group">
+<<<<<<< HEAD
+                            <span class="entry-form-label">10&deg; Quais habilidades o respons&aacute;vel, professor ou terapeuta precisa desenvolver com maior prioridade?</span>
+=======
                             <label for="hiperfocos">10&deg; Existem hiperfocos, interesses espec&iacute;ficos ou temas favoritos que possam ser usados para melhorar o aprendizado?</label>
                             <textarea id="hiperfocos" name="hiperfocos" rows="3"></textarea>
                         </div>
@@ -380,6 +499,7 @@
 
                         <div class="entry-login-form__group">
                             <span class="entry-form-label">16&deg; Quais habilidades o respons&aacute;vel, professor ou terapeuta precisa desenvolver com maior prioridade?</span>
+>>>>>>> origin/main
                             <div class="entry-check-grid">
                                 <label><input type="checkbox" name="prioridades[]" value="fala"> Fala</label>
                                 <label><input type="checkbox" name="prioridades[]" value="coordenacao"> Coordena&ccedil;&atilde;o</label>

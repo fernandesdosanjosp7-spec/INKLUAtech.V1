@@ -8,7 +8,7 @@ const gameCards = document.querySelectorAll("[data-activity]");
 const platformViews = document.querySelectorAll("[data-view]");
 const navLinks = document.querySelectorAll(".nav-menu a[href^='#']");
 
-const availableViews = ["inicio", "formulario", "relatorio", "jogos", "aprendizado", "rotina", "apoio"];
+const availableViews = ["inicio", "formulario", "relatorio", "jogos", "atividades"];
 
 const showPlatformView = (viewName = "inicio") => {
     const nextView = availableViews.includes(viewName) ? viewName : "inicio";
@@ -43,6 +43,18 @@ const goToPlatformView = (viewName) => {
 
 const getViewFromHash = () => window.location.hash.replace("#", "") || "inicio";
 
+const syncPlatformViewFromHash = () => {
+    const viewName = getViewFromHash();
+
+    showPlatformView(viewName);
+
+    if (viewName === "jogos" || viewName === "atividades") {
+        window.setTimeout(() => {
+            document.getElementById(viewName)?.scrollIntoView({ block: "start" });
+        }, 80);
+    }
+};
+
 navLinks.forEach((link) => {
     link.addEventListener("click", (event) => {
         const href = link.getAttribute("href") || "#inicio";
@@ -57,27 +69,66 @@ navLinks.forEach((link) => {
     });
 });
 
-showPlatformView(getViewFromHash());
+syncPlatformViewFromHash();
 
 window.addEventListener("hashchange", () => {
-    showPlatformView(getViewFromHash());
+    syncPlatformViewFromHash();
 });
 
 window.addEventListener("popstate", () => {
-    showPlatformView(getViewFromHash());
+    syncPlatformViewFromHash();
 });
 
+const moodStorageKey = "inklua_daily_mood_v1";
+const moodFeedback = document.getElementById("moodFeedback");
+const moodButtons = document.querySelectorAll("[data-mood]");
+
+const getTodayKey = () => new Date().toISOString().slice(0, 10);
+
+const saveMood = (button) => {
+    const payload = {
+        date: getTodayKey(),
+        mood: button.dataset.mood || "",
+        label: button.dataset.moodLabel || "",
+        feedback: button.dataset.moodFeedback || ""
+    };
+
+    localStorage.setItem(moodStorageKey, JSON.stringify(payload));
+    renderMood(payload);
+};
+
+const readMood = () => {
+    try {
+        const savedMood = JSON.parse(localStorage.getItem(moodStorageKey)) || {};
+        return savedMood.date === getTodayKey() ? savedMood : null;
+    } catch (error) {
+        return null;
+    }
+};
+
+const renderMood = (mood) => {
+    moodButtons.forEach((button) => {
+        const isSelected = mood?.mood && button.dataset.mood === mood.mood;
+        button.classList.toggle("is-selected", Boolean(isSelected));
+        button.setAttribute("aria-pressed", isSelected ? "true" : "false");
+    });
+
+    if (moodFeedback && mood?.feedback) {
+        moodFeedback.textContent = mood.feedback;
+        moodFeedback.classList.remove("visually-hidden");
+    }
+};
+
+moodButtons.forEach((button) => {
+    button.setAttribute("aria-pressed", "false");
+    button.addEventListener("click", () => saveMood(button));
+});
+
+renderMood(readMood());
+
+const clampNumber = (value, min, max) => Math.min(Math.max(value, min), max);
+
 const activityContent = {
-    emocoes: {
-        title: "Jogo das Emo&ccedil;&otilde;es",
-        text: "Escolha como a pessoa pode estar se sentindo nesta situa&ccedil;&atilde;o: chegou em um lugar com muito barulho.",
-        choices: ["Feliz", "Assustado", "Com sono", "Com fome"]
-    },
-    rotina: {
-        title: "Sequ&ecirc;ncia da Rotina",
-        text: "Organize mentalmente a rotina de hoje. Qual etapa vem depois da chegada?",
-        choices: ["Pausa", "Atividade", "Ir embora", "Dormir"]
-    },
     cores: {
         title: "Jogo das Cores",
         text: "Toque em uma cor para ouvir seu nome em voz alta.",
@@ -360,7 +411,14 @@ const speakLetter = (letter) => {
     window.speechSynthesis.cancel();
 
     const letterName = letterNames[letter] || letter;
+<<<<<<< HEAD
+    const utterance = window.InkluaSpeech?.createUtterance(`${letterName}.`) || new SpeechSynthesisUtterance(`${letterName}.`);
+    utterance.lang = utterance.lang || "pt-BR";
+    utterance.rate = 0.82;
+    utterance.pitch = 1.16;
+=======
     const utterance = createSoftSpeech(`${letterName}.`);
+>>>>>>> origin/main
     window.speechSynthesis.speak(utterance);
 };
 
@@ -371,7 +429,14 @@ const speakNumber = (number) => {
 
     window.speechSynthesis.cancel();
 
+<<<<<<< HEAD
+    const utterance = window.InkluaSpeech?.createUtterance(String(number)) || new SpeechSynthesisUtterance(String(number));
+    utterance.lang = utterance.lang || "pt-BR";
+    utterance.rate = 0.82;
+    utterance.pitch = 1.16;
+=======
     const utterance = createSoftSpeech(String(number));
+>>>>>>> origin/main
     window.speechSynthesis.speak(utterance);
 };
 
@@ -382,7 +447,14 @@ const speakColor = (colorName) => {
 
     window.speechSynthesis.cancel();
 
+<<<<<<< HEAD
+    const utterance = window.InkluaSpeech?.createUtterance(`${colorName}.`) || new SpeechSynthesisUtterance(`${colorName}.`);
+    utterance.lang = utterance.lang || "pt-BR";
+    utterance.rate = 0.82;
+    utterance.pitch = 1.16;
+=======
     const utterance = createSoftSpeech(`${colorName}.`);
+>>>>>>> origin/main
     window.speechSynthesis.speak(utterance);
 };
 
@@ -473,6 +545,101 @@ if (completeActivity && activityPanel) {
 }
 
 const formStorageKey = "inklua_formulario_adaptacao";
+
+const setupAgeInput = (input) => {
+    if (input.dataset.ageStepperReady === "true") {
+        return;
+    }
+
+    const min = Number(input.min) || 1;
+    const max = Number(input.max) || 99;
+
+    input.dataset.ageStepperReady = "true";
+    input.type = "text";
+    input.step = "1";
+    input.inputMode = "numeric";
+    input.autocomplete = "off";
+
+    const clampAge = (value) => {
+        const number = Number.parseInt(String(value || "").replace(/\D/g, ""), 10);
+
+        if (Number.isNaN(number)) {
+            return "";
+        }
+
+        return String(Math.min(Math.max(number, min), max));
+    };
+
+    const setAge = (value) => {
+        input.value = clampAge(value);
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+        input.dispatchEvent(new Event("change", { bubbles: true }));
+    };
+
+    const stepAge = (direction) => {
+        const currentAge = Number.parseInt(clampAge(input.value), 10);
+        const baseAge = Number.isNaN(currentAge) ? min : currentAge;
+        setAge(baseAge + direction);
+        input.focus();
+    };
+
+    const wrapper = document.createElement("div");
+    const decreaseButton = document.createElement("button");
+    const increaseButton = document.createElement("button");
+
+    wrapper.className = "age-stepper";
+    decreaseButton.className = "age-stepper__button";
+    increaseButton.className = "age-stepper__button";
+    decreaseButton.type = "button";
+    increaseButton.type = "button";
+    decreaseButton.textContent = "-";
+    increaseButton.textContent = "+";
+    decreaseButton.setAttribute("aria-label", "Diminuir idade");
+    increaseButton.setAttribute("aria-label", "Aumentar idade");
+
+    input.classList.add("age-stepper__input");
+    input.parentNode?.insertBefore(wrapper, input);
+    wrapper.append(decreaseButton, input, increaseButton);
+
+    decreaseButton.addEventListener("click", () => stepAge(-1));
+    increaseButton.addEventListener("click", () => stepAge(1));
+
+    input.addEventListener("input", () => {
+        const normalizedAge = clampAge(input.value);
+
+        if (input.value !== normalizedAge) {
+            input.value = normalizedAge;
+        }
+    });
+
+    input.addEventListener("blur", () => {
+        input.value = clampAge(input.value);
+    });
+
+    input.addEventListener("keydown", (event) => {
+        if (["e", "E", "+", "-", ".", ","].includes(event.key)) {
+            event.preventDefault();
+            return;
+        }
+
+        if (event.key === "ArrowUp") {
+            event.preventDefault();
+            stepAge(1);
+            return;
+        }
+
+        if (event.key === "ArrowDown") {
+            event.preventDefault();
+            stepAge(-1);
+        }
+    });
+
+    input.addEventListener("wheel", (event) => {
+        if (document.activeElement === input) {
+            event.preventDefault();
+        }
+    }, { passive: false });
+};
 
 const collectFormAnswers = (form) => {
     const formData = new FormData(form);
@@ -667,16 +834,16 @@ const renderReportRecommendations = (answers) => {
     if (includesAny(answers.prioridades, ["fala", "leitura", "socializacao"]) || includesAny(answers.comunicacao_melhor, ["fala", "gestos", "imagens", "comunicacao-alternativa"])) {
         recommendations.push({
             title: "Comunica\u00e7\u00e3o e express\u00e3o",
-            text: "Priorize emo\u00e7\u00f5es, vogais, s\u00edlabas e alfabeto para trabalhar escolhas, escuta, fala e comunica\u00e7\u00e3o alternativa.",
+            text: "Priorize vogais, s\u00edlabas e alfabeto para trabalhar escolhas, escuta, fala e comunica\u00e7\u00e3o alternativa.",
             href: "#jogos",
             action: "Ver jogos"
         });
     }
 
-    if (includesAny(answers.conteudos_reconhecidos, ["cores", "formas", "numeros"]) || includesAny(answers.atividade_funciona, ["associacao-imagens", "jogos"])) {
+    if (includesAny(answers.conteudos_reconhecidos, ["cores", "numeros"]) || includesAny(answers.atividade_funciona, ["associacao-imagens", "jogos"])) {
         recommendations.push({
             title: "Percep\u00e7\u00e3o visual e matem\u00e1tica",
-            text: "Use cores, formas e n\u00fameros para refor\u00e7ar reconhecimento, associa\u00e7\u00e3o, contagem e compara\u00e7\u00e3o.",
+            text: "Use cores, n\u00fameros e matem\u00e1tica visual para refor\u00e7ar reconhecimento, associa\u00e7\u00e3o, contagem e compara\u00e7\u00e3o.",
             href: "#jogos",
             action: "Praticar percep\u00e7\u00e3o"
         });
@@ -685,18 +852,18 @@ const renderReportRecommendations = (answers) => {
     if (answers.adaptacao_rotina === "nao" || answers.adaptacao_rotina === "as-vezes" || includesAny(answers.recursos_uteis, ["rotina-visual", "reforco-positivo"])) {
         recommendations.push({
             title: "Rotina e autonomia",
-            text: "Use rotina visual, pausas e instru\u00e7\u00f5es curtas para apoiar previsibilidade, transi\u00e7\u00f5es e participa\u00e7\u00e3o.",
-            href: "#rotina",
-            action: "Ver rotina"
+            text: "Registre no perfil quais combinados, pausas e recursos ajudam previsibilidade, transi\u00e7\u00f5es e participa\u00e7\u00e3o.",
+            href: "#formulario",
+            action: "Atualizar perfil"
         });
     }
 
     if (includesAny(answers.sensibilidades_importantes, ["sons-altos", "luz-forte", "muitas-cores", "ambientes-agitados"])) {
         recommendations.push({
             title: "Ajustes sensoriais",
-            text: "Mantenha atividades curtas, tela limpa, pausas e ambiente silencioso quando houver sinais de desconforto.",
-            href: "#apoio",
-            action: "Ver apoio"
+            text: "Use o formulario para registrar sinais de desconforto e adaptar a escolha dos jogos.",
+            href: "#formulario",
+            action: "Atualizar perfil"
         });
     }
 
@@ -724,23 +891,58 @@ const readGameProgress = () => {
     }
 };
 
+<<<<<<< HEAD
+const readPlatformTime = () => {
+    window.InkluaPlatformTime?.commit?.();
+
+    try {
+        return JSON.parse(localStorage.getItem("inklua_platform_time_v1")) || { totalMs: 0, visits: 0 };
+    } catch (error) {
+        return { totalMs: 0, visits: 0 };
+    }
+};
+
+const formatDuration = (milliseconds) => {
+    const totalSeconds = Math.max(Math.round((Number(milliseconds) || 0) / 1000), 0);
+=======
 const formatDuration = (milliseconds = 0) => {
     const totalSeconds = Math.max(Math.floor(milliseconds / 1000), 0);
+>>>>>>> origin/main
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
 
     if (hours > 0) {
+<<<<<<< HEAD
+        return `${hours}h ${minutes}min`;
+    }
+
+    if (minutes > 0) {
+        return `${minutes}min ${seconds}s`;
+=======
         return `${hours}h ${String(minutes).padStart(2, "0")}min`;
     }
 
     if (minutes > 0) {
         return `${minutes}min ${String(seconds).padStart(2, "0")}s`;
+>>>>>>> origin/main
     }
 
     return `${seconds}s`;
 };
 
+<<<<<<< HEAD
+const hiddenGameIds = ["emocoes", "checkin-emocional", "rotina", "formas"];
+const isVisibleGame = (game) => !hiddenGameIds.includes(game.id || game.gameId || "");
+
+const developmentAreas = {
+    percepcao: ["cores"],
+    linguagem: ["alfabeto", "vogais", "silabas"],
+    matematica: ["numeros", "matematica-visual"]
+};
+
+=======
+>>>>>>> origin/main
 const getDaysBetween = (dateString) => {
     const date = new Date(dateString);
 
@@ -846,20 +1048,76 @@ const updateProgressCountFromGames = (completedGames) => {
     }
 };
 
+const getGameDevelopmentScore = (game) => {
+    if (!game) {
+        return 0;
+    }
+
+    const answered = Number(game.attempts) || (game.correct || 0) + (game.wrong || 0);
+    const totalItems = Math.max(Number(game.totalItems) || answered || 1, 1);
+    const exploredItems = Math.min(answered, totalItems);
+    const itemProgress = exploredItems / totalItems;
+    const accuracy = answered ? (game.correct || 0) / answered : itemProgress;
+    const completion = game.completed ? 1 : 0;
+    const score = Math.round((itemProgress * 44) + (accuracy * 36) + (Math.min(Number(game.level) || 1, 4) * 5) + (completion * 10));
+
+    return Math.min(Math.max(score, 0), 100);
+};
+
+const getAreaDevelopmentScore = (gameMap, gameIds) => {
+    const scores = gameIds.map((gameId) => getGameDevelopmentScore(gameMap.get(gameId)));
+    const total = scores.reduce((sum, score) => sum + score, 0);
+
+    return Math.round(total / Math.max(scores.length, 1));
+};
+
+const renderDevelopmentAreas = (games) => {
+    const gameMap = new Map(games.map((game) => [game.id, game]));
+
+    document.querySelectorAll("[data-development-area]").forEach((area) => {
+        const areaName = area.dataset.developmentArea || "";
+        const score = getAreaDevelopmentScore(gameMap, developmentAreas[areaName] || []);
+        const value = area.querySelector("[data-development-value]");
+        const bar = area.querySelector("[data-development-bar]");
+
+        value?.replaceChildren(document.createTextNode(`${score}%`));
+
+        if (bar instanceof HTMLElement) {
+            bar.style.width = `${score}%`;
+        }
+    });
+};
+
 const renderConsolidatedReport = () => {
     const progress = readGameProgress();
-    const games = Object.values(progress.games || {});
-    const sessions = progress.sessions || [];
+    const platformTime = readPlatformTime();
+    const games = Object.values(progress.games || {}).filter(isVisibleGame);
+    const sessions = (progress.sessions || []).filter(isVisibleGame);
     const completedGames = games.filter((game) => game.completed).length;
+<<<<<<< HEAD
+    const totalGames = Math.max(games.length, 6);
+=======
     const totalGames = Math.max(games.length, 8);
     const correctAnswers = games.reduce((sum, game) => sum + (Number(game.correct) || 0), 0);
     const wrongAnswers = games.reduce((sum, game) => sum + (Number(game.wrong) || 0), 0);
     const totalPlatformTime = window.InkluaGameProgress?.getPlatformUsageTime
         ? window.InkluaGameProgress.getPlatformUsageTime()
         : Math.max(Number(progress.totalTimeMs) || 0, 0);
+>>>>>>> origin/main
     const answeredSessions = sessions.filter((session) => typeof session.correct === "boolean");
-    const correctSessions = answeredSessions.filter((session) => session.correct).length;
-    const accuracy = answeredSessions.length ? Math.round((correctSessions / answeredSessions.length) * 100) : 0;
+    const correctTotal = games.reduce((sum, game) => sum + Math.max(Number(game.correct) || 0, 0), 0);
+    const wrongTotal = games.reduce((sum, game) => sum + Math.max(Number(game.wrong) || 0, 0), 0);
+    const attemptsTotal = games.reduce((sum, game) => {
+        const correct = Math.max(Number(game.correct) || 0, 0);
+        const wrong = Math.max(Number(game.wrong) || 0, 0);
+
+        return sum + Math.max(Number(game.attempts) || 0, correct + wrong);
+    }, 0);
+    const accuracy = attemptsTotal ? Math.round((correctTotal / attemptsTotal) * 100) : 0;
+    const maxLevel = games.reduce((level, game) => Math.max(level, Number(game.level) || 0), 0);
+    const gameTimeMs = sessions.reduce((sum, session) => sum + Math.max(Number(session.responseTimeMs) || 0, 0), 0);
+    const averageResponseMs = answeredSessions.length ? Math.round(gameTimeMs / answeredSessions.length) : 0;
+    const platformTimeMs = Math.max(Number(platformTime.totalMs) || 0, gameTimeMs);
     const recentSessions = sessions.filter((session) => {
         const daysBetween = getDaysBetween(session.createdAt);
         return daysBetween !== null && daysBetween >= 0 && daysBetween <= 6;
@@ -879,6 +1137,24 @@ const renderConsolidatedReport = () => {
     const developmentSummary = getDevelopmentSummary({ games, completedGames, accuracy, activeDays });
     const levelSummary = getLevelSummary(games);
 
+<<<<<<< HEAD
+    document.getElementById("attemptsMetric")?.replaceChildren(document.createTextNode(String(attemptsTotal)));
+    document.getElementById("attemptsMetricText")?.replaceChildren(document.createTextNode(`${games.length} jogo(s) com registro de uso.`));
+    document.getElementById("correctMetric")?.replaceChildren(document.createTextNode(String(correctTotal)));
+    document.getElementById("wrongMetric")?.replaceChildren(document.createTextNode(String(wrongTotal)));
+    document.getElementById("accuracyMetric")?.replaceChildren(document.createTextNode(`${accuracy}%`));
+    document.getElementById("accuracyMetricText")?.replaceChildren(document.createTextNode(`Maior nivel: ${maxLevel || "aguardando"}.`));
+    document.getElementById("platformTimeMetric")?.replaceChildren(document.createTextNode(formatDuration(platformTimeMs)));
+    document.getElementById("platformTimeText")?.replaceChildren(document.createTextNode(`${Number(platformTime.visits) || 0} acesso(s) registrados.`));
+    document.getElementById("answerTimeMetric")?.replaceChildren(document.createTextNode(formatDuration(gameTimeMs)));
+    document.getElementById("answerTimeText")?.replaceChildren(document.createTextNode(`Media por resposta: ${formatDuration(averageResponseMs)}.`));
+    document.getElementById("completedActivitiesMetric")?.replaceChildren(document.createTextNode(`${completedGames} de ${totalGames}`));
+    document.getElementById("completedActivitiesText")?.replaceChildren(document.createTextNode(`${games.length} jogos com registro de uso.`));
+    document.getElementById("usageFrequencyMetric")?.replaceChildren(document.createTextNode(usageLabel));
+    document.getElementById("usageFrequencyText")?.replaceChildren(document.createTextNode(`${activeDays} dia(s) de uso recente.`));
+    document.getElementById("developmentMetric")?.replaceChildren(document.createTextNode(developmentSummary.label));
+    document.getElementById("developmentMetricText")?.replaceChildren(document.createTextNode(developmentSummary.text));
+=======
     document.getElementById("completedActivitiesMetric")?.replaceChildren(document.createTextNode(`${correctAnswers} acerto(s)`));
     document.getElementById("completedActivitiesText")?.replaceChildren(document.createTextNode(`${wrongAnswers} erro(s). ${completedGames} de ${totalGames} atividades concluidas.`));
     document.getElementById("usageFrequencyMetric")?.replaceChildren(document.createTextNode(formatDuration(totalPlatformTime)));
@@ -889,6 +1165,7 @@ const renderConsolidatedReport = () => {
             ? `${levelSummary.advancedGames} jogo(s) ja avancaram de fase. ${developmentSummary.text}`
             : developmentSummary.text
     ));
+>>>>>>> origin/main
     document.getElementById("qualitativeDevelopmentText")?.replaceChildren(document.createTextNode(getQualitativeDevelopment({
         games,
         completedGames,
@@ -897,6 +1174,7 @@ const renderConsolidatedReport = () => {
         mostUsedSkill
     })));
 
+    renderDevelopmentAreas(games);
     updateProgressCountFromGames(completedGames);
 };
 
@@ -920,6 +1198,8 @@ document.addEventListener("click", (event) => {
     event.preventDefault();
     goToPlatformView(viewName);
 });
+
+document.querySelectorAll('input[name="aluno_idade"]').forEach(setupAgeInput);
 
 document.querySelectorAll(".platform-form").forEach((form) => {
     if (form.hasAttribute("data-local-form")) {

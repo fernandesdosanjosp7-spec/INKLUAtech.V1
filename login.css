@@ -648,17 +648,18 @@ a {
 
 .login-button {
     width: 100%;
-    min-height: 3.3rem;
+    min-height: 3.75rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.65rem;
-    padding: 0.85rem 1rem;
+    padding: 1rem 1.2rem;
     border: 0;
     border-radius: 0.95rem;
     font: inherit;
     font-weight: 850;
     cursor: pointer;
+    touch-action: manipulation;
     transition: transform 170ms ease, box-shadow 170ms ease, background 170ms ease, border-color 170ms ease;
 }
 
@@ -732,6 +733,95 @@ a {
 .login-link:hover {
     color: #7667a6;
     text-decoration: underline;
+}
+
+.password-recovery-form {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.2rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid rgba(112, 139, 166, 0.22);
+}
+
+.password-recovery-form[hidden] {
+    display: none;
+}
+
+.recovery-message.is-success {
+    color: #167d7f;
+}
+
+.recovery-message.is-error {
+    color: var(--color-error);
+}
+
+.password-recovery-form__back {
+    width: fit-content;
+    margin: 0 auto;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.password-recovery-code {
+    display: grid;
+    gap: 0.85rem;
+    padding: 1rem;
+    border: 1px solid rgba(112, 139, 166, 0.22);
+    border-radius: 0.95rem;
+    background: rgba(255, 255, 255, 0.62);
+}
+
+.password-recovery-code[hidden] {
+    display: none;
+}
+
+.password-recovery-code p {
+    margin: 0;
+}
+
+.password-recovery-code strong {
+    width: fit-content;
+    padding: 0.55rem 0.8rem;
+    border-radius: 0.75rem;
+    color: #167d7f;
+    background: rgba(95, 227, 177, 0.18);
+    font-size: 1.35rem;
+    letter-spacing: 0.12rem;
+}
+
+.recovery-code-message.is-success {
+    color: #167d7f;
+}
+
+.recovery-code-message.is-error {
+    color: var(--color-error);
+}
+
+.new-password-form {
+    display: grid;
+    gap: 0.85rem;
+    padding: 1rem;
+    border: 1px solid rgba(112, 139, 166, 0.22);
+    border-radius: 0.95rem;
+    background: rgba(255, 255, 255, 0.62);
+}
+
+.new-password-form[hidden] {
+    display: none;
+}
+
+.new-password-message.is-success {
+    color: #167d7f;
+}
+
+.new-password-message.is-error {
+    color: var(--color-error);
 }
 
 @keyframes calm-float {

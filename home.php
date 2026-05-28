@@ -42,6 +42,7 @@ try {
     if (($_GET["status"] ?? "") === "profile_saved") {
         $savedMessage = "Formulario salvo com sucesso.";
     }
+
 } catch (Throwable $e) {
     $databaseError = $e->getMessage();
 }
@@ -60,17 +61,6 @@ function checkedValue(array $user, string $key, string $value): string
 {
     $values = array_map("trim", explode(",", $user[$key] ?? ""));
     return in_array($value, $values, true) ? " checked" : "";
-}
-
-function reportValue(array $user, string $key, string $fallback): string
-{
-    $value = trim((string) ($user[$key] ?? ""));
-
-    if ($value === "") {
-        return $fallback;
-    }
-
-    return h(str_replace("-", " ", $value));
 }
 ?>
 <!DOCTYPE html>
@@ -94,9 +84,7 @@ function reportValue(array $user, string $key, string $fallback): string
                 <a href="#formulario">Formul&aacute;rio</a>
                 <a href="#relatorio">Relat&oacute;rio</a>
                 <a href="#jogos">Jogos</a>
-                <a href="#aprendizado">Aprendizado</a>
-                <a href="#rotina">Rotina</a>
-                <a href="#apoio">Apoio</a>
+                <a href="#atividades">Atividades</a>
             </nav>
 
             <div class="student-card">
@@ -127,27 +115,40 @@ function reportValue(array $user, string $key, string $fallback): string
                 <div class="welcome-panel">
                     <p class="eyebrow">Boas-vindas</p>
                     <h2><span id="welcomeGreeting">Ol&aacute;</span>, <?php echo h($user["aluno_nome"] ?: "aluno"); ?>!</h2>
-                    <p>Hoje separamos atividades curtas para praticar comunica&ccedil;&atilde;o, rotina e percep&ccedil;&atilde;o com calma.</p>
                     <div class="welcome-actions" aria-label="Atalhos de in&iacute;cio">
                         <a href="#jogos">Come&ccedil;ar pelos jogos</a>
-                        <a href="#rotina">Ver rotina</a>
-                        <a href="#aprendizado">Trilhas educativas</a>
+                        <a href="#formulario">Atualizar perfil</a>
+                        <a href="#jogos">Ver jogos</a>
                     </div>
                 </div>
+
+                <section class="mood-checkin" aria-labelledby="moodCheckinTitle">
+                    <div>
+                        <p class="eyebrow">Check-in</p>
+                        <h3 id="moodCheckinTitle">Hoje</h3>
+                        <p id="moodFeedback" class="visually-hidden">Escolha uma op&ccedil;&atilde;o.</p>
+                    </div>
+                    <div class="mood-options" aria-label="Op&ccedil;&otilde;es de humor">
+                        <button type="button" data-mood="feliz" data-mood-label="Feliz" data-mood-feedback="Que bom. Voc&ecirc; est&aacute; pronto para brilhar."><span aria-hidden="true">😊</span><strong>Feliz</strong></button>
+                        <button type="button" data-mood="triste" data-mood-label="Triste" data-mood-feedback="Tudo bem. Um passo de cada vez."><span aria-hidden="true">😢</span><strong>Triste</strong></button>
+                        <button type="button" data-mood="doente" data-mood-label="Doente" data-mood-feedback="Voc&ecirc; consegue. Hoje vamos com calma."><span aria-hidden="true">🤒</span><strong>Doente</strong></button>
+                        <button type="button" data-mood="bravo" data-mood-label="Bravo" data-mood-feedback="Respire. Voc&ecirc; consegue tentar de novo."><span aria-hidden="true">😠</span><strong>Bravo</strong></button>
+                    </div>
+                </section>
 
                 <div class="overview-grid">
                 <article class="overview-card">
                     <span class="overview-icon overview-icon--blue">1</span>
                     <div>
                         <strong>Atividades de hoje</strong>
-                        <p>8 jogos recomendados</p>
+                        <p>6 jogos recomendados</p>
                     </div>
                 </article>
                 <article class="overview-card">
                     <span class="overview-icon overview-icon--mint">2</span>
                     <div>
                         <strong>Objetivo</strong>
-                        <p>Comunica&ccedil;&atilde;o e rotina</p>
+                        <p>Comunica&ccedil;&atilde;o e autonomia</p>
                     </div>
                 </article>
                 <article class="overview-card">
@@ -170,6 +171,41 @@ function reportValue(array $user, string $key, string $fallback): string
 
                 <form class="platform-form" action="auth.php" method="post">
                     <input type="hidden" name="action" value="update_profile">
+                    <h3 class="form-subtitle">Dados do respons&aacute;vel</h3>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="platform-responsavel-nome">Nome completo</label>
+                            <input type="text" id="platform-responsavel-nome" name="responsavel_nome" value="<?php echo h($user["responsavel_nome"] ?? ""); ?>" placeholder="Nome do respons&aacute;vel" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="platform-responsavel-vinculo">V&iacute;nculo com o aluno</label>
+                            <select id="platform-responsavel-vinculo" name="responsavel_vinculo">
+                                <option value="">Selecione</option>
+                                <option value="mae"<?php echo selectedValue($user, "responsavel_vinculo", "mae"); ?>>M&atilde;e</option>
+                                <option value="pai"<?php echo selectedValue($user, "responsavel_vinculo", "pai"); ?>>Pai</option>
+                                <option value="responsavel"<?php echo selectedValue($user, "responsavel_vinculo", "responsavel"); ?>>Respons&aacute;vel legal</option>
+                                <option value="terapeuta"<?php echo selectedValue($user, "responsavel_vinculo", "terapeuta"); ?>>Terapeuta</option>
+                                <option value="professor"<?php echo selectedValue($user, "responsavel_vinculo", "professor"); ?>>Professor(a)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <h3 class="form-subtitle">Perfil do aluno</h3>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="platform-aluno-nome">Nome do aluno</label>
+                            <input type="text" id="platform-aluno-nome" name="aluno_nome" value="<?php echo h($user["aluno_nome"] ?? ""); ?>" placeholder="Nome do aluno" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="platform-aluno-idade">Idade</label>
+                            <input type="number" id="platform-aluno-idade" name="aluno_idade" min="1" max="99" value="<?php echo h((string) ($user["aluno_idade"] ?? "")); ?>" placeholder="Idade">
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <label for="platform-nivel-suporte">1&deg; Qual o n&iacute;vel de suporte do estudante?</label>
                         <select id="platform-nivel-suporte" name="nivel_suporte">
@@ -179,6 +215,21 @@ function reportValue(array $user, string $key, string $fallback): string
                             <option value="nivel-3"<?php echo selectedValue($user, "nivel_suporte", "nivel-3"); ?>>N&iacute;vel 3 - necessita de apoio muito substancial</option>
                             <option value="nao-informado"<?php echo selectedValue($user, "nivel_suporte", "nao-informado"); ?>>N&atilde;o sei informar</option>
                         </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="platform-forma-aprendizado">Forma de aprendizado registrada no cadastro</label>
+                        <textarea id="platform-forma-aprendizado" name="forma_aprendizado" rows="3" placeholder="Ex.: imagens, sons, textos curtos, jogos, atividades pr&aacute;ticas"><?php echo h($user["forma_aprendizado"] ?? ""); ?></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="platform-comunicacao">Comunica&ccedil;&atilde;o registrada no cadastro</label>
+                        <textarea id="platform-comunicacao" name="comunicacao" rows="3" placeholder="Ex.: fala, gestos, figuras, escrita, comunica&ccedil;&atilde;o alternativa"><?php echo h($user["comunicacao"] ?? ""); ?></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="platform-desconfortos">Situa&ccedil;&otilde;es de desconforto, ansiedade ou distra&ccedil;&atilde;o</label>
+                        <textarea id="platform-desconfortos" name="desconfortos" rows="3" placeholder="Ex.: barulho, mudan&ccedil;a de rotina, espera, excesso de comandos, telas muito cheias"><?php echo h($user["desconfortos"] ?? ""); ?></textarea>
                     </div>
 
                     <div class="form-group">
@@ -350,24 +401,21 @@ function reportValue(array $user, string $key, string $fallback): string
 
                 <div class="report-summary">
                     <article class="report-card">
-                        <span class="report-card__number">8</span>
+                        <span class="report-card__number">6</span>
                         <div>
                             <strong>Jogos educativos</strong>
-                            <p>Emo&ccedil;&otilde;es, rotina, cores, formas, alfabeto, vogais, s&iacute;labas e n&uacute;meros.</p>
                         </div>
                     </article>
                     <article class="report-card">
                         <span class="report-card__number">3</span>
                         <div>
-                            <strong>Trilhas educativas</strong>
-                            <p>Comunica&ccedil;&atilde;o alternativa, matem&aacute;tica visual e leitura com imagens.</p>
+                            <strong>Jogos de apoio</strong>
                         </div>
                     </article>
                     <article class="report-card">
                         <span class="report-card__number">4</span>
                         <div>
-                            <strong>Rotina do dia</strong>
-                            <p>Boas-vindas, jogo educativo, pausa sensorial e comunica&ccedil;&atilde;o.</p>
+                            <strong>Perfil do aluno</strong>
                         </div>
                     </article>
                 </div>
@@ -375,40 +423,39 @@ function reportValue(array $user, string $key, string $fallback): string
                 <div class="report-grid">
                     <article class="report-panel">
                         <h3>Desenvolvimento por &aacute;rea</h3>
-                        <div class="skill-progress">
+                        <div class="skill-progress" data-development-area="percepcao">
                             <div class="skill-progress__row">
                                 <span>Jogos de percep&ccedil;&atilde;o</span>
-                                <strong>70%</strong>
+                                <strong data-development-value>0%</strong>
                             </div>
-                            <span class="skill-progress__bar"><span style="width: 70%"></span></span>
+                            <span class="skill-progress__bar"><span data-development-bar style="width: 0%"></span></span>
                         </div>
-                        <div class="skill-progress">
+                        <div class="skill-progress" data-development-area="linguagem">
                             <div class="skill-progress__row">
-                                <span>Comunica&ccedil;&atilde;o e emo&ccedil;&otilde;es</span>
-                                <strong>60%</strong>
+                                <span>Comunica&ccedil;&atilde;o e linguagem</span>
+                                <strong data-development-value>0%</strong>
                             </div>
-                            <span class="skill-progress__bar"><span style="width: 60%"></span></span>
+                            <span class="skill-progress__bar"><span data-development-bar style="width: 0%"></span></span>
                         </div>
-                        <div class="skill-progress">
+                        <div class="skill-progress" data-development-area="matematica">
                             <div class="skill-progress__row">
-                                <span>Rotina e autonomia</span>
-                                <strong>45%</strong>
+                                <span>Matem&aacute;tica e n&uacute;meros</span>
+                                <strong data-development-value>0%</strong>
                             </div>
-                            <span class="skill-progress__bar"><span style="width: 45%"></span></span>
+                            <span class="skill-progress__bar"><span data-development-bar style="width: 0%"></span></span>
                         </div>
                     </article>
 
-                    <article class="report-panel">
-                        <h3>Pr&oacute;ximos passos do acompanhamento</h3>
-                        <ul class="report-timeline">
-                            <li>Observar quais jogos geram mais participa&ccedil;&atilde;o e repetir essas atividades em sess&otilde;es curtas.</li>
-                            <li>Registrar conquistas simples, como escolhas aut&ocirc;nomas, respostas corretas e tempo de foco.</li>
-                            <li>Usar o relat&oacute;rio completo para comparar evolu&ccedil;&atilde;o, comportamento e habilidades trabalhadas.</li>
-                        </ul>
-                    </article>
                 </div>
 
                 <article class="report-panel report-panel--wide">
+<<<<<<< HEAD
+                    <h3>Resumo</h3>
+                    <div class="report-metrics-grid" aria-label="Resumo consolidado dos jogos">
+                        <article class="report-metric-card">
+                            <span>Tentativas</span>
+                            <strong id="attemptsMetric">0</strong>
+=======
                     <h3>Consolida&ccedil;&atilde;o de dados da plataforma</h3>
                     <div class="report-metrics-grid" aria-label="Resumo consolidado dos jogos">
                         <article class="report-metric-card">
@@ -440,36 +487,41 @@ function reportValue(array $user, string $key, string $fallback): string
                             <strong>Comunica&ccedil;&atilde;o e express&atilde;o</strong>
                             <p>Use jogos de emo&ccedil;&otilde;es, vogais, s&iacute;labas e alfabeto para ampliar escolhas, fala, escuta e comunica&ccedil;&atilde;o alternativa.</p>
                             <a href="#jogos">Ver jogos</a>
+>>>>>>> origin/main
                         </article>
-                        <article class="report-action-card">
-                            <strong>Percep&ccedil;&atilde;o visual e matem&aacute;tica</strong>
-                            <p>Use cores, formas e n&uacute;meros para trabalhar reconhecimento, associa&ccedil;&atilde;o, contagem e compara&ccedil;&atilde;o.</p>
-                            <a href="#jogos">Praticar percep&ccedil;&atilde;o</a>
+                        <article class="report-metric-card">
+                            <span>Acertos</span>
+                            <strong id="correctMetric">0</strong>
                         </article>
-                        <article class="report-action-card">
-                            <strong>Rotina e autonomia</strong>
-                            <p>Use rotina visual, pausas e instru&ccedil;&otilde;es curtas para apoiar previsibilidade e participa&ccedil;&atilde;o.</p>
-                            <a href="#rotina">Ver rotina</a>
+                        <article class="report-metric-card">
+                            <span>Erros</span>
+                            <strong id="wrongMetric">0</strong>
+                        </article>
+                        <article class="report-metric-card">
+                            <span>Taxa de acerto</span>
+                            <strong id="accuracyMetric">0%</strong>
+                        </article>
+                        <article class="report-metric-card">
+                            <span>Tempo na plataforma</span>
+                            <strong id="platformTimeMetric">0s</strong>
+                        </article>
+                        <article class="report-metric-card">
+                            <span>Tempo respondendo</span>
+                            <strong id="answerTimeMetric">0s</strong>
+                        </article>
+                        <article class="report-metric-card">
+                            <span>Atividades conclu&iacute;das</span>
+                            <strong id="completedActivitiesMetric">0 de 6</strong>
+                        </article>
+                        <article class="report-metric-card">
+                            <span>Frequ&ecirc;ncia de uso</span>
+                            <strong id="usageFrequencyMetric">Sem uso recente</strong>
+                        </article>
+                        <article class="report-metric-card">
+                            <span>Desenvolvimento</span>
+                            <strong id="developmentMetric">Aguardando dados</strong>
                         </article>
                     </div>
-                </article>
-
-                <article class="report-panel report-panel--wide">
-                    <h3>Alinhamento &agrave; BNCC</h3>
-                    <ul class="report-timeline">
-                        <li><strong>Direitos de aprendizagem:</strong> conviver, brincar, participar, explorar, expressar e conhecer-se.</li>
-                        <li><strong>Campos de experi&ecirc;ncia:</strong> o eu, o outro e o n&oacute;s; corpo, gestos e movimentos; tra&ccedil;os, sons, cores e formas; escuta, fala, pensamento e imagina&ccedil;&atilde;o; espa&ccedil;os, tempos, quantidades, rela&ccedil;&otilde;es e transforma&ccedil;&otilde;es.</li>
-                        <li><strong>Compet&ecirc;ncias gerais:</strong> comunica&ccedil;&atilde;o, pensamento criativo, autoconhecimento, empatia, coopera&ccedil;&atilde;o e autonomia.</li>
-                    </ul>
-                </article>
-
-                <article class="report-panel report-panel--wide">
-                    <h3>Como acompanhar dentro da plataforma</h3>
-                    <ul class="report-timeline">
-                        <li><strong>Jogos:</strong> observe interesse, autonomia e reconhecimento em emo&ccedil;&otilde;es, cores, formas, letras, vogais, s&iacute;labas e n&uacute;meros.</li>
-                        <li><strong>Aprendizado:</strong> use as trilhas de comunica&ccedil;&atilde;o alternativa, matem&aacute;tica visual e leitura com imagens para refor&ccedil;ar habilidades.</li>
-                        <li><strong>Rotina e apoio:</strong> compare o desempenho com as prefer&ecirc;ncias, sensibilidades e estrat&eacute;gias registradas no formul&aacute;rio.</li>
-                    </ul>
                 </article>
             </section>
 
@@ -477,56 +529,22 @@ function reportValue(array $user, string $key, string $fallback): string
                 <div class="section-heading">
                     <div>
                         <p class="eyebrow">Jogos educativos</p>
-                        <h2 id="games-title">Escolha uma atividade para come&ccedil;ar</h2>
+                        <h2 id="games-title">Jogos</h2>
                     </div>
                 </div>
 
                 <div class="game-grid">
                     <article class="game-card">
-                        <span class="game-visual game-visual--emotions" aria-hidden="true">:)</span>
-                        <span class="game-badge">Emo&ccedil;&otilde;es</span>
-                        <h3><span class="card-icon card-icon--emotion" aria-hidden="true"></span>Jogo das Emo&ccedil;&otilde;es</h3>
-                        <p>Associe express&otilde;es, sentimentos e situa&ccedil;&otilde;es do cotidiano.</p>
-                        <a class="game-button" href="emocoes.html">Jogar</a>
-                    </article>
-
-                    <article class="game-card">
-                        <span class="game-visual game-visual--routine" aria-hidden="true">1-2</span>
-                        <span class="game-badge game-badge--mint">Rotina</span>
-                        <h3><span class="card-icon card-icon--routine" aria-hidden="true"></span>Sequ&ecirc;ncia da Rotina</h3>
-                        <p>Organize passos como chegada, atividade, pausa e finaliza&ccedil;&atilde;o.</p>
-                        <a class="game-button" href="rotina-jogo.html">Jogar</a>
-                    </article>
-
-                    <article class="game-card">
                         <span class="game-visual game-visual--colors" aria-hidden="true"></span>
                         <span class="game-badge game-badge--yellow">Percep&ccedil;&atilde;o</span>
                         <h3><span class="card-icon card-icon--colors" aria-hidden="true"></span>Jogo das Cores</h3>
-                        <p>Toque em uma cor para ouvir seu nome em voz alta.</p>
                         <a class="game-button" href="cores.html">Jogar</a>
-                    </article>
-
-                    <article class="game-card">
-                        <span class="game-visual game-visual--shapes" aria-hidden="true"></span>
-                        <span class="game-badge game-badge--yellow">Formas</span>
-                        <h3><span class="card-icon card-icon--shapes" aria-hidden="true"></span>Formas Faladas</h3>
-                        <p>Toque em uma forma geom&eacute;trica para ouvir seu nome.</p>
-                        <a class="game-button" href="formas.html">Jogar</a>
-                    </article>
-
-                    <article class="game-card">
-                        <span class="game-visual game-visual--letters" aria-hidden="true">Aa</span>
-                        <span class="game-badge game-badge--pink">Letras</span>
-                        <h3><span class="card-icon card-icon--letters" aria-hidden="true"></span>Alfabeto Falado</h3>
-                        <p>Toque em uma letra para ouvir seu nome em voz alta.</p>
-                        <a class="game-button" href="alfabeto.html">Jogar</a>
                     </article>
 
                     <article class="game-card">
                         <span class="game-visual game-visual--vowels" aria-hidden="true">AEIOU</span>
                         <span class="game-badge game-badge--pink">Vogais</span>
                         <h3><span class="card-icon card-icon--vowels" aria-hidden="true"></span>Jogo das Vogais</h3>
-                        <p>Toque em uma vogal para ouvir qual letra &eacute;.</p>
                         <a class="game-button" href="vogais.html">Jogar</a>
                     </article>
 
@@ -534,67 +552,70 @@ function reportValue(array $user, string $key, string $fallback): string
                         <span class="game-visual game-visual--syllables" aria-hidden="true">A+I</span>
                         <span class="game-badge game-badge--pink">S&iacute;labas</span>
                         <h3><span class="card-icon card-icon--letters" aria-hidden="true"></span>Jogo das S&iacute;labas</h3>
-                        <p>Veja as letras na plaquinha e escolha qual som elas formam.</p>
                         <a class="game-button" href="silabas.html">Jogar</a>
+                    </article>
+                </div>
+            </section>
+
+            <section class="section-block platform-view" id="atividades" data-view="atividades" aria-labelledby="activities-title">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">Atividades educativas</p>
+                        <h2 id="activities-title">Atividades</h2>
+                    </div>
+                </div>
+
+                <div class="game-grid">
+                    <article class="game-card">
+                        <span class="game-visual game-visual--letters" aria-hidden="true">Aa</span>
+                        <span class="game-badge game-badge--pink">Letras</span>
+                        <h3><span class="card-icon card-icon--letters" aria-hidden="true"></span>Alfabeto Falado</h3>
+                        <a class="game-button" href="alfabeto.html">Jogar</a>
                     </article>
 
                     <article class="game-card">
                         <span class="game-visual game-visual--numbers" aria-hidden="true">123</span>
                         <span class="game-badge game-badge--mint">N&uacute;meros</span>
                         <h3><span class="card-icon card-icon--numbers" aria-hidden="true"></span>N&uacute;meros Falados</h3>
-                        <p>Toque em um n&uacute;mero de 0 a 10 para ouvir qual n&uacute;mero &eacute;.</p>
                         <a class="game-button" href="numeros.html">Jogar</a>
                     </article>
+
+                    <article class="game-card">
+                        <span class="game-visual game-visual--math" aria-hidden="true">
+                            <span class="game-math-scene">
+                                <span class="game-math-group">
+                                    <span></span>
+                                    <span></span>
+                                </span>
+                                <span class="game-math-symbol">+</span>
+                                <span class="game-math-group game-math-group--second">
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                </span>
+                                <span class="game-math-symbol">=</span>
+                                <span class="game-math-result">5</span>
+                            </span>
+                        </span>
+                        <span class="game-badge game-badge--mint">Matem&aacute;tica</span>
+                        <h3><span class="card-icon card-icon--math" aria-hidden="true"></span>Matem&aacute;tica Visual</h3>
+                        <a class="game-button" href="matematica.html">Jogar</a>
+                    </article>
                 </div>
             </section>
 
-            <section class="section-block platform-view" id="aprendizado" data-view="aprendizado" aria-labelledby="learning-title">
-                <p class="eyebrow">Aprendizado</p>
-                <h2 id="learning-title">Trilhas educativas</h2>
-                <div class="learning-list">
-                    <article>
-                        <span class="learning-visual learning-visual--communication" aria-hidden="true">Oi</span>
-                        <strong><span class="card-icon card-icon--communication" aria-hidden="true"></span>Comunica&ccedil;&atilde;o alternativa</strong>
-                        <p>Cart&otilde;es visuais para expressar necessidades e escolhas.</p>
-                    </article>
-                    <article>
-                        <span class="learning-visual learning-visual--math" aria-hidden="true">5</span>
-                        <strong><span class="card-icon card-icon--math" aria-hidden="true"></span>Matem&aacute;tica visual</strong>
-                        <p>Contagem, compara&ccedil;&atilde;o e associa&ccedil;&atilde;o com apoio visual.</p>
-                    </article>
-                    <article>
-                        <span class="learning-visual learning-visual--reading" aria-hidden="true">A</span>
-                        <strong><span class="card-icon card-icon--reading" aria-hidden="true"></span>Leitura e imagens</strong>
-                        <p>Palavras, figuras e frases curtas com refor&ccedil;o positivo.</p>
-                    </article>
-                </div>
-            </section>
-
-                <article class="section-block platform-view" id="rotina" data-view="rotina">
-                    <p class="eyebrow">Rotina</p>
-                    <h2>Meu dia</h2>
-                    <ol class="routine-list">
-                        <li>Boas-vindas</li>
-                        <li>Jogo educativo</li>
-                        <li>Pausa sensorial</li>
-                        <li>Atividade de comunica&ccedil;&atilde;o</li>
-                    </ol>
-                </article>
-
-                <article class="section-block platform-view" id="apoio" data-view="apoio">
-                    <p class="eyebrow">Apoio</p>
-                    <h2>Prefer&ecirc;ncias do aluno</h2>
-                    <p class="support-text">
-                        Use as informa&ccedil;&otilde;es do cadastro para adaptar atividades, reduzir sobrecarga sensorial e registrar estrat&eacute;gias que ajudam.
-                    </p>
-                </article>
         </section>
     </main>
 
+<<<<<<< HEAD
+    <script src="platform-time.js"></script>
+    <script src="inklua-speech.js"></script>
+=======
     <script>
         window.InkluaServerGameProgress = <?php echo json_encode($serverGameProgress, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
     </script>
     <script src="game-progress.js"></script>
+>>>>>>> origin/main
     <script src="app.js"></script>
 </body>
 </html>

@@ -47,6 +47,7 @@
 
             <form class="login-form" id="loginForm" action="auth.php" method="post" novalidate>
                 <input type="hidden" name="action" value="login">
+                <input type="hidden" name="login_source" value="login.html">
                 <div class="login-form__group">
                     <label for="cpf">CPF</label>
                     <input
@@ -86,8 +87,95 @@
 
             <div class="login-links" aria-label="Links de acesso">
                 <a href="Index.html#cadastro" class="login-link">Criar conta</a>
-                <a href="#" class="login-link">Esqueci minha senha</a>
+                <a href="#recover-password" class="login-link" id="recoverPasswordLink">Esqueci minha senha</a>
             </div>
+
+            <form class="password-recovery-form" id="passwordRecoveryForm" action="auth.php" method="post" hidden novalidate>
+                <input type="hidden" name="action" value="recover_password">
+                <input type="hidden" name="recovery_source" value="login.html">
+
+                <div class="login-form__group">
+                    <label for="recoveryEmail">E-mail cadastrado</label>
+                    <input
+                        type="email"
+                        id="recoveryEmail"
+                        name="email"
+                        placeholder="seuemail@exemplo.com"
+                        autocomplete="email"
+                        aria-describedby="recoveryMessage"
+                    >
+                </div>
+
+                <p class="login-form__error recovery-message" id="recoveryMessage" aria-live="polite"></p>
+
+                <button class="login-button login-button--primary" type="submit">
+                    Enviar recupera&ccedil;&atilde;o
+                </button>
+
+                <div class="password-recovery-code" id="passwordRecoveryCodePanel" hidden>
+                    <p>C&oacute;digo de recupera&ccedil;&atilde;o</p>
+                    <strong id="passwordRecoveryCodePreview"></strong>
+
+                    <div class="login-form__group">
+                        <label for="passwordRecoveryCodeInput">Digite o c&oacute;digo recebido</label>
+                        <input
+                            type="text"
+                            id="passwordRecoveryCodeInput"
+                            inputmode="numeric"
+                            maxlength="6"
+                            placeholder="000000"
+                            aria-describedby="passwordRecoveryCodeMessage"
+                        >
+                    </div>
+
+                    <p class="login-form__error recovery-code-message" id="passwordRecoveryCodeMessage" aria-live="polite"></p>
+
+                    <button class="login-button login-button--primary" id="verifyPasswordRecoveryCode" type="button">
+                        Confirmar c&oacute;digo
+                    </button>
+                </div>
+
+                <div class="new-password-form" id="newPasswordForm" hidden>
+                    <input type="hidden" name="action" value="reset_password">
+                    <input type="hidden" name="reset_source" value="login.html">
+
+                    <div class="login-form__group">
+                        <label for="newPassword">Nova senha</label>
+                        <input
+                            type="password"
+                            id="newPassword"
+                            name="new_password"
+                            placeholder="Crie uma nova senha"
+                            autocomplete="new-password"
+                            aria-describedby="newPasswordMessage"
+                            required
+                        >
+                    </div>
+
+                    <div class="login-form__group">
+                        <label for="confirmNewPassword">Confirmar nova senha</label>
+                        <input
+                            type="password"
+                            id="confirmNewPassword"
+                            name="confirm_password"
+                            placeholder="Digite a senha novamente"
+                            autocomplete="new-password"
+                            aria-describedby="newPasswordMessage"
+                            required
+                        >
+                    </div>
+
+                    <p class="login-form__error new-password-message" id="newPasswordMessage" aria-live="polite"></p>
+
+                    <button class="login-button login-button--primary" id="saveNewPasswordButton" type="button">
+                        Confirmar nova senha
+                    </button>
+                </div>
+
+                <button class="login-link password-recovery-form__back" id="backToLoginLink" type="button">
+                    Voltar para o login
+                </button>
+            </form>
         </section>
     </main>
 

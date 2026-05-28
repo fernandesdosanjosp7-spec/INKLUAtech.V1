@@ -14,14 +14,47 @@ function requirePostAction(string $expected): bool
     return ($_SERVER["REQUEST_METHOD"] ?? "") === "POST" && ($_POST["action"] ?? "") === $expected;
 }
 
+function loginErrorPath(string $code): string
+{
+    $source = basename((string) ($_POST["login_source"] ?? "Index.html"));
+    $page = $source === "login.html" ? "login.html" : "Index.html";
+    $hash = $page === "Index.html" ? "#login" : "";
+
+    return $page . "?login_error=" . rawurlencode($code) . $hash;
+}
+
+function recoveryStatusPath(string $code, string $recoveryCode = ""): string
+{
+    $source = basename((string) ($_POST["recovery_source"] ?? "Index.html"));
+    $page = $source === "login.html" ? "login.html" : "Index.html";
+    $hash = $page === "Index.html" ? "#recuperar-senha" : "#recover-password";
+    $query = "?recovery_status=" . rawurlencode($code);
+
+    if ($recoveryCode !== "") {
+        $query .= "&recovery_code=" . rawurlencode($recoveryCode);
+    }
+
+    return $page . $query . $hash;
+}
+
+function resetStatusPath(string $code): string
+{
+    $source = basename((string) ($_POST["reset_source"] ?? "Index.html"));
+    $page = $source === "login.html" ? "login.html" : "Index.html";
+    $hash = $page === "Index.html" ? "#recuperar-senha" : "#recover-password";
+
+    return $page . "?reset_status=" . rawurlencode($code) . $hash;
+}
+
 try {
     $pdo = getDatabase();
 
     if (requirePostAction("register")) {
         $cpf = normalizeCpf($_POST["cpf"] ?? "");
         $password = $_POST["senha"] ?? "";
+        $email = trim((string) ($_POST["email"] ?? ""));
 
-        if ($cpf === "" || $password === "" || empty($_POST["responsavel_nome"])) {
+        if ($cpf === "" || $password === "" || $email === "" || empty($_POST["responsavel_nome"])) {
             redirectTo("Index.html#cadastro");
         }
 
@@ -39,6 +72,7 @@ try {
         $stmt = $pdo->prepare("
             INSERT INTO usuarios (
                 nome,
+                email,
                 cpf,
                 senha_hash,
                 responsavel_nome,
@@ -72,6 +106,7 @@ try {
                 ultimo_login_em
             ) VALUES (
                 :nome,
+                :email,
                 :cpf,
                 :senha_hash,
                 :responsavel_nome,
@@ -109,6 +144,7 @@ try {
         $now = date("c");
         $stmt->execute([
             ":nome" => $_POST["responsavel_nome"] ?? "",
+            ":email" => $email,
             ":cpf" => $cpf,
             ":senha_hash" => password_hash($password, PASSWORD_DEFAULT),
             ":responsavel_nome" => $_POST["responsavel_nome"] ?? "",
@@ -148,19 +184,27 @@ try {
 
     if (requirePostAction("login")) {
         $cpf = normalizeCpf($_POST["cpf"] ?? "");
-        $password = $_POST["password"] ?? "";
+        $password = (string) ($_POST["password"] ?? "");
+
+        if ($cpf === "" || trim($password) === "") {
+            redirectTo(loginErrorPath("required"));
+        }
 
         $stmt = $pdo->prepare("SELECT id, senha_hash, senha FROM usuarios WHERE cpf = :cpf ORDER BY id DESC LIMIT 1");
         $stmt->execute([":cpf" => $cpf]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
+        if (!$user) {
+            redirectTo(loginErrorPath("cpf"));
+        }
+
         $validPassword = false;
 
-        if ($user && !empty($user["senha_hash"])) {
+        if (!empty($user["senha_hash"])) {
             $validPassword = password_verify($password, $user["senha_hash"]);
         }
 
-        if ($user && !$validPassword && !empty($user["senha"]) && hash_equals($user["senha"], $password)) {
+        if (!$validPassword && !empty($user["senha"]) && hash_equals($user["senha"], $password)) {
             $validPassword = true;
             $stmt = $pdo->prepare("UPDATE usuarios SET senha_hash = :senha_hash, senha = '' WHERE id = :id");
             $stmt->execute([
@@ -169,8 +213,8 @@ try {
             ]);
         }
 
-        if (!$user || !$validPassword) {
-            redirectTo("Index.html#login");
+        if (!$validPassword) {
+            redirectTo(loginErrorPath("senha"));
         }
 
         $_SESSION["user_id"] = (int) $user["id"];
@@ -182,14 +226,68 @@ try {
         redirectTo("home.php");
     }
 
+    if (requirePostAction("recover_password")) {
+        $email = trim((string) ($_POST["email"] ?? ""));
+
+        if ($email === "" || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            redirectTo(recoveryStatusPath("invalid"));
+        }
+
+        $recoveryCode = (string) random_int(100000, 999999);
+        $_SESSION["recovery_email"] = $email;
+        $_SESSION["recovery_code"] = $recoveryCode;
+        $_SESSION["recovery_code_expires"] = time() + 900;
+
+        $subject = "Codigo de recuperacao INKLUAtech";
+        $message = "Seu codigo de recuperacao da INKLUAtech e: " . $recoveryCode;
+        $headers = "From: no-reply@inkluatech.local\r\nContent-Type: text/plain; charset=UTF-8";
+
+        @mail($email, $subject, $message, $headers);
+
+        redirectTo(recoveryStatusPath("sent", $recoveryCode));
+    }
+
+    if (requirePostAction("reset_password")) {
+        $newPassword = (string) ($_POST["new_password"] ?? "");
+        $confirmPassword = (string) ($_POST["confirm_password"] ?? "");
+        $email = (string) ($_SESSION["recovery_email"] ?? "");
+        $expiresAt = (int) ($_SESSION["recovery_code_expires"] ?? 0);
+
+        if (trim($newPassword) === "" || $newPassword !== $confirmPassword || strlen($newPassword) < 4) {
+            redirectTo(resetStatusPath("invalid"));
+        }
+
+        if ($email === "" || $expiresAt < time()) {
+            redirectTo(resetStatusPath("expired"));
+        }
+
+        $stmt = $pdo->prepare("UPDATE usuarios SET senha_hash = :senha_hash, senha = '' WHERE lower(email) = lower(:email)");
+        $stmt->execute([
+            ":senha_hash" => password_hash($newPassword, PASSWORD_DEFAULT),
+            ":email" => $email
+        ]);
+
+        unset($_SESSION["recovery_email"], $_SESSION["recovery_code"], $_SESSION["recovery_code_expires"]);
+
+        redirectTo(resetStatusPath("saved"));
+    }
+
     if (requirePostAction("update_profile")) {
         if (empty($_SESSION["user_id"])) {
             redirectTo("Index.html#login");
         }
 
         $profile = collectProfileData($_POST);
+        $alunoIdade = $_POST["aluno_idade"] ?? null;
+        $alunoIdade = $alunoIdade === "" ? null : $alunoIdade;
+
         $stmt = $pdo->prepare("
             UPDATE usuarios SET
+                nome = :nome,
+                responsavel_nome = :responsavel_nome,
+                responsavel_vinculo = :responsavel_vinculo,
+                aluno_nome = :aluno_nome,
+                aluno_idade = :aluno_idade,
                 sensibilidades = :sensibilidades,
                 comunicacao = :comunicacao,
                 rotina = :rotina,
@@ -216,6 +314,11 @@ try {
         ");
 
         $stmt->execute([
+            ":nome" => $_POST["responsavel_nome"] ?? "",
+            ":responsavel_nome" => $_POST["responsavel_nome"] ?? "",
+            ":responsavel_vinculo" => $_POST["responsavel_vinculo"] ?? "",
+            ":aluno_nome" => $_POST["aluno_nome"] ?? "",
+            ":aluno_idade" => $alunoIdade,
             ":sensibilidades" => $profile["sensibilidades"],
             ":comunicacao" => $profile["comunicacao"],
             ":rotina" => $profile["rotina"],

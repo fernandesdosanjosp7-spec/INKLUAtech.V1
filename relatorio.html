@@ -19,9 +19,6 @@
                 <a href="home.php#formulario">Formul&aacute;rio</a>
                 <a class="is-active" href="relatorio.php">Relat&oacute;rio</a>
                 <a href="home.php#jogos">Jogos</a>
-                <a href="home.php#aprendizado">Aprendizado</a>
-                <a href="home.php#rotina">Rotina</a>
-                <a href="home.php#apoio">Apoio</a>
             </nav>
 
         </aside>
@@ -30,42 +27,38 @@
             <header class="topbar">
                 <div>
                     <p class="eyebrow">Relat&oacute;rio educacional</p>
-                    <h1>Acompanhamento de desenvolvimento e progresso</h1>
+                    <h1>Relat&oacute;rio de acompanhamento</h1>
                 </div>
                 <a class="topbar-button" href="home.php">Voltar</a>
             </header>
 
         <section class="student-card" aria-labelledby="student-name">
             <div class="student-photo" aria-label="Foto do aluno">
-                <span id="studentInitials">LA</span>
+                <span id="studentInitials">AL</span>
             </div>
 
             <div class="student-main">
                 <p class="eyebrow">Perfil acompanhado</p>
-                <h2 id="student-name">Lucas Andrade</h2>
-                <p id="studentSummary">Relat&oacute;rio pedag&oacute;gico com indicadores de evolu&ccedil;&atilde;o, comportamento e participa&ccedil;&atilde;o nas atividades.</p>
+                <h2 id="student-name">Aluno</h2>
+                <p id="studentSummary">Aguardando dados do perfil.</p>
             </div>
 
             <dl class="student-info">
                 <div>
                     <dt>Idade</dt>
-                    <dd id="studentAge">8 anos</dd>
-                </div>
-                <div>
-                    <dt>S&eacute;rie</dt>
-                    <dd id="studentGrade">N&atilde;o informado</dd>
+                    <dd id="studentAge">N&atilde;o informado</dd>
                 </div>
                 <div>
                     <dt>N&iacute;vel de suporte</dt>
-                    <dd id="studentSupport">N&iacute;vel 1</dd>
+                    <dd id="studentSupport">N&atilde;o informado</dd>
                 </div>
                 <div>
                     <dt>Respons&aacute;vel</dt>
-                    <dd id="studentGuardian">Mariana Andrade</dd>
+                    <dd id="studentGuardian">N&atilde;o informado</dd>
                 </div>
                 <div>
                     <dt>Data do relat&oacute;rio</dt>
-                    <dd id="reportDate">25/05/2026</dd>
+                    <dd id="reportDate">Hoje</dd>
                 </div>
             </dl>
         </section>
@@ -76,7 +69,6 @@
                     <p class="eyebrow">Evolu&ccedil;&atilde;o</p>
                     <h2 id="evolution-title">Indicadores de desenvolvimento</h2>
                 </div>
-                <span class="status-pill">Atualizado nesta semana</span>
             </div>
 
             <div class="evolution-grid" id="evolutionGrid"></div>
@@ -86,7 +78,6 @@
             <article class="chart-card">
                 <div class="chart-heading">
                     <h2>Evolu&ccedil;&atilde;o semanal</h2>
-                    <span>Linha</span>
                 </div>
                 <canvas id="weeklyChart" aria-label="Gr&aacute;fico de linha da evolu&ccedil;&atilde;o semanal"></canvas>
             </article>
@@ -94,7 +85,6 @@
             <article class="chart-card">
                 <div class="chart-heading">
                     <h2>Atividades conclu&iacute;das</h2>
-                    <span>Pizza</span>
                 </div>
                 <canvas id="activitiesChart" aria-label="Gr&aacute;fico de pizza das atividades conclu&iacute;das"></canvas>
             </article>
@@ -102,7 +92,6 @@
             <article class="chart-card chart-card--wide">
                 <div class="chart-heading">
                     <h2>Desempenho por habilidade</h2>
-                    <span>Barras</span>
                 </div>
                 <canvas id="skillsChart" aria-label="Gr&aacute;fico de barras do desempenho por habilidade"></canvas>
             </article>
@@ -144,60 +133,22 @@
                 </div>
                 <span class="status-pill" id="gamesReportStatus">Sincronizado com os jogos</span>
             </div>
+            <div class="game-metrics-grid" id="gameMetricsGrid"></div>
             <div class="games-report-grid" id="gamesReportGrid"></div>
         </section>
 
-        <section class="section-block bncc-section" aria-labelledby="bncc-title">
-            <div class="section-heading">
-                <div>
-                    <p class="eyebrow">Refer&ecirc;ncia pedag&oacute;gica</p>
-                    <h2 id="bncc-title">Alinhamento &agrave; BNCC</h2>
-                </div>
-                <span class="status-pill">Base Nacional Comum Curricular</span>
-            </div>
-
-            <p class="bncc-note">
-                O relat&oacute;rio organiza as evid&ecirc;ncias das atividades em rela&ccedil;&atilde;o a direitos de aprendizagem, campos de experi&ecirc;ncia e compet&ecirc;ncias gerais da BNCC. Esta leitura apoia o planejamento pedag&oacute;gico e deve ser complementada pela observa&ccedil;&atilde;o do professor.
-            </p>
-
-            <div class="bncc-rights" aria-label="Direitos de aprendizagem e desenvolvimento">
-                <span>Conviver</span>
-                <span>Brincar</span>
-                <span>Participar</span>
-                <span>Explorar</span>
-                <span>Expressar</span>
-                <span>Conhecer-se</span>
-            </div>
-
-            <div class="bncc-grid" id="bnccGrid"></div>
-        </section>
-
-        <section class="two-column">
-            <article class="section-block behavior-card" aria-labelledby="behavior-title">
-                <p class="eyebrow">Comportamento</p>
-                <h2 id="behavior-title">Registro observado</h2>
-                <div class="tag-list" id="behaviorTags" aria-label="Tags de comportamento">
-                    <span class="tag tag--blue">Calmo</span>
-                    <span class="tag tag--green">Focado</span>
-                    <span class="tag tag--purple">Interativo</span>
-                    <span class="tag tag--yellow">Dificuldade sensorial</span>
-                    <span class="tag tag--pink">Comunica&ccedil;&atilde;o ativa</span>
-                </div>
-            </article>
-
-            <article class="section-block ai-card" aria-labelledby="ai-title">
+        <section class="section-block ai-card" aria-labelledby="ai-title">
                 <div class="ai-badge" aria-hidden="true">
                     <svg viewBox="0 0 24 24" role="img">
                         <path d="M12 3l1.7 4.6L18 9.4l-4.3 1.8L12 16l-1.7-4.8L6 9.4l4.3-1.8L12 3z"></path>
                         <path d="M18.5 14l.8 2.1 2.1.9-2.1.9-.8 2.1-.8-2.1-2.1-.9 2.1-.9.8-2.1z"></path>
                     </svg>
                 </div>
-                <p class="eyebrow">An&aacute;lise pedag&oacute;gica inteligente</p>
+                <p class="eyebrow">An&aacute;lise pedag&oacute;gica</p>
                 <h2 id="ai-title">Relat&oacute;rio autom&aacute;tico</h2>
                 <p id="automaticReportText">
-                    O aluno apresentou melhora significativa nas atividades visuais e maior intera&ccedil;&atilde;o durante as tarefas educativas. Recomenda-se manter atividades curtas, refor&ccedil;o positivo e apoio visual nas pr&oacute;ximas semanas.
+                    Aguardando dados do perfil e dos jogos.
                 </p>
-            </article>
         </section>
 
         <section class="section-block teacher-notes" aria-labelledby="notes-title">
@@ -207,6 +158,9 @@
                     <h2 id="notes-title">Registro do desenvolvimento do aluno</h2>
                 </div>
             </div>
+<<<<<<< HEAD
+            <textarea id="teacherNotes" aria-label="Campo de observa&ccedil;&otilde;es do professor" placeholder="Observa&ccedil;&otilde;es do professor, respons&aacute;vel ou terapeuta."></textarea>
+=======
             <p class="teacher-notes__intro">
                 Espa&ccedil;o reservado para descrever avan&ccedil;os observados, habilidades desenvolvidas, autonomia, comunica&ccedil;&atilde;o, intera&ccedil;&atilde;o, desafios e encaminhamentos para as pr&oacute;ximas atividades.
             </p>
@@ -218,20 +172,13 @@
                 <span>Pr&oacute;ximos passos</span>
             </div>
             <textarea id="teacherNotes" aria-label="Campo de registro do profissional ou respons&aacute;vel" placeholder="Descreva aqui o desenvolvimento do aluno, habilidades desenvolvidas, avan&ccedil;os percebidos, apoios necess&aacute;rios e recomenda&ccedil;&otilde;es para continuidade."></textarea>
+>>>>>>> origin/main
         </section>
 
         <section class="action-bar" aria-label="A&ccedil;&otilde;es do relat&oacute;rio">
             <button class="action-button action-button--primary" id="pdfButton" type="button">
                 <span aria-hidden="true">↓</span>
                 Gerar PDF
-            </button>
-            <button class="action-button" id="shareButton" type="button">
-                <span aria-hidden="true">↗</span>
-                Compartilhar relat&oacute;rio
-            </button>
-            <button class="action-button" id="exportButton" type="button">
-                <span aria-hidden="true">⇩</span>
-                Exportar dados
             </button>
             <a class="action-button action-button--ghost" href="home.php">
                 <span aria-hidden="true">←</span>
@@ -241,6 +188,7 @@
         </section>
     </main>
 
+    <script src="platform-time.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="game-progress.js"></script>
     <script src="relatorio.js"></script>

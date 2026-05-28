@@ -20,7 +20,6 @@
             <div class="syllable-intro">
                 <p class="eyebrow">Jogo educativo</p>
                 <h1 id="syllable-title">Jogo das S&iacute;labas</h1>
-                <p>Observe as letras na plaquinha e escolha qual som elas formam juntas.</p>
             </div>
 
             <div class="syllable-progress" aria-label="Progresso do jogo">
@@ -30,12 +29,8 @@
             </div>
 
             <article class="syllable-scene" aria-live="polite">
-                <div class="syllable-boy" aria-hidden="true">
-                    <span class="syllable-boy__hair"></span>
-                    <span class="syllable-boy__head"></span>
-                    <span class="syllable-boy__body"></span>
-                    <span class="syllable-boy__arm syllable-boy__arm--left"></span>
-                    <span class="syllable-boy__arm syllable-boy__arm--right"></span>
+                <div class="inklua-student-avatar" aria-hidden="true">
+                    <img src="assets/inklua-student-avatar.png" alt="">
                 </div>
                 <div class="syllable-board">
                     <span id="syllableLetters">A + I</span>
@@ -43,8 +38,12 @@
             </article>
 
             <div class="syllable-question">
-                <p class="eyebrow">Qual s&iacute;laba forma?</p>
-                <h2 id="syllableQuestion">A + I forma...</h2>
+                <p class="eyebrow" id="syllablePrompt">Qual s&iacute;laba forma?</p>
+                <div class="syllable-question-card" id="syllableQuestion">
+                    <span class="game-level-pill">N&iacute;vel 1</span>
+                    <strong>A + I</strong>
+                    <small>forma...</small>
+                </div>
             </div>
 
             <div class="choice-row syllable-options" id="syllableOptions" aria-label="Op&ccedil;&otilde;es de s&iacute;laba"></div>
@@ -55,19 +54,12 @@
                 <button class="complete-button" id="nextSyllable" type="button" disabled>Pr&oacute;xima</button>
                 <button class="topbar-button" id="restartSyllable" type="button" hidden>Jogar novamente</button>
             </div>
-
-            <section class="syllable-info" aria-labelledby="syllable-info-title">
-                <h2 id="syllable-info-title">Informa&ccedil;&otilde;es da atividade</h2>
-                <ul>
-                    <li>Trabalha alfabetiza&ccedil;&atilde;o inicial e combina&ccedil;&atilde;o de sons.</li>
-                    <li>Estimula aten&ccedil;&atilde;o visual, escuta e escolha entre alternativas.</li>
-                    <li>Os acertos e tentativas entram automaticamente no relat&oacute;rio educacional.</li>
-                </ul>
-            </section>
         </section>
     </main>
 
+    <script src="platform-time.js"></script>
     <script src="game-progress.js"></script>
+    <script src="inklua-speech.js"></script>
     <script src="silabas.js"></script>
 </body>
 </html>
