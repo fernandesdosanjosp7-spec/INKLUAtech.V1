@@ -702,6 +702,72 @@ a {
     line-height: 1.4;
 }
 
+.entry-recovery-message.is-success {
+    color: #167d7f;
+}
+
+.entry-recovery-message.is-error {
+    color: #a34843;
+}
+
+.entry-recovery-code {
+    display: grid;
+    gap: 0.85rem;
+    margin-top: 1rem;
+    padding: 1rem;
+    border: 1px solid rgba(112, 139, 166, 0.22);
+    border-radius: 0.95rem;
+    background: rgba(255, 255, 255, 0.62);
+}
+
+.entry-recovery-code[hidden] {
+    display: none;
+}
+
+.entry-recovery-code p {
+    margin: 0;
+}
+
+.entry-recovery-code strong {
+    width: fit-content;
+    padding: 0.55rem 0.8rem;
+    border-radius: 0.75rem;
+    color: #167d7f;
+    background: rgba(95, 227, 177, 0.18);
+    font-size: 1.35rem;
+    letter-spacing: 0.12rem;
+}
+
+.entry-recovery-code__message.is-success {
+    color: #167d7f;
+}
+
+.entry-recovery-code__message.is-error {
+    color: #a34843;
+}
+
+.entry-new-password-form {
+    display: grid;
+    gap: 0.85rem;
+    margin-top: 1rem;
+    padding: 1rem;
+    border: 1px solid rgba(112, 139, 166, 0.22);
+    border-radius: 0.95rem;
+    background: rgba(255, 255, 255, 0.62);
+}
+
+.entry-new-password-form[hidden] {
+    display: none;
+}
+
+.entry-new-password-message.is-success {
+    color: #167d7f;
+}
+
+.entry-new-password-message.is-error {
+    color: #a34843;
+}
+
 .entry-login-form__button {
     min-height: 3.25rem;
     border: 0;
