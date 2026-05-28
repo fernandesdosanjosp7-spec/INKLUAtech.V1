@@ -1,6 +1,8 @@
 const gameId = "matematica-visual";
-const totalItems = 60;
+const totalItems = 100;
 const preferencesKey = "inklua_math_preferences_v1";
+const savedMathProgress = window.InkluaGameProgress?.read?.()?.games?.[gameId] || {};
+let nextQuestionTimer = null;
 
 const elements = {
     mode: document.getElementById("mathModeLabel"),
@@ -60,28 +62,149 @@ const themeObjects = {
 };
 
 const labels = {
-    counting: "Contagem",
     addition: "Soma",
-    subtraction: "Subtracao",
-    sequence: "Sequencia logica",
-    multiplication: "Multiplicacao",
-    division: "Divisao"
+    subtraction: "Subtracao"
 };
 
-const positiveFeedbackMessages = [
-    "Muito bem!",
-    "Voce conseguiu!",
-    "Excelente trabalho!",
-    "Parabens!",
-    "Resposta certa!"
-];
+const motivationalMessages = {
+    correct: [
+        "Muito bom! Continue assim!",
+        "Voce conseguiu avancar!",
+        "Fantastico! Voce acertou!",
+        "Boa! Vamos para a proxima?",
+        "Seu esforco esta valendo a pena!",
+        "Voce esta indo muito bem!",
+        "Excelente trabalho!",
+        "Que legal, voce encontrou a resposta!",
+        "Muito bem pensado!",
+        "Voce esta ficando cada vez melhor nisso!",
+        "Parabens pela atencao!",
+        "Isso mesmo, voce resolveu com calma!",
+        "Otima resposta!",
+        "Voce contou direitinho!",
+        "Boa conquista! Vamos continuar?"
+    ],
+    wrong: [
+        "Quase la! Vamos tentar juntos?",
+        "Nao tem problema errar, vamos aprender juntos.",
+        "Excelente tentativa!",
+        "Observe com atencao, voce consegue.",
+        "Cada tentativa ajuda voce a aprender mais.",
+        "Aprender leva tempo, e voce esta evoluindo.",
+        "Vamos resolver com calma?",
+        "Tudo bem, vamos olhar as macas de novo.",
+        "Foi uma boa tentativa. Agora vamos conferir juntos.",
+        "Respire com calma. Voce consegue tentar outra vez.",
+        "Errar faz parte do aprendizado.",
+        "Vamos descobrir a resposta passo a passo.",
+        "Voce esta praticando, e isso e muito importante.",
+        "Continue tentando, seu caminho esta ficando mais claro.",
+        "Vamos contar juntos mais uma vez?"
+    ],
+    retry: [
+        "Tente novamente com calma.",
+        "Mais uma tentativa e voce consegue.",
+        "Observe as macas com calma.",
+        "Continue praticando, voce esta evoluindo!",
+        "Vamos tentar mais uma vez?",
+        "Olhe devagar e conte uma maca por vez.",
+        "Sem pressa. O importante e aprender.",
+        "Voce pode tentar de novo quando estiver pronto.",
+        "Conte com tranquilidade.",
+        "Vamos fazer juntos, passo por passo.",
+        "Confie no seu raciocinio.",
+        "Uma nova tentativa pode ajudar bastante.",
+        "Preste atencao nas macas que ficam.",
+        "Continue, voce esta no caminho.",
+        "Vamos olhar de novo com carinho?"
+    ],
+    phase: [
+        "Voce concluiu uma fase com muito esforco!",
+        "Boa! Voce avancou para um novo desafio.",
+        "Seu progresso esta aparecendo.",
+        "Voce esta evoluindo com calma e dedicacao.",
+        "Mais uma etapa vencida!",
+        "Muito bem, voce ganhou mais confianca.",
+        "Vamos para uma fase um pouco mais desafiadora.",
+        "Seu treino esta dando resultado.",
+        "Cada fase mostra o quanto voce esta aprendendo.",
+        "Que bom ver voce avancando!",
+        "Voce terminou essa parte com muita atencao.",
+        "Parabens pela persistencia.",
+        "Agora vamos continuar com calma.",
+        "Voce esta construindo seu aprendizado.",
+        "Excelente evolucao ate aqui!"
+    ]
+};
+
+const lastMotivationalMessage = {};
+
+const getMotivationalMessage = (type) => {
+    const messages = motivationalMessages[type] || motivationalMessages.retry;
+    const availableMessages = messages.filter((message) => message !== lastMotivationalMessage[type]);
+    const options = availableMessages.length ? availableMessages : messages;
+    const message = options[randomInt(0, options.length - 1)];
+
+    lastMotivationalMessage[type] = message;
+    return message;
+};
+
+const createQuestionBank = () => {
+    const maxByLevel = [5, 8, 12, 16, 20];
+    const bank = [];
+
+    for (let level = 1; level <= 5; level += 1) {
+        const max = maxByLevel[level - 1];
+
+        for (let index = 0; index < 20; index += 1) {
+            const isAddition = index % 2 === 0;
+
+            if (isAddition) {
+                const first = (index % Math.max(2, Math.floor(max / 2))) + 1 + Math.floor(level / 3);
+                const second = ((index * 2 + level) % Math.max(2, Math.floor(max / 2))) + 1;
+                const answer = first + second;
+
+                bank.push({
+                    id: `soma-${level}-${index}`,
+                    mode: "addition",
+                    difficulty: level,
+                    operands: [first, second],
+                    groups: [first, second],
+                    answer,
+                    expression: `${first} + ${second}`
+                });
+                continue;
+            }
+
+            const first = Math.max(3, ((index * 3 + level) % max) + 2);
+            const second = Math.min(first - 1, ((index + level) % Math.max(2, first - 1)) + 1);
+            const answer = first - second;
+
+            bank.push({
+                id: `subtracao-${level}-${index}`,
+                mode: "subtraction",
+                difficulty: level,
+                operands: [first, second],
+                groups: [first, -second],
+                answer,
+                expression: `${first} - ${second}`
+            });
+        }
+    }
+
+    return bank.slice(0, totalItems);
+};
+
+const questionBank = createQuestionBank();
 
 let state = {
-    difficulty: 1,
-    correct: 0,
-    wrong: 0,
-    answeredQuestions: Number(window.InkluaGameProgress?.read?.()?.games?.[gameId]?.attempts) || 0,
+    difficulty: Math.min(Math.max(Number(savedMathProgress.level) || 1, 1), 5),
+    correct: Number(savedMathProgress.correct) || 0,
+    wrong: Number(savedMathProgress.wrong) || 0,
+    answeredQuestions: Number(savedMathProgress.attempts) || 0,
     streak: 0,
+    wrongStreak: 0,
+    askedIds: new Set(),
     current: null,
     answered: false,
     helped: false,
@@ -91,7 +214,6 @@ let state = {
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const shuffle = (items) => [...items].sort(() => Math.random() - 0.5);
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
-const getPositiveFeedback = () => positiveFeedbackMessages[randomInt(0, positiveFeedbackMessages.length - 1)];
 let speechRequestId = 0;
 
 const normalizeVoiceText = (value) => String(value || "")
@@ -224,13 +346,6 @@ const playTone = (correct) => {
     oscillator.stop(context.currentTime + 0.22);
 };
 
-const getModes = () => {
-    if (state.difficulty === 1) return ["counting", "addition"];
-    if (state.difficulty === 2) return ["counting", "addition", "subtraction", "sequence"];
-    if (state.difficulty === 3) return ["addition", "subtraction", "sequence", "multiplication"];
-    return ["addition", "subtraction", "multiplication", "division", "sequence"];
-};
-
 const createOptions = (answer) => {
     const options = new Set([answer]);
     while (options.size < 4) {
@@ -240,58 +355,22 @@ const createOptions = (answer) => {
 };
 
 const createQuestion = () => {
-    const mode = shuffle(getModes())[0];
-    const max = [5, 9, 12, 18][state.difficulty - 1];
-    let question = { mode, groups: [], answer: 0, expression: "", sequence: null };
+    let availableQuestions = questionBank.filter((question) => {
+        return question.difficulty === state.difficulty && !state.askedIds.has(question.id);
+    });
 
-    if (mode === "counting") {
-        question.answer = randomInt(1, max);
-        question.groups = [question.answer];
-        question.expression = "Conte os objetos.";
+    if (!availableQuestions.length) {
+        questionBank
+            .filter((question) => question.difficulty === state.difficulty)
+            .forEach((question) => state.askedIds.delete(question.id));
+
+        availableQuestions = questionBank.filter((question) => {
+            return question.difficulty === state.difficulty && !state.askedIds.has(question.id);
+        });
     }
 
-    if (mode === "addition") {
-        const first = randomInt(1, Math.ceil(max / 2));
-        const second = randomInt(1, Math.ceil(max / 2));
-        question.answer = first + second;
-        question.groups = [first, second];
-        question.expression = `${first} + ${second}`;
-    }
-
-    if (mode === "subtraction") {
-        const first = randomInt(3, max);
-        const second = randomInt(1, first - 1);
-        question.answer = first - second;
-        question.groups = [first, -second];
-        question.expression = `${first} - ${second}`;
-    }
-
-    if (mode === "multiplication") {
-        const first = randomInt(2, 4);
-        const second = randomInt(2, 4);
-        question.answer = first * second;
-        question.groups = Array.from({ length: first }, () => second);
-        question.expression = `${first} x ${second}`;
-    }
-
-    if (mode === "division") {
-        const divisor = randomInt(2, 4);
-        const answer = randomInt(2, 4);
-        question.answer = answer;
-        question.groups = Array.from({ length: divisor }, () => answer);
-        question.expression = `${divisor * answer} / ${divisor}`;
-    }
-
-    if (mode === "sequence") {
-        const start = randomInt(1, 5);
-        const step = randomInt(1, 3);
-        const sequence = Array.from({ length: 5 }, (_, index) => start + (index * step));
-        const missing = randomInt(1, 3);
-        question.answer = sequence[missing];
-        question.sequence = { values: sequence, missing };
-        question.expression = sequence.map((value, index) => index === missing ? "?" : value).join("  ");
-    }
-
+    const question = { ...shuffle(availableQuestions)[0] };
+    state.askedIds.add(question.id);
     question.options = createOptions(question.answer);
     return question;
 };
@@ -309,15 +388,6 @@ const renderObjects = (count, removed = false) => {
 const renderScene = () => {
     const question = state.current;
 
-    if (question.sequence) {
-        elements.scene.innerHTML = `
-            <div class="math-sequence">
-                ${question.sequence.values.map((value, index) => `<span>${index === question.sequence.missing ? "?" : value}</span>`).join("")}
-            </div>
-        `;
-        return;
-    }
-
     elements.scene.innerHTML = question.groups.map((group, index) => `
         <div class="math-object-row">
             ${index > 0 ? `<strong>${group < 0 ? "-" : "+"}</strong>` : ""}
@@ -326,35 +396,134 @@ const renderScene = () => {
     `).join("");
 };
 
+const renderAppleStep = (count, removed = false) => `
+    <div class="math-step-apples">
+        ${renderObjects(count, removed)}
+    </div>
+`;
+
+const getErrorExplanation = (question) => {
+    const [first, second] = question.operands;
+
+    if (question.mode === "addition") {
+        return {
+            title: `${first} mais ${second} e igual a ${question.answer}.`,
+            speech: `Temos ${first} macas. Juntamos mais ${second} macas. Agora contamos todas juntas e chegamos em ${question.answer}.`,
+            steps: [
+                `Primeiro observe ${first} maca(s).`,
+                `Depois junte mais ${second} maca(s).`,
+                `Conte todas as macas: ${first} mais ${second} e igual a ${question.answer}.`
+            ],
+            visual: `
+                ${renderAppleStep(first)}
+                <strong class="math-step-symbol">+</strong>
+                ${renderAppleStep(second)}
+                <strong class="math-step-symbol">=</strong>
+                ${renderAppleStep(question.answer)}
+            `
+        };
+    }
+
+    return {
+        title: `${first} menos ${second} e igual a ${question.answer}.`,
+        speech: `Comecamos com ${first} macas. Tiramos ${second} macas. Ficaram ${question.answer} macas.`,
+        steps: [
+            `Primeiro observe ${first} maca(s).`,
+            `Depois tire ${second} maca(s).`,
+            `Conte as macas que ficaram: ${first} menos ${second} e igual a ${question.answer}.`
+        ],
+        visual: `
+            ${renderAppleStep(first)}
+            <strong class="math-step-symbol">-</strong>
+            ${renderAppleStep(second, true)}
+            <strong class="math-step-symbol">=</strong>
+            ${renderAppleStep(question.answer)}
+        `
+    };
+};
+
+const renderErrorFeedback = (selectedAnswer) => {
+    const message = getMotivationalMessage("wrong");
+    const retryMessage = getMotivationalMessage("retry");
+    const explanation = getErrorExplanation(state.current);
+
+    elements.feedback.innerHTML = `
+        <article class="math-explanation">
+            <strong>${message}</strong>
+            <p>Voce escolheu ${selectedAnswer}. A resposta correta e ${state.current.answer}.</p>
+            <div class="math-step-visual" aria-hidden="true">${explanation.visual}</div>
+            <ol>
+                ${explanation.steps.map((step) => `<li>${step}</li>`).join("")}
+            </ol>
+            <p>${retryMessage}</p>
+        </article>
+    `;
+    elements.guide.textContent = message;
+    speak(`${message} ${explanation.speech} ${retryMessage}`);
+};
+
+const updateAdaptiveDifficulty = (wasCorrect) => {
+    if (wasCorrect) {
+        state.streak += 1;
+        state.wrongStreak = 0;
+
+        if (state.streak >= 3) {
+            state.difficulty = clamp(state.difficulty + 1, 1, 5);
+            state.streak = 0;
+            return getMotivationalMessage("phase");
+        }
+
+        return "";
+    }
+
+    state.streak = 0;
+    state.wrongStreak += 1;
+
+    if (state.wrongStreak >= 2) {
+        state.difficulty = clamp(state.difficulty - 1, 1, 5);
+        state.wrongStreak = 0;
+    }
+
+    return getMotivationalMessage("retry");
+};
+
+const getEvolutionLabel = (accuracy, total) => {
+    if (!total) return "Inicio";
+    if (accuracy >= 85 && state.difficulty >= 4) return "Avancando";
+    if (accuracy >= 70) return "Boa evolucao";
+    if (accuracy >= 45) return "Em progresso";
+    return "Com apoio";
+};
+
 const updatePanel = () => {
     const progress = window.InkluaGameProgress?.read?.();
     const game = progress?.games?.[gameId];
     const correct = Number(game?.correct) || state.correct;
     const wrong = Number(game?.wrong) || state.wrong;
     const total = Number(game?.attempts) || correct + wrong;
-    const level = Number(game?.level) || Math.floor(total / 5) + 1;
+    const accuracy = total ? Math.round((correct / total) * 100) : 0;
 
-    elements.level.textContent = level;
+    elements.level.textContent = state.difficulty;
     elements.correct.textContent = correct;
     elements.wrong.textContent = wrong;
-    elements.accuracy.textContent = total ? `${Math.round((correct / total) * 100)}%` : "0%";
+    elements.accuracy.textContent = `${accuracy}%`;
     elements.difficulty.textContent = state.difficulty;
-    elements.medal.textContent = correct >= 15 ? "Ouro" : correct >= 8 ? "Prata" : correct >= 4 ? "Bronze" : "Inicio";
-    elements.progress.style.width = `${Math.min((total % 5) * 20, 100)}%`;
+    elements.medal.textContent = getEvolutionLabel(accuracy, total);
+    elements.progress.style.width = `${Math.min((state.answeredQuestions / totalItems) * 100, 100)}%`;
 };
 
 const renderQuestion = () => {
-    state.difficulty = clamp(Math.floor(state.answeredQuestions / 5) + 1, 1, 4);
+    window.clearTimeout(nextQuestionTimer);
     state.current = createQuestion();
     state.answered = false;
     state.helped = false;
     state.startedAt = Date.now();
 
     elements.mode.textContent = labels[state.current.mode];
-    elements.title.textContent = state.current.mode === "sequence" ? "Qual numero completa a sequencia?" : "Qual e a resposta?";
+    elements.title.textContent = state.current.mode === "subtraction" ? "Quantas macas ficam?" : "Quantas macas tem ao todo?";
     elements.expression.textContent = state.current.expression;
     elements.feedback.textContent = "";
-    elements.guide.textContent = "Observe os objetos e escolha a resposta.";
+    elements.guide.textContent = "Observe as macas com calma.";
     elements.scene.classList.remove("is-celebrating", "is-helping");
     elements.next.disabled = true;
 
@@ -365,6 +534,11 @@ const renderQuestion = () => {
     speakCurrentQuestion();
 };
 
+const scheduleNextQuestion = () => {
+    window.clearTimeout(nextQuestionTimer);
+    nextQuestionTimer = window.setTimeout(renderQuestion, 5000);
+};
+
 const recordProgress = (correct) => {
     window.InkluaGameProgress?.record(gameId, {
         title: "Matematica Visual",
@@ -373,7 +547,7 @@ const recordProgress = (correct) => {
         correct,
         totalItems,
         level: state.difficulty,
-        maxLevel: 4,
+        maxLevel: 5,
         difficulty: `Nivel ${state.difficulty}`,
         responseTimeMs: Date.now() - state.startedAt,
         helpUsed: state.helped
@@ -388,37 +562,60 @@ const answerQuestion = (answer, button) => {
     button.classList.add(correct ? "is-correct" : "is-wrong");
 
     if (correct) {
-        const feedback = getPositiveFeedback();
+        const feedback = getMotivationalMessage("correct");
         state.correct += 1;
-        elements.feedback.textContent = feedback;
-        elements.guide.textContent = feedback;
         elements.scene.classList.add("is-celebrating");
         window.setTimeout(() => elements.scene.classList.remove("is-celebrating"), 900);
+        state.answeredQuestions += 1;
+        const phaseMessage = updateAdaptiveDifficulty(true);
+        const finalFeedback = phaseMessage ? `${feedback} ${phaseMessage}` : feedback;
+        elements.feedback.textContent = finalFeedback;
+        elements.guide.textContent = phaseMessage || feedback;
+        playTone(true);
+        speak(finalFeedback);
+        recordProgress(true);
+        updatePanel();
+        elements.next.disabled = true;
+        scheduleNextQuestion();
+        return;
     } else {
         state.wrong += 1;
-        elements.feedback.textContent = `Quase. A resposta era ${state.current.answer}.`;
+        state.answeredQuestions += 1;
+        const retryMessage = updateAdaptiveDifficulty(false);
         elements.options.querySelector(`[data-answer="${state.current.answer}"]`)?.classList.add("is-correct");
+        playTone(false);
+        renderErrorFeedback(answer);
+        if (retryMessage) {
+            elements.guide.textContent = retryMessage;
+        }
+        recordProgress(false);
+        updatePanel();
+        elements.next.disabled = true;
+        scheduleNextQuestion();
     }
-
-    state.answeredQuestions += 1;
-    state.difficulty = clamp(Math.floor(state.answeredQuestions / 5) + 1, 1, 4);
-    playTone(correct);
-    speak(correct ? elements.feedback.textContent : `Quase. A resposta era ${state.current.answer}.`);
-    recordProgress(correct);
-    updatePanel();
-    elements.next.disabled = false;
 };
 
 elements.help.addEventListener("click", () => {
     state.helped = true;
-    elements.feedback.textContent = "Dica: conte cada objeto com calma.";
+    const retryMessage = getMotivationalMessage("retry");
+    const hint = state.current.mode === "subtraction"
+        ? "Dica: conte as macas que nao estao apagadas."
+        : "Dica: conte todas as macas dos dois grupos.";
+
+    elements.feedback.textContent = `${retryMessage} ${hint}`;
+    elements.guide.textContent = retryMessage;
     elements.scene.classList.add("is-helping");
-    speak("Dica. Conte cada objeto com calma.");
+    speak(state.current.mode === "subtraction"
+        ? `${retryMessage} Conte as macas que nao estao apagadas com calma.`
+        : `${retryMessage} Conte todas as macas dos dois grupos com calma.`);
     window.setTimeout(() => elements.scene.classList.remove("is-helping"), 900);
 });
 
 elements.repeat.addEventListener("click", speakCurrentQuestion);
-elements.next.addEventListener("click", renderQuestion);
+elements.next.addEventListener("click", () => {
+    window.clearTimeout(nextQuestionTimer);
+    renderQuestion();
+});
 [elements.theme, elements.voice, elements.sound, elements.volume].forEach((input) => input.addEventListener("change", savePreferences));
 
 loadPreferences();
