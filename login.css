@@ -648,17 +648,18 @@ a {
 
 .login-button {
     width: 100%;
-    min-height: 3.3rem;
+    min-height: 3.75rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.65rem;
-    padding: 0.85rem 1rem;
+    padding: 1rem 1.2rem;
     border: 0;
     border-radius: 0.95rem;
     font: inherit;
     font-weight: 850;
     cursor: pointer;
+    touch-action: manipulation;
     transition: transform 170ms ease, box-shadow 170ms ease, background 170ms ease, border-color 170ms ease;
 }
 

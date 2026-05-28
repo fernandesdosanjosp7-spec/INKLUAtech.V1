@@ -74,6 +74,7 @@ function checkedValue(array $user, string $key, string $value): string
                 <a href="#formulario">Formul&aacute;rio</a>
                 <a href="#relatorio">Relat&oacute;rio</a>
                 <a href="#jogos">Jogos</a>
+                <a href="#atividades">Atividades</a>
             </nav>
 
             <div class="student-card">
@@ -497,13 +498,6 @@ function checkedValue(array $user, string $key, string $value): string
                     </article>
 
                     <article class="game-card">
-                        <span class="game-visual game-visual--letters" aria-hidden="true">Aa</span>
-                        <span class="game-badge game-badge--pink">Letras</span>
-                        <h3><span class="card-icon card-icon--letters" aria-hidden="true"></span>Alfabeto Falado</h3>
-                        <a class="game-button" href="alfabeto.html">Jogar</a>
-                    </article>
-
-                    <article class="game-card">
                         <span class="game-visual game-visual--vowels" aria-hidden="true">AEIOU</span>
                         <span class="game-badge game-badge--pink">Vogais</span>
                         <h3><span class="card-icon card-icon--vowels" aria-hidden="true"></span>Jogo das Vogais</h3>
@@ -515,6 +509,24 @@ function checkedValue(array $user, string $key, string $value): string
                         <span class="game-badge game-badge--pink">S&iacute;labas</span>
                         <h3><span class="card-icon card-icon--letters" aria-hidden="true"></span>Jogo das S&iacute;labas</h3>
                         <a class="game-button" href="silabas.html">Jogar</a>
+                    </article>
+                </div>
+            </section>
+
+            <section class="section-block platform-view" id="atividades" data-view="atividades" aria-labelledby="activities-title">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">Atividades educativas</p>
+                        <h2 id="activities-title">Atividades</h2>
+                    </div>
+                </div>
+
+                <div class="game-grid">
+                    <article class="game-card">
+                        <span class="game-visual game-visual--letters" aria-hidden="true">Aa</span>
+                        <span class="game-badge game-badge--pink">Letras</span>
+                        <h3><span class="card-icon card-icon--letters" aria-hidden="true"></span>Alfabeto Falado</h3>
+                        <a class="game-button" href="alfabeto.html">Jogar</a>
                     </article>
 
                     <article class="game-card">

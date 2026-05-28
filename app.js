@@ -8,7 +8,7 @@ const gameCards = document.querySelectorAll("[data-activity]");
 const platformViews = document.querySelectorAll("[data-view]");
 const navLinks = document.querySelectorAll(".nav-menu a[href^='#']");
 
-const availableViews = ["inicio", "formulario", "relatorio", "jogos"];
+const availableViews = ["inicio", "formulario", "relatorio", "jogos", "atividades"];
 
 const showPlatformView = (viewName = "inicio") => {
     const nextView = availableViews.includes(viewName) ? viewName : "inicio";
@@ -48,9 +48,9 @@ const syncPlatformViewFromHash = () => {
 
     showPlatformView(viewName);
 
-    if (viewName === "jogos") {
+    if (viewName === "jogos" || viewName === "atividades") {
         window.setTimeout(() => {
-            document.getElementById("jogos")?.scrollIntoView({ block: "start" });
+            document.getElementById(viewName)?.scrollIntoView({ block: "start" });
         }, 80);
     }
 };
