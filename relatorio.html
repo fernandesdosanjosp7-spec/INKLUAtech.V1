@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INKLUA Tech | Relat&oacute;rio Educacional</title>
+    <link rel="stylesheet" href="relatorio.css">
+</head>
+<body>
+    <main class="platform-shell">
+        <aside class="sidebar" aria-label="Navega&ccedil;&atilde;o da plataforma">
+            <a class="brand" href="home.php">
+                <img src="assets/ink-logo.png" alt="Logo INKLUA Tech">
+                <span>Inklua Tech</span>
+            </a>
+
+            <nav class="nav-menu">
+                <a href="home.php#inicio">In&iacute;cio</a>
+                <a href="home.php#formulario">Formul&aacute;rio</a>
+                <a class="is-active" href="relatorio.php">Relat&oacute;rio</a>
+                <a href="home.php#jogos">Jogos</a>
+            </nav>
+
+        </aside>
+
+        <section class="platform-content">
+            <header class="topbar">
+                <div>
+                    <p class="eyebrow">Relat&oacute;rio educacional</p>
+                    <h1>Relat&oacute;rio de acompanhamento</h1>
+                </div>
+                <a class="topbar-button" href="home.php">Voltar</a>
+            </header>
+
+        <section class="student-card" aria-labelledby="student-name">
+            <div class="student-photo" aria-label="Foto do aluno">
+                <span id="studentInitials">AL</span>
+            </div>
+
+            <div class="student-main">
+                <p class="eyebrow">Perfil acompanhado</p>
+                <h2 id="student-name">Aluno</h2>
+                <p id="studentSummary">Aguardando dados do perfil.</p>
+            </div>
+
+            <dl class="student-info">
+                <div>
+                    <dt>Idade</dt>
+                    <dd id="studentAge">N&atilde;o informado</dd>
+                </div>
+                <div>
+                    <dt>N&iacute;vel de suporte</dt>
+                    <dd id="studentSupport">N&atilde;o informado</dd>
+                </div>
+                <div>
+                    <dt>Respons&aacute;vel</dt>
+                    <dd id="studentGuardian">N&atilde;o informado</dd>
+                </div>
+                <div>
+                    <dt>Data do relat&oacute;rio</dt>
+                    <dd id="reportDate">Hoje</dd>
+                </div>
+            </dl>
+        </section>
+
+        <section class="section-block" aria-labelledby="evolution-title">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Evolu&ccedil;&atilde;o</p>
+                    <h2 id="evolution-title">Indicadores de desenvolvimento</h2>
+                </div>
+            </div>
+
+            <div class="evolution-grid" id="evolutionGrid"></div>
+        </section>
+
+        <section class="charts-grid" aria-label="Gr&aacute;ficos de progresso">
+            <article class="chart-card">
+                <div class="chart-heading">
+                    <h2>Evolu&ccedil;&atilde;o semanal</h2>
+                </div>
+                <canvas id="weeklyChart" aria-label="Gr&aacute;fico de linha da evolu&ccedil;&atilde;o semanal"></canvas>
+            </article>
+
+            <article class="chart-card">
+                <div class="chart-heading">
+                    <h2>Atividades conclu&iacute;das</h2>
+                </div>
+                <canvas id="activitiesChart" aria-label="Gr&aacute;fico de pizza das atividades conclu&iacute;das"></canvas>
+            </article>
+
+            <article class="chart-card chart-card--wide">
+                <div class="chart-heading">
+                    <h2>Desempenho por habilidade</h2>
+                </div>
+                <canvas id="skillsChart" aria-label="Gr&aacute;fico de barras do desempenho por habilidade"></canvas>
+            </article>
+        </section>
+
+        <section class="section-block platform-summary" aria-labelledby="platform-summary-title">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Resumo da plataforma</p>
+                    <h2 id="platform-summary-title">Tempo e respostas registradas</h2>
+                </div>
+                <span class="status-pill" id="platformSummaryStatus">Sincronizado</span>
+            </div>
+
+            <div class="platform-summary-grid">
+                <article class="platform-summary-card">
+                    <span>Perguntas acertadas</span>
+                    <strong id="correctAnswersMetric">0</strong>
+                    <p id="correctAnswersText">Aguardando respostas dos jogos.</p>
+                </article>
+                <article class="platform-summary-card">
+                    <span>Perguntas erradas</span>
+                    <strong id="wrongAnswersMetric">0</strong>
+                    <p id="wrongAnswersText">Aguardando respostas dos jogos.</p>
+                </article>
+                <article class="platform-summary-card">
+                    <span>Tempo na plataforma</span>
+                    <strong id="platformTimeMetric">0 min</strong>
+                    <p id="platformTimeText">Tempo acumulado entre home, jogos e relatorio.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="section-block games-report" aria-labelledby="games-report-title">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Dados dos jogos</p>
+                    <h2 id="games-report-title">Atividades registradas no relat&oacute;rio</h2>
+                </div>
+                <span class="status-pill" id="gamesReportStatus">Sincronizado com os jogos</span>
+            </div>
+            <div class="game-metrics-grid" id="gameMetricsGrid"></div>
+            <div class="games-report-grid" id="gamesReportGrid"></div>
+        </section>
+
+        <section class="section-block ai-card" aria-labelledby="ai-title">
+                <div class="ai-badge" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" role="img">
+                        <path d="M12 3l1.7 4.6L18 9.4l-4.3 1.8L12 16l-1.7-4.8L6 9.4l4.3-1.8L12 3z"></path>
+                        <path d="M18.5 14l.8 2.1 2.1.9-2.1.9-.8 2.1-.8-2.1-2.1-.9 2.1-.9.8-2.1z"></path>
+                    </svg>
+                </div>
+                <p class="eyebrow">An&aacute;lise pedag&oacute;gica</p>
+                <h2 id="ai-title">Relat&oacute;rio autom&aacute;tico</h2>
+                <p id="automaticReportText">
+                    Aguardando dados do perfil e dos jogos.
+                </p>
+        </section>
+
+        <section class="section-block teacher-notes" aria-labelledby="notes-title">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Profissional ou respons&aacute;vel</p>
+                    <h2 id="notes-title">Registro do desenvolvimento do aluno</h2>
+                </div>
+            </div>
+<<<<<<< HEAD
+            <textarea id="teacherNotes" aria-label="Campo de observa&ccedil;&otilde;es do professor" placeholder="Observa&ccedil;&otilde;es do professor, respons&aacute;vel ou terapeuta."></textarea>
+=======
+            <p class="teacher-notes__intro">
+                Espa&ccedil;o reservado para descrever avan&ccedil;os observados, habilidades desenvolvidas, autonomia, comunica&ccedil;&atilde;o, intera&ccedil;&atilde;o, desafios e encaminhamentos para as pr&oacute;ximas atividades.
+            </p>
+            <div class="teacher-notes__prompts" aria-label="Sugest&otilde;es para o registro">
+                <span>Desenvolvimento geral</span>
+                <span>Habilidades desenvolvidas</span>
+                <span>Comunica&ccedil;&atilde;o e intera&ccedil;&atilde;o</span>
+                <span>Autonomia</span>
+                <span>Pr&oacute;ximos passos</span>
+            </div>
+            <textarea id="teacherNotes" aria-label="Campo de registro do profissional ou respons&aacute;vel" placeholder="Descreva aqui o desenvolvimento do aluno, habilidades desenvolvidas, avan&ccedil;os percebidos, apoios necess&aacute;rios e recomenda&ccedil;&otilde;es para continuidade."></textarea>
+>>>>>>> origin/main
+        </section>
+
+        <section class="action-bar" aria-label="A&ccedil;&otilde;es do relat&oacute;rio">
+            <button class="action-button action-button--primary" id="pdfButton" type="button">
+                <span aria-hidden="true">↓</span>
+                Gerar PDF
+            </button>
+            <a class="action-button action-button--ghost" href="home.php">
+                <span aria-hidden="true">←</span>
+                Voltar ao dashboard
+            </a>
+        </section>
+        </section>
+    </main>
+
+    <script src="platform-time.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="game-progress.js"></script>
+    <script src="relatorio.js"></script>
+</body>
+</html>

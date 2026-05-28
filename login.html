@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Inklua Tech</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <main class="login-page">
+        <div class="login-background" aria-hidden="true">
+            <span class="bg-path bg-path--left"></span>
+            <span class="bg-path bg-path--right"></span>
+            <span class="bg-cognitive-panel"></span>
+            <span class="bg-shape bg-shape--one"></span>
+            <span class="bg-shape bg-shape--two"></span>
+            <span class="bg-shape bg-shape--three"></span>
+            <span class="bg-symbol bg-symbol--puzzle-one"></span>
+            <span class="bg-symbol bg-symbol--puzzle-two"></span>
+            <span class="bg-symbol bg-symbol--puzzle-three"></span>
+            <span class="bg-symbol bg-symbol--puzzle-four"></span>
+            <span class="bg-symbol bg-symbol--puzzle-five"></span>
+            <span class="bg-symbol bg-symbol--puzzle-six"></span>
+            <span class="bg-symbol bg-symbol--puzzle-seven"></span>
+            <span class="bg-symbol bg-symbol--puzzle-eight"></span>
+            <span class="bg-symbol bg-symbol--infinity-one">&infin;</span>
+            <span class="bg-symbol bg-symbol--infinity-two">&infin;</span>
+            <span class="bg-symbol bg-symbol--infinity-three">&infin;</span>
+            <span class="bg-node bg-node--one"></span>
+            <span class="bg-node bg-node--two"></span>
+            <span class="bg-node bg-node--three"></span>
+            <span class="bg-edu bg-edu--book"></span>
+            <span class="bg-edu bg-edu--chat"></span>
+            <span class="bg-edu bg-edu--growth"></span>
+        </div>
+
+        <section class="login-card" aria-labelledby="login-title">
+            <div class="login-brand">
+                <span class="login-brand__mark">
+                    <img src="assets/ink-logo.png" alt="Logo Inklua Tech">
+                </span>
+                <div>
+                    <p class="login-brand__label">Inklua Tech</p>
+                    <h1 id="login-title">Acesse sua conta</h1>
+                </div>
+            </div>
+
+            <form class="login-form" id="loginForm" action="auth.php" method="post" novalidate>
+                <input type="hidden" name="action" value="login">
+                <input type="hidden" name="login_source" value="login.html">
+                <div class="login-form__group">
+                    <label for="cpf">CPF</label>
+                    <input
+                        type="text"
+                        id="cpf"
+                        name="cpf"
+                        placeholder="000.000.000-00"
+                        autocomplete="username"
+                        inputmode="numeric"
+                        aria-describedby="loginError"
+                    >
+                </div>
+
+                <div class="login-form__group">
+                    <label for="password">Senha</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Digite sua senha"
+                        autocomplete="current-password"
+                        aria-describedby="loginError"
+                    >
+                </div>
+
+                <p class="login-form__error" id="loginError" aria-live="polite"></p>
+
+                <button class="login-button login-button--primary" type="submit">
+                    Entrar
+                </button>
+
+                <button class="login-button login-button--google" type="button" aria-label="Entrar com Google">
+                    <span class="login-button__google-mark" aria-hidden="true">G</span>
+                    Entrar com Google
+                </button>
+            </form>
+
+            <div class="login-links" aria-label="Links de acesso">
+                <a href="Index.html#cadastro" class="login-link">Criar conta</a>
+                <a href="#recover-password" class="login-link" id="recoverPasswordLink">Esqueci minha senha</a>
+            </div>
+
+            <form class="password-recovery-form" id="passwordRecoveryForm" action="auth.php" method="post" hidden novalidate>
+                <input type="hidden" name="action" value="recover_password">
+                <input type="hidden" name="recovery_source" value="login.html">
+
+                <div class="login-form__group">
+                    <label for="recoveryEmail">E-mail cadastrado</label>
+                    <input
+                        type="email"
+                        id="recoveryEmail"
+                        name="email"
+                        placeholder="seuemail@exemplo.com"
+                        autocomplete="email"
+                        aria-describedby="recoveryMessage"
+                    >
+                </div>
+
+                <p class="login-form__error recovery-message" id="recoveryMessage" aria-live="polite"></p>
+
+                <button class="login-button login-button--primary" type="submit">
+                    Enviar recupera&ccedil;&atilde;o
+                </button>
+
+                <div class="password-recovery-code" id="passwordRecoveryCodePanel" hidden>
+                    <p>C&oacute;digo de recupera&ccedil;&atilde;o</p>
+                    <strong id="passwordRecoveryCodePreview"></strong>
+
+                    <div class="login-form__group">
+                        <label for="passwordRecoveryCodeInput">Digite o c&oacute;digo recebido</label>
+                        <input
+                            type="text"
+                            id="passwordRecoveryCodeInput"
+                            inputmode="numeric"
+                            maxlength="6"
+                            placeholder="000000"
+                            aria-describedby="passwordRecoveryCodeMessage"
+                        >
+                    </div>
+
+                    <p class="login-form__error recovery-code-message" id="passwordRecoveryCodeMessage" aria-live="polite"></p>
+
+                    <button class="login-button login-button--primary" id="verifyPasswordRecoveryCode" type="button">
+                        Confirmar c&oacute;digo
+                    </button>
+                </div>
+
+                <div class="new-password-form" id="newPasswordForm" hidden>
+                    <input type="hidden" name="action" value="reset_password">
+                    <input type="hidden" name="reset_source" value="login.html">
+
+                    <div class="login-form__group">
+                        <label for="newPassword">Nova senha</label>
+                        <input
+                            type="password"
+                            id="newPassword"
+                            name="new_password"
+                            placeholder="Crie uma nova senha"
+                            autocomplete="new-password"
+                            aria-describedby="newPasswordMessage"
+                            required
+                        >
+                    </div>
+
+                    <div class="login-form__group">
+                        <label for="confirmNewPassword">Confirmar nova senha</label>
+                        <input
+                            type="password"
+                            id="confirmNewPassword"
+                            name="confirm_password"
+                            placeholder="Digite a senha novamente"
+                            autocomplete="new-password"
+                            aria-describedby="newPasswordMessage"
+                            required
+                        >
+                    </div>
+
+                    <p class="login-form__error new-password-message" id="newPasswordMessage" aria-live="polite"></p>
+
+                    <button class="login-button login-button--primary" id="saveNewPasswordButton" type="button">
+                        Confirmar nova senha
+                    </button>
+                </div>
+
+                <button class="login-link password-recovery-form__back" id="backToLoginLink" type="button">
+                    Voltar para o login
+                </button>
+            </form>
+        </section>
+    </main>
+
+    <script src="login.js"></script>
+</body>
+</html>

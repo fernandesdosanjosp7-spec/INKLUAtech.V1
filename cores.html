@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INKLUAtech | Jogo das Cores</title>
+    <link rel="stylesheet" href="home.css">
+</head>
+<body class="color-page">
+    <main class="color-shell">
+        <header class="color-topbar">
+            <a class="brand" href="home.html">
+                <img src="assets/ink-logo.png" alt="Logo Inklua Tech">
+                <span>Inklua Tech</span>
+            </a>
+            <a class="topbar-button" href="home.html#jogos">Voltar aos jogos</a>
+        </header>
+
+        <section class="color-focus" aria-labelledby="color-title">
+            <div class="number-intro">
+                <p class="eyebrow">Jogo educativo</p>
+                <h1 id="color-title">Jogo das Cores</h1>
+            </div>
+
+            <div class="color-game color-game--standalone">
+                <div class="color-display" id="colorDisplay" aria-live="polite">
+                    <span class="color-display__swatch" style="--color-swatch: #ffe066"></span>
+                    <strong>amarela</strong>
+                </div>
+
+                <div class="color-grid" aria-label="Cores">
+                    <button class="color-button" type="button" data-color-name="amarela" data-color-value="#ffe066" style="--color-swatch: #ffe066">
+                        <span class="color-button__swatch"></span>
+                        <span>amarela</span>
+                    </button>
+                    <button class="color-button" type="button" data-color-name="azul" data-color-value="#2f80ed" style="--color-swatch: #2f80ed">
+                        <span class="color-button__swatch"></span>
+                        <span>azul</span>
+                    </button>
+                    <button class="color-button" type="button" data-color-name="branco" data-color-value="#ffffff" style="--color-swatch: #ffffff">
+                        <span class="color-button__swatch"></span>
+                        <span>branco</span>
+                    </button>
+                    <button class="color-button" type="button" data-color-name="laranja" data-color-value="#f2994a" style="--color-swatch: #f2994a">
+                        <span class="color-button__swatch"></span>
+                        <span>laranja</span>
+                    </button>
+                    <button class="color-button" type="button" data-color-name="preto" data-color-value="#111827" style="--color-swatch: #111827">
+                        <span class="color-button__swatch"></span>
+                        <span>preto</span>
+                    </button>
+                    <button class="color-button" type="button" data-color-name="roxo" data-color-value="#7b43f0" style="--color-swatch: #7b43f0">
+                        <span class="color-button__swatch"></span>
+                        <span>roxo</span>
+                    </button>
+                    <button class="color-button" type="button" data-color-name="verde" data-color-value="#27ae60" style="--color-swatch: #27ae60">
+                        <span class="color-button__swatch"></span>
+                        <span>verde</span>
+                    </button>
+                    <button class="color-button" type="button" data-color-name="vermelho" data-color-value="#eb5757" style="--color-swatch: #eb5757">
+                        <span class="color-button__swatch"></span>
+                        <span>vermelho</span>
+                    </button>
+                    <button class="color-button" type="button" data-color-name="rosa" data-color-value="#ff8fa3" style="--color-swatch: #ff8fa3">
+                        <span class="color-button__swatch"></span>
+                        <span>rosa</span>
+                    </button>
+                    <button class="color-button" type="button" data-color-name="cinza" data-color-value="#8a96a3" style="--color-swatch: #8a96a3">
+                        <span class="color-button__swatch"></span>
+                        <span>cinza</span>
+                    </button>
+                    <button class="color-button" type="button" data-color-name="marrom" data-color-value="#8b5e3c" style="--color-swatch: #8b5e3c">
+                        <span class="color-button__swatch"></span>
+                        <span>marrom</span>
+                    </button>
+                    <button class="color-button" type="button" data-color-name="bege" data-color-value="#e7d1a3" style="--color-swatch: #e7d1a3">
+                        <span class="color-button__swatch"></span>
+                        <span>bege</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="platform-time.js"></script>
+    <script src="game-progress.js"></script>
+    <script src="inklua-speech.js"></script>
+    <script src="cores.js"></script>
+</body>
+</html>
