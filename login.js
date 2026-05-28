@@ -35,12 +35,6 @@ const recoveryMessages = {
 };
 const recoveryCodeStorageKey = "inklua_recovery_code";
 
-const canUsePhpBackend = () => {
-    const port = Number(window.location.port);
-    const isLiveServer = port >= 5500 && port <= 5599;
-    return window.location.protocol !== "file:" && !isLiveServer;
-};
-
 const normalizeCpfValue = (value) => String(value || "").replace(/\D/g, "");
 const normalizeEmailValue = (value) => String(value || "").trim().toLowerCase();
 const normalizeCodeValue = (value) => String(value || "").replace(/\D/g, "").slice(0, 6);
@@ -65,10 +59,10 @@ const getStoredRegisterAnswers = () => {
 };
 
 const canUsePhpBackend = () => {
-    const protocol = window.location.protocol;
-    const staticServerPorts = new Set(["5500", "5501"]);
+    const port = Number(window.location.port);
+    const isLiveServer = port >= 5500 && port <= 5599;
 
-    return protocol !== "file:" && !staticServerPorts.has(window.location.port);
+    return window.location.protocol !== "file:" && !isLiveServer;
 };
 
 const showError = (message, fields) => {
@@ -324,19 +318,12 @@ loginForm.addEventListener("submit", (event) => {
         return;
     }
 
-<<<<<<< HEAD
-    if (!canUsePhpBackend()) {
-        event.preventDefault();
-        validateStoredLogin();
-    }
-=======
     if (canUsePhpBackend() && loginForm.method.toLowerCase() === "post" && loginForm.action.includes("auth.php")) {
         return;
     }
 
     event.preventDefault();
-    window.location.href = "home.html";
->>>>>>> origin/main
+    validateStoredLogin();
 });
 
 [cpfInput, passwordInput].forEach((field) => {

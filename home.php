@@ -80,11 +80,12 @@ function checkedValue(array $user, string $key, string $value): string
             </a>
 
             <nav class="nav-menu">
-                <a class="is-active" href="#inicio">In&iacute;cio</a>
-                <a href="#formulario">Formul&aacute;rio</a>
-                <a href="#relatorio">Relat&oacute;rio</a>
-                <a href="#jogos">Jogos</a>
-                <a href="#atividades">Atividades</a>
+                <a class="is-active" href="/" data-view-link="inicio">In&iacute;cio</a>
+                <a href="/jogos" data-view-link="jogos">Jogos</a>
+                <a href="/atividades" data-view-link="atividades">Atividades</a>
+                <a href="/formularios" data-view-link="formulario">Formul&aacute;rios</a>
+                <a href="/relatorios" data-view-link="relatorio">Relat&oacute;rios</a>
+                <a href="/perfil" data-view-link="perfil">Perfil</a>
             </nav>
 
             <div class="student-card">
@@ -116,9 +117,9 @@ function checkedValue(array $user, string $key, string $value): string
                     <p class="eyebrow">Boas-vindas</p>
                     <h2><span id="welcomeGreeting">Ol&aacute;</span>, <?php echo h($user["aluno_nome"] ?: "aluno"); ?>!</h2>
                     <div class="welcome-actions" aria-label="Atalhos de in&iacute;cio">
-                        <a href="#jogos">Come&ccedil;ar pelos jogos</a>
-                        <a href="#formulario">Atualizar perfil</a>
-                        <a href="#jogos">Ver jogos</a>
+                        <a href="/jogos">Come&ccedil;ar pelos jogos</a>
+                        <a href="/formularios">Atualizar perfil</a>
+                        <a href="/perfil">Ver perfil</a>
                     </div>
                 </div>
 
@@ -449,45 +450,12 @@ function checkedValue(array $user, string $key, string $value): string
                 </div>
 
                 <article class="report-panel report-panel--wide">
-<<<<<<< HEAD
                     <h3>Resumo</h3>
                     <div class="report-metrics-grid" aria-label="Resumo consolidado dos jogos">
                         <article class="report-metric-card">
                             <span>Tentativas</span>
                             <strong id="attemptsMetric">0</strong>
-=======
-                    <h3>Consolida&ccedil;&atilde;o de dados da plataforma</h3>
-                    <div class="report-metrics-grid" aria-label="Resumo consolidado dos jogos">
-                        <article class="report-metric-card">
-                            <span>Perguntas respondidas</span>
-                            <strong id="completedActivitiesMetric">0 acertos</strong>
-                            <p id="completedActivitiesText">0 erros registrados nos jogos.</p>
-                        </article>
-                        <article class="report-metric-card">
-                            <span>Tempo na plataforma</span>
-                            <strong id="usageFrequencyMetric">0s</strong>
-                            <p id="usageFrequencyText">Uso acumulado entre home, jogos e relat&oacute;rio.</p>
-                        </article>
-                        <article class="report-metric-card">
-                            <span>Desenvolvimento</span>
-                            <strong id="developmentMetric">Aguardando dados</strong>
-                            <p id="developmentMetricText">Leitura geral do progresso do aluno.</p>
-                        </article>
-                    </div>
-
-                    <p class="report-insight-text" id="qualitativeDevelopmentText">
-                        Ao usar os jogos, a plataforma vai consolidar evid&ecirc;ncias de participa&ccedil;&atilde;o, const&acirc;ncia e habilidades trabalhadas.
-                    </p>
-                </article>
-
-                <article class="report-panel report-panel--wide">
-                    <h3>Plano sugerido pela plataforma</h3>
-                    <div class="report-action-grid">
-                        <article class="report-action-card">
-                            <strong>Comunica&ccedil;&atilde;o e express&atilde;o</strong>
-                            <p>Use jogos de emo&ccedil;&otilde;es, vogais, s&iacute;labas e alfabeto para ampliar escolhas, fala, escuta e comunica&ccedil;&atilde;o alternativa.</p>
-                            <a href="#jogos">Ver jogos</a>
->>>>>>> origin/main
+                            <p id="attemptsMetricText">Aguardando jogos.</p>
                         </article>
                         <article class="report-metric-card">
                             <span>Acertos</span>
@@ -500,28 +468,37 @@ function checkedValue(array $user, string $key, string $value): string
                         <article class="report-metric-card">
                             <span>Taxa de acerto</span>
                             <strong id="accuracyMetric">0%</strong>
+                            <p id="accuracyMetricText">Maior n&iacute;vel: aguardando.</p>
                         </article>
                         <article class="report-metric-card">
                             <span>Tempo na plataforma</span>
                             <strong id="platformTimeMetric">0s</strong>
+                            <p id="platformTimeText">0 acessos registrados.</p>
                         </article>
                         <article class="report-metric-card">
                             <span>Tempo respondendo</span>
                             <strong id="answerTimeMetric">0s</strong>
+                            <p id="answerTimeText">M&eacute;dia por resposta: 0s.</p>
                         </article>
                         <article class="report-metric-card">
                             <span>Atividades conclu&iacute;das</span>
                             <strong id="completedActivitiesMetric">0 de 6</strong>
+                            <p id="completedActivitiesText">0 jogos com registro de uso.</p>
                         </article>
                         <article class="report-metric-card">
                             <span>Frequ&ecirc;ncia de uso</span>
                             <strong id="usageFrequencyMetric">Sem uso recente</strong>
+                            <p id="usageFrequencyText">0 dias de uso recente.</p>
                         </article>
                         <article class="report-metric-card">
                             <span>Desenvolvimento</span>
                             <strong id="developmentMetric">Aguardando dados</strong>
+                            <p id="developmentMetricText">Use os jogos para iniciar o acompanhamento.</p>
                         </article>
                     </div>
+                    <p class="report-insight-text" id="qualitativeDevelopmentText">
+                        Ao usar os jogos, a plataforma vai consolidar evid&ecirc;ncias de participa&ccedil;&atilde;o, const&acirc;ncia e habilidades trabalhadas.
+                    </p>
                 </article>
             </section>
 
@@ -604,18 +581,41 @@ function checkedValue(array $user, string $key, string $value): string
                 </div>
             </section>
 
+            <section class="section-block platform-view" id="perfil" data-view="perfil" aria-labelledby="profile-title">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">Perfil</p>
+                        <h2 id="profile-title">Perfil do aluno</h2>
+                    </div>
+                    <a class="topbar-button" href="/formularios">Editar perfil</a>
+                </div>
+
+                <div class="report-grid">
+                    <article class="report-panel">
+                        <h3>Resumo</h3>
+                        <p><strong>Aluno:</strong> <span data-report-field="aluno_nome"><?php echo h($user["aluno_nome"] ?: "Aluno"); ?></span></p>
+                        <p><strong>Respons&aacute;vel:</strong> <span data-report-field="responsavel_nome"><?php echo h($user["responsavel_nome"] ?: "Nao informado"); ?></span></p>
+                        <p><strong>Comunica&ccedil;&atilde;o:</strong> <span data-report-field="comunicacao_melhor"><?php echo h($user["comunicacao_melhor"] ?: "Nao informado"); ?></span></p>
+                    </article>
+
+                    <article class="report-panel">
+                        <h3>Prefer&ecirc;ncias de apoio</h3>
+                        <p><strong>Aprendizado:</strong> <span data-report-field="forma_aprendizado"><?php echo h($user["forma_aprendizado"] ?: "Nao informado"); ?></span></p>
+                        <p><strong>Recursos &uacute;teis:</strong> <span data-report-field="recursos_uteis"><?php echo h($user["recursos_uteis"] ?: "Nao informado"); ?></span></p>
+                        <p><strong>Sensibilidades:</strong> <span data-report-field="sensibilidades_importantes"><?php echo h($user["sensibilidades_importantes"] ?: "Nao informado"); ?></span></p>
+                    </article>
+                </div>
+            </section>
+
         </section>
     </main>
 
-<<<<<<< HEAD
     <script src="platform-time.js"></script>
     <script src="inklua-speech.js"></script>
-=======
     <script>
         window.InkluaServerGameProgress = <?php echo json_encode($serverGameProgress, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
     </script>
     <script src="game-progress.js"></script>
->>>>>>> origin/main
     <script src="app.js"></script>
 </body>
 </html>

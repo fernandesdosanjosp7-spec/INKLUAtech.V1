@@ -121,7 +121,7 @@ const loadCurrentLevel = () => {
 
 const speak = (text) => {
     if (window.InkluaSpeech?.speak) {
-        window.InkluaSpeech.speak(text);
+        window.InkluaSpeech.speak(text, { interrupt: true });
         return;
     }
 
@@ -189,9 +189,9 @@ const selectAnswer = (button) => {
     button.classList.add("is-selected");
 
     if (selectedEmotion.id === round.correct) {
+        const feedbackPhrase = window.InkluaFeedback?.getPositivePhrase?.() || "Voce acertou!";
         button.classList.add("is-correct");
-        emotionFeedback.textContent = `Muito bem! Essa situa\u00e7\u00e3o combina com ${correctEmotion.label.toLowerCase()}.`;
-        speak(`Muito bem. ${correctEmotion.label}.`);
+        emotionFeedback.textContent = `${feedbackPhrase} Essa situa\u00e7\u00e3o combina com ${correctEmotion.label.toLowerCase()}.`;
         window.InkluaGameProgress?.record("emocoes", {
             title: "Jogo das Emoções",
             skill: "Comunicação",
@@ -200,13 +200,24 @@ const selectAnswer = (button) => {
             totalItems: rounds.length
         });
         canContinue = true;
-        nextEmotion.disabled = false;
+        nextEmotion.disabled = true;
+        window.InkluaSpeech?.speak
+            ? window.InkluaSpeech.speak(`${feedbackPhrase} ${correctEmotion.label}.`, {
+                interrupt: true,
+                onEnd: () => {
+                    nextEmotion.disabled = false;
+                }
+            })
+            : speak(`${feedbackPhrase} ${correctEmotion.label}.`);
         return;
     }
 
     button.classList.add("is-wrong");
-    emotionFeedback.textContent = `Boa tentativa. ${round.hint}`;
-    speak(round.hint);
+    const encouragementPhrase = window.InkluaFeedback?.getEncouragementPhrase?.() || "Boa tentativa, vamos continuar!";
+    emotionFeedback.textContent = `${encouragementPhrase} ${round.hint}`;
+    window.InkluaSpeech?.speak
+        ? window.InkluaSpeech.speak(`${encouragementPhrase} ${round.hint}`, { interrupt: true })
+        : speak(`${encouragementPhrase} ${round.hint}`);
     window.InkluaGameProgress?.record("emocoes", {
         title: "Jogo das Emoções",
         skill: "Comunicação",

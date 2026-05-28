@@ -419,14 +419,11 @@
             correct: 0,
             wrong: 0,
             level: 1,
-<<<<<<< HEAD
             maxLevel: payload.maxLevel || 4,
-=======
             levelStep,
             progressInLevel: 0,
             correctToNextLevel: levelStep,
             levelUps: 0,
->>>>>>> origin/main
             completed: false,
             items: [],
             totalItems: payload.totalItems || 1,
@@ -464,14 +461,8 @@
             currentGame.wrong += 1;
         }
 
-<<<<<<< HEAD
-        currentGame.level = Math.min(
-            Math.max(Number(payload.level) || Math.floor((currentGame.attempts || 0) / 5) + 1, 1),
-            currentGame.maxLevel
-        );
-=======
         const levelState = getLevelState(currentGame.correct);
-        currentGame.level = levelState.level;
+        currentGame.level = Math.min(Number(payload.level) || levelState.level, currentGame.maxLevel);
         currentGame.levelStep = levelState.levelStep;
         currentGame.progressInLevel = levelState.progressInLevel;
         currentGame.correctToNextLevel = levelState.correctToNextLevel;
@@ -481,7 +472,6 @@
             currentGame.levelUps = (currentGame.levelUps || 0) + 1;
             currentGame.lastLevelUp = currentGame.lastPlayed;
         }
->>>>>>> origin/main
 
         if (payload.completed || currentGame.items.length >= currentGame.totalItems) {
             currentGame.completed = true;
@@ -497,13 +487,10 @@
             selected: payload.selected || "",
             correct: payload.correct,
             level: currentGame.level,
-<<<<<<< HEAD
             difficulty: payload.difficulty || `Nivel ${currentGame.level}`,
             responseTimeMs: payload.responseTimeMs || null,
             helpUsed: Boolean(payload.helpUsed),
-=======
             leveledUp: currentGame.leveledUp,
->>>>>>> origin/main
             completed: currentGame.completed,
             createdAt: currentGame.lastPlayed
         });
@@ -546,8 +533,10 @@
     };
 
     window.InkluaSpeech = {
-        createUtterance: createSoftVoiceUtterance,
-        speak: speakWithSoftVoice
+        ...window.InkluaSpeech,
+        createUtterance: window.InkluaSpeech?.createUtterance || createSoftVoiceUtterance,
+        getFemaleVoice: window.InkluaSpeech?.getFemaleVoice || getPreferredVoice,
+        speak: window.InkluaSpeech?.speak || speakWithSoftVoice
     };
 
     if ("speechSynthesis" in window) {

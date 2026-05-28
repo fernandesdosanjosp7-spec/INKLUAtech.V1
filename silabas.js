@@ -8,7 +8,6 @@ const syllableTotal = document.getElementById("syllableTotal");
 const nextSyllable = document.getElementById("nextSyllable");
 const restartSyllable = document.getElementById("restartSyllable");
 
-<<<<<<< HEAD
 const syllableRounds = [
     { letters: "A + I", answer: "AI", options: ["AI", "IA", "OI", "AU"], word: "ai" },
     { letters: "O + I", answer: "OI", options: ["UI", "OI", "IO", "AI"], word: "oi" },
@@ -60,37 +59,13 @@ const syllableRounds = [
     { letters: "GL + A", answer: "GLA", options: ["GA", "GLA", "GAL", "CLA"], word: "gla" },
     { letters: "VR + O", answer: "VRO", options: ["VO", "VOR", "VRO", "FRO"], word: "vro" },
     { letters: "QU + E", answer: "QUE", options: ["QE", "QUE", "CE", "GUE"], word: "que" }
-=======
-const syllableLevels = [
-    [
-        { letters: "A + I", answer: "AI", options: ["AI", "IA", "OI", "AU"], word: "ai" },
-        { letters: "O + I", answer: "OI", options: ["UI", "OI", "IO", "AI"], word: "oi" },
-        { letters: "A + U", answer: "AU", options: ["UA", "EU", "AU", "AI"], word: "au" },
-        { letters: "E + U", answer: "EU", options: ["OU", "EU", "UA", "EI"], word: "eu" },
-        { letters: "U + A", answer: "UA", options: ["AU", "IA", "UA", "OU"], word: "ua" }
-    ],
-    [
-        { letters: "B + A", answer: "BA", options: ["BA", "BE", "AB", "PA"], word: "ba" },
-        { letters: "B + O", answer: "BO", options: ["BO", "OB", "BA", "DO"], word: "bo" },
-        { letters: "C + A", answer: "CA", options: ["AC", "CA", "CO", "KA"], word: "ca" },
-        { letters: "D + E", answer: "DE", options: ["DE", "DA", "ED", "TE"], word: "de" },
-        { letters: "F + I", answer: "FI", options: ["FA", "IF", "FI", "VI"], word: "fi" }
-    ],
-    [
-        { letters: "M + A", answer: "MA", options: ["MA", "AM", "ME", "NA"], word: "ma" },
-        { letters: "P + E", answer: "PE", options: ["PA", "PE", "EP", "BE"], word: "pe" },
-        { letters: "T + O", answer: "TO", options: ["OT", "TA", "TO", "DO"], word: "to" },
-        { letters: "L + U", answer: "LU", options: ["LI", "UL", "NU", "LU"], word: "lu" },
-        { letters: "R + I", answer: "RI", options: ["IR", "RA", "RI", "LI"], word: "ri" }
-    ]
->>>>>>> origin/main
 ];
 
 let currentRound = 0;
 let canContinue = false;
-<<<<<<< HEAD
 let answeredQuestions = 0;
 let questionStartedAt = Date.now();
+let nextRoundTimer = null;
 
 const getLevel = () => Math.min(Math.floor(answeredQuestions / 5) + 1, 8);
 
@@ -207,26 +182,11 @@ const getSpokenAnswer = (round) => {
     }
 
     return syllableSpeechNames[round.answer] || round.word || round.answer.toLowerCase();
-=======
-let currentLevel = 1;
-let syllableRounds = [];
-
-const getStoredGameLevel = (gameId) => {
-    const progress = window.InkluaGameProgress?.read?.();
-    return Math.max(Number(progress?.games?.[gameId]?.level) || 1, 1);
-};
-
-const getRoundsForLevel = (level) => syllableLevels[(level - 1) % syllableLevels.length];
-
-const loadCurrentLevel = () => {
-    currentLevel = getStoredGameLevel("silabas");
-    syllableRounds = getRoundsForLevel(currentLevel);
->>>>>>> origin/main
 };
 
 const speakSyllable = (text) => {
     if (window.InkluaSpeech?.speak) {
-        window.InkluaSpeech.speak(text);
+        window.InkluaSpeech.speak(text, { interrupt: true });
         return;
     }
 
@@ -236,19 +196,10 @@ const speakSyllable = (text) => {
 
     window.speechSynthesis.cancel();
 
-<<<<<<< HEAD
-    if (window.InkluaSpeech?.speak) {
-        window.InkluaSpeech.speak(text);
-        return;
-    }
-
     const utterance = window.InkluaSpeech?.createUtterance(text) || new SpeechSynthesisUtterance(text);
     utterance.lang = utterance.lang || "pt-BR";
     utterance.rate = 0.82;
     utterance.pitch = 1.16;
-=======
-    const utterance = window.InkluaSpeech?.createUtterance(text) || new SpeechSynthesisUtterance(text);
->>>>>>> origin/main
     window.speechSynthesis.speak(utterance);
 };
 
@@ -272,6 +223,7 @@ const renderRound = () => {
     const round = syllableRounds[currentRound];
     const isWordRound = round.type === "word";
 
+    window.clearTimeout(nextRoundTimer);
     canContinue = false;
     questionStartedAt = Date.now();
     syllableLetters.textContent = round.letters;
@@ -287,11 +239,7 @@ const renderRound = () => {
     syllableStep.textContent = String(currentRound + 1);
     syllableTotal.textContent = String(syllableRounds.length);
     nextSyllable.disabled = true;
-<<<<<<< HEAD
     nextSyllable.textContent = currentRound === syllableRounds.length - 1 ? "Finalizar" : "Proxima";
-=======
-    nextSyllable.textContent = currentRound === syllableRounds.length - 1 ? "Finalizar fase" : "Proxima";
->>>>>>> origin/main
     syllableOptions.innerHTML = round.options.map((option) => `
         <button class="syllable-option" type="button" data-option="${option}">${option}</button>
     `).join("");
@@ -300,23 +248,13 @@ const renderRound = () => {
 };
 
 const finishGame = () => {
-    const nextLevel = getStoredGameLevel("silabas");
-
     syllableLetters.textContent = "Muito bem!";
-<<<<<<< HEAD
     syllableQuestion.textContent = "Atividade concluida";
     syllableOptions.innerHTML = "";
     syllableFeedback.textContent = "Voce completou o Jogo das Silabas.";
-=======
-    syllableQuestion.textContent = nextLevel > currentLevel ? `Fase ${nextLevel} desbloqueada` : "Atividade concluida";
-    syllableOptions.innerHTML = "";
-    syllableFeedback.textContent = nextLevel > currentLevel
-        ? "Voce acertou as perguntas da fase. A proxima fase tem novas silabas."
-        : "Voce completou o Jogo das Silabas.";
->>>>>>> origin/main
     nextSyllable.hidden = true;
     restartSyllable.hidden = false;
-    restartSyllable.textContent = nextLevel > currentLevel ? `Comecar fase ${nextLevel}` : "Jogar novamente";
+    restartSyllable.textContent = "Jogar novamente";
 
     window.InkluaGameProgress?.record("silabas", {
         title: "Jogo das Silabas",
@@ -345,25 +283,37 @@ const selectOption = (button) => {
     button.classList.add("is-selected");
 
     if (isCorrect) {
+        const feedbackPhrase = window.InkluaFeedback?.getPositivePhrase?.() || "Isso mesmo!";
         button.classList.add("is-correct");
-        syllableFeedback.textContent = `Isso mesmo! ${round.letters} forma ${round.answer}.`;
+        syllableFeedback.textContent = `${feedbackPhrase} ${round.letters} forma ${round.answer}.`;
         canContinue = true;
-        nextSyllable.disabled = false;
+        nextSyllable.disabled = true;
         recordSyllable(round, selected, true);
-        speakSyllable(`${getSpokenAnswer(round)}. Muito bem.`);
+        window.InkluaSpeech?.speak
+            ? window.InkluaSpeech.speak(`${feedbackPhrase} ${getSpokenAnswer(round)}.`, {
+                interrupt: true,
+                onEnd: () => {
+                    nextSyllable.disabled = false;
+                }
+            })
+            : speakSyllable(`${feedbackPhrase} ${getSpokenAnswer(round)}.`);
+        nextRoundTimer = window.setTimeout(goToNextRound, 5000);
         return;
     }
 
+    const encouragementPhrase = window.InkluaFeedback?.getEncouragementPhrase?.() || "Boa tentativa, vamos continuar!";
     button.classList.add("is-wrong");
-    syllableFeedback.textContent = "Boa tentativa. Observe a plaquinha e tente novamente.";
+    syllableFeedback.textContent = `${encouragementPhrase} Observe a plaquinha e tente novamente.`;
     recordSyllable(round, selected, false);
-    speakSyllable("Boa tentativa. Tente novamente.");
+    speakSyllable(`${encouragementPhrase} Tente novamente.`);
 };
 
 const goToNextRound = () => {
     if (!canContinue) {
         return;
     }
+
+    window.clearTimeout(nextRoundTimer);
 
     if (currentRound === syllableRounds.length - 1) {
         finishGame();
@@ -375,12 +325,9 @@ const goToNextRound = () => {
 };
 
 const restartGame = () => {
+    window.clearTimeout(nextRoundTimer);
     currentRound = 0;
-<<<<<<< HEAD
     answeredQuestions = 0;
-=======
-    loadCurrentLevel();
->>>>>>> origin/main
     nextSyllable.hidden = false;
     restartSyllable.hidden = true;
     renderRound();
@@ -397,5 +344,4 @@ syllableOptions.addEventListener("click", (event) => {
 nextSyllable.addEventListener("click", goToNextRound);
 restartSyllable.addEventListener("click", restartGame);
 
-loadCurrentLevel();
 renderRound();

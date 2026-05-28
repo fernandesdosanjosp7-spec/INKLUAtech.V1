@@ -6,9 +6,59 @@ const welcomeGreeting = document.getElementById("welcomeGreeting");
 const welcomeName = document.getElementById("welcomeName");
 const gameCards = document.querySelectorAll("[data-activity]");
 const platformViews = document.querySelectorAll("[data-view]");
-const navLinks = document.querySelectorAll(".nav-menu a[href^='#']");
+const navLinks = document.querySelectorAll(".nav-menu a[data-view-link]");
 
-const availableViews = ["inicio", "formulario", "relatorio", "jogos", "atividades"];
+const routeToView = {
+    "/": "inicio",
+    "/inicio": "inicio",
+    "/formularios": "formulario",
+    "/formulario": "formulario",
+    "/relatorios": "relatorio",
+    "/relatorio": "relatorio",
+    "/jogos": "jogos",
+    "/atividades": "atividades",
+    "/perfil": "perfil"
+};
+const viewToRoute = {
+    inicio: "/",
+    formulario: "/formularios",
+    relatorio: "/relatorios",
+    jogos: "/jogos",
+    atividades: "/atividades",
+    perfil: "/perfil"
+};
+const availableViews = Object.keys(viewToRoute);
+
+const normalizeRoutePath = (path) => {
+    const cleanPath = String(path || "/").replace(/\/+$/, "") || "/";
+    const fileName = cleanPath.split("/").pop();
+
+    if (fileName === "home.html" || fileName === "home.php") {
+        return "/";
+    }
+
+    return cleanPath;
+};
+
+const getViewFromLocation = () => {
+    const legacyHashView = window.location.hash.replace("#", "");
+
+    if (availableViews.includes(legacyHashView)) {
+        return legacyHashView;
+    }
+
+    return routeToView[normalizeRoutePath(window.location.pathname)] || "inicio";
+};
+
+const buildViewUrl = (viewName) => {
+    const route = viewToRoute[viewName] || "/";
+
+    if (window.location.protocol === "file:") {
+        return viewName === "inicio" ? window.location.pathname : `#${viewName}`;
+    }
+
+    return route;
+};
 
 const showPlatformView = (viewName = "inicio") => {
     const nextView = availableViews.includes(viewName) ? viewName : "inicio";
@@ -20,7 +70,7 @@ const showPlatformView = (viewName = "inicio") => {
     });
 
     navLinks.forEach((link) => {
-        const isCurrentLink = link.getAttribute("href") === `#${nextView}`;
+        const isCurrentLink = link.dataset.viewLink === nextView;
         link.classList.toggle("is-active", isCurrentLink);
 
         if (isCurrentLink) {
@@ -38,27 +88,18 @@ const goToPlatformView = (viewName) => {
     }
 
     showPlatformView(viewName);
-    window.location.hash = viewName;
-};
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
 
-const getViewFromHash = () => window.location.hash.replace("#", "") || "inicio";
+    const nextUrl = buildViewUrl(viewName);
 
-const syncPlatformViewFromHash = () => {
-    const viewName = getViewFromHash();
-
-    showPlatformView(viewName);
-
-    if (viewName === "jogos" || viewName === "atividades") {
-        window.setTimeout(() => {
-            document.getElementById(viewName)?.scrollIntoView({ block: "start" });
-        }, 80);
+    if (window.location.pathname + window.location.hash !== nextUrl) {
+        window.history.pushState({ viewName }, "", nextUrl);
     }
 };
 
 navLinks.forEach((link) => {
     link.addEventListener("click", (event) => {
-        const href = link.getAttribute("href") || "#inicio";
-        const viewName = href.replace("#", "") || "inicio";
+        const viewName = link.dataset.viewLink || "inicio";
 
         if (!availableViews.includes(viewName)) {
             return;
@@ -69,14 +110,10 @@ navLinks.forEach((link) => {
     });
 });
 
-syncPlatformViewFromHash();
-
-window.addEventListener("hashchange", () => {
-    syncPlatformViewFromHash();
-});
+showPlatformView(getViewFromLocation());
 
 window.addEventListener("popstate", () => {
-    syncPlatformViewFromHash();
+    showPlatformView(getViewFromLocation());
 });
 
 const moodStorageKey = "inklua_daily_mood_v1";
@@ -262,11 +299,7 @@ gameCards.forEach((card) => {
     }
 
     button.addEventListener("click", () => {
-        if (window.location.hash !== "#jogos") {
-            window.location.hash = "jogos";
-        }
-
-        showPlatformView("jogos");
+        goToPlatformView("jogos");
         renderActivity(card.dataset.activity);
     });
 });
@@ -274,13 +307,8 @@ gameCards.forEach((card) => {
 const initialActivity = new URLSearchParams(window.location.search).get("start");
 
 if (initialActivity && activityContent[initialActivity]) {
-    showPlatformView("jogos");
+    goToPlatformView("jogos");
     renderActivity(initialActivity);
-    const activityBoard = document.querySelector(".activity-board");
-
-    if (activityBoard) {
-        activityBoard.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
 }
 
 const scoreSpeechVoice = (voice) => {
@@ -361,6 +389,12 @@ const getPreferredSpeechVoice = () => {
         return null;
     }
 
+    const sharedFemaleVoice = window.InkluaSpeech?.getFemaleVoice?.();
+
+    if (sharedFemaleVoice) {
+        return sharedFemaleVoice;
+    }
+
     const voices = window.speechSynthesis.getVoices();
     const portugueseVoices = voices.filter((voice) => voice.lang?.toLowerCase().startsWith("pt"));
     const femaleVoice = portugueseVoices
@@ -408,18 +442,15 @@ const speakLetter = (letter) => {
         return;
     }
 
-    window.speechSynthesis.cancel();
-
     const letterName = letterNames[letter] || letter;
-<<<<<<< HEAD
-    const utterance = window.InkluaSpeech?.createUtterance(`${letterName}.`) || new SpeechSynthesisUtterance(`${letterName}.`);
-    utterance.lang = utterance.lang || "pt-BR";
-    utterance.rate = 0.82;
-    utterance.pitch = 1.16;
-=======
-    const utterance = createSoftSpeech(`${letterName}.`);
->>>>>>> origin/main
-    window.speechSynthesis.speak(utterance);
+
+    if (window.InkluaSpeech?.speak) {
+        window.InkluaSpeech.speak(`${letterName}.`, { interrupt: true });
+        return;
+    }
+
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(createSoftSpeech(`${letterName}.`));
 };
 
 const speakNumber = (number) => {
@@ -427,17 +458,13 @@ const speakNumber = (number) => {
         return;
     }
 
-    window.speechSynthesis.cancel();
+    if (window.InkluaSpeech?.speak) {
+        window.InkluaSpeech.speak(String(number), { interrupt: true });
+        return;
+    }
 
-<<<<<<< HEAD
-    const utterance = window.InkluaSpeech?.createUtterance(String(number)) || new SpeechSynthesisUtterance(String(number));
-    utterance.lang = utterance.lang || "pt-BR";
-    utterance.rate = 0.82;
-    utterance.pitch = 1.16;
-=======
-    const utterance = createSoftSpeech(String(number));
->>>>>>> origin/main
-    window.speechSynthesis.speak(utterance);
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(createSoftSpeech(String(number)));
 };
 
 const speakColor = (colorName) => {
@@ -445,17 +472,13 @@ const speakColor = (colorName) => {
         return;
     }
 
-    window.speechSynthesis.cancel();
+    if (window.InkluaSpeech?.speak) {
+        window.InkluaSpeech.speak(`${colorName}.`, { interrupt: true });
+        return;
+    }
 
-<<<<<<< HEAD
-    const utterance = window.InkluaSpeech?.createUtterance(`${colorName}.`) || new SpeechSynthesisUtterance(`${colorName}.`);
-    utterance.lang = utterance.lang || "pt-BR";
-    utterance.rate = 0.82;
-    utterance.pitch = 1.16;
-=======
-    const utterance = createSoftSpeech(`${colorName}.`);
->>>>>>> origin/main
-    window.speechSynthesis.speak(utterance);
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(createSoftSpeech(`${colorName}.`));
 };
 
 if (activityPanel) {
@@ -835,7 +858,7 @@ const renderReportRecommendations = (answers) => {
         recommendations.push({
             title: "Comunica\u00e7\u00e3o e express\u00e3o",
             text: "Priorize vogais, s\u00edlabas e alfabeto para trabalhar escolhas, escuta, fala e comunica\u00e7\u00e3o alternativa.",
-            href: "#jogos",
+            href: "/jogos",
             action: "Ver jogos"
         });
     }
@@ -844,7 +867,7 @@ const renderReportRecommendations = (answers) => {
         recommendations.push({
             title: "Percep\u00e7\u00e3o visual e matem\u00e1tica",
             text: "Use cores, n\u00fameros e matem\u00e1tica visual para refor\u00e7ar reconhecimento, associa\u00e7\u00e3o, contagem e compara\u00e7\u00e3o.",
-            href: "#jogos",
+            href: "/jogos",
             action: "Praticar percep\u00e7\u00e3o"
         });
     }
@@ -853,7 +876,7 @@ const renderReportRecommendations = (answers) => {
         recommendations.push({
             title: "Rotina e autonomia",
             text: "Registre no perfil quais combinados, pausas e recursos ajudam previsibilidade, transi\u00e7\u00f5es e participa\u00e7\u00e3o.",
-            href: "#formulario",
+            href: "/formularios",
             action: "Atualizar perfil"
         });
     }
@@ -862,7 +885,7 @@ const renderReportRecommendations = (answers) => {
         recommendations.push({
             title: "Ajustes sensoriais",
             text: "Use o formulario para registrar sinais de desconforto e adaptar a escolha dos jogos.",
-            href: "#formulario",
+            href: "/formularios",
             action: "Atualizar perfil"
         });
     }
@@ -870,7 +893,7 @@ const renderReportRecommendations = (answers) => {
     const cards = recommendations.length ? recommendations : [{
         title: "Complete o perfil",
         text: "Preencha comunica\u00e7\u00e3o, aprendizagem, sensibilidades e prioridades para gerar recomenda\u00e7\u00f5es personalizadas.",
-        href: "#formulario",
+        href: "/formularios",
         action: "Ir para o formul\u00e1rio"
     }];
 
@@ -891,7 +914,6 @@ const readGameProgress = () => {
     }
 };
 
-<<<<<<< HEAD
 const readPlatformTime = () => {
     window.InkluaPlatformTime?.commit?.();
 
@@ -902,36 +924,23 @@ const readPlatformTime = () => {
     }
 };
 
-const formatDuration = (milliseconds) => {
-    const totalSeconds = Math.max(Math.round((Number(milliseconds) || 0) / 1000), 0);
-=======
 const formatDuration = (milliseconds = 0) => {
-    const totalSeconds = Math.max(Math.floor(milliseconds / 1000), 0);
->>>>>>> origin/main
+    const totalSeconds = Math.max(Math.round((Number(milliseconds) || 0) / 1000), 0);
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
 
     if (hours > 0) {
-<<<<<<< HEAD
-        return `${hours}h ${minutes}min`;
-    }
-
-    if (minutes > 0) {
-        return `${minutes}min ${seconds}s`;
-=======
         return `${hours}h ${String(minutes).padStart(2, "0")}min`;
     }
 
     if (minutes > 0) {
         return `${minutes}min ${String(seconds).padStart(2, "0")}s`;
->>>>>>> origin/main
     }
 
     return `${seconds}s`;
 };
 
-<<<<<<< HEAD
 const hiddenGameIds = ["emocoes", "checkin-emocional", "rotina", "formas"];
 const isVisibleGame = (game) => !hiddenGameIds.includes(game.id || game.gameId || "");
 
@@ -941,8 +950,6 @@ const developmentAreas = {
     matematica: ["numeros", "matematica-visual"]
 };
 
-=======
->>>>>>> origin/main
 const getDaysBetween = (dateString) => {
     const date = new Date(dateString);
 
@@ -1094,16 +1101,7 @@ const renderConsolidatedReport = () => {
     const games = Object.values(progress.games || {}).filter(isVisibleGame);
     const sessions = (progress.sessions || []).filter(isVisibleGame);
     const completedGames = games.filter((game) => game.completed).length;
-<<<<<<< HEAD
     const totalGames = Math.max(games.length, 6);
-=======
-    const totalGames = Math.max(games.length, 8);
-    const correctAnswers = games.reduce((sum, game) => sum + (Number(game.correct) || 0), 0);
-    const wrongAnswers = games.reduce((sum, game) => sum + (Number(game.wrong) || 0), 0);
-    const totalPlatformTime = window.InkluaGameProgress?.getPlatformUsageTime
-        ? window.InkluaGameProgress.getPlatformUsageTime()
-        : Math.max(Number(progress.totalTimeMs) || 0, 0);
->>>>>>> origin/main
     const answeredSessions = sessions.filter((session) => typeof session.correct === "boolean");
     const correctTotal = games.reduce((sum, game) => sum + Math.max(Number(game.correct) || 0, 0), 0);
     const wrongTotal = games.reduce((sum, game) => sum + Math.max(Number(game.wrong) || 0, 0), 0);
@@ -1135,9 +1133,7 @@ const renderConsolidatedReport = () => {
     const mostUsedSkill = Object.entries(skillCount).sort((a, b) => b[1] - a[1])[0]?.[0] || "";
     const usageLabel = getUsageLabel(activeDays, recentSessions.length);
     const developmentSummary = getDevelopmentSummary({ games, completedGames, accuracy, activeDays });
-    const levelSummary = getLevelSummary(games);
 
-<<<<<<< HEAD
     document.getElementById("attemptsMetric")?.replaceChildren(document.createTextNode(String(attemptsTotal)));
     document.getElementById("attemptsMetricText")?.replaceChildren(document.createTextNode(`${games.length} jogo(s) com registro de uso.`));
     document.getElementById("correctMetric")?.replaceChildren(document.createTextNode(String(correctTotal)));
@@ -1154,18 +1150,6 @@ const renderConsolidatedReport = () => {
     document.getElementById("usageFrequencyText")?.replaceChildren(document.createTextNode(`${activeDays} dia(s) de uso recente.`));
     document.getElementById("developmentMetric")?.replaceChildren(document.createTextNode(developmentSummary.label));
     document.getElementById("developmentMetricText")?.replaceChildren(document.createTextNode(developmentSummary.text));
-=======
-    document.getElementById("completedActivitiesMetric")?.replaceChildren(document.createTextNode(`${correctAnswers} acerto(s)`));
-    document.getElementById("completedActivitiesText")?.replaceChildren(document.createTextNode(`${wrongAnswers} erro(s). ${completedGames} de ${totalGames} atividades concluidas.`));
-    document.getElementById("usageFrequencyMetric")?.replaceChildren(document.createTextNode(formatDuration(totalPlatformTime)));
-    document.getElementById("usageFrequencyText")?.replaceChildren(document.createTextNode(`${usageLabel}. ${activeDays} dia(s) de uso recente.`));
-    document.getElementById("developmentMetric")?.replaceChildren(document.createTextNode(`Fase ${levelSummary.highestLevel}`));
-    document.getElementById("developmentMetricText")?.replaceChildren(document.createTextNode(
-        games.length
-            ? `${levelSummary.advancedGames} jogo(s) ja avancaram de fase. ${developmentSummary.text}`
-            : developmentSummary.text
-    ));
->>>>>>> origin/main
     document.getElementById("qualitativeDevelopmentText")?.replaceChildren(document.createTextNode(getQualitativeDevelopment({
         games,
         completedGames,
@@ -1183,13 +1167,17 @@ renderReportRecommendations(savedFormAnswers);
 renderConsolidatedReport();
 
 document.addEventListener("click", (event) => {
-    const link = event.target instanceof Element ? event.target.closest("a[href^='#']") : null;
+    const link = event.target instanceof Element ? event.target.closest("a[href]") : null;
 
     if (!(link instanceof HTMLAnchorElement)) {
         return;
     }
 
-    const viewName = link.getAttribute("href")?.replace("#", "") || "";
+    const href = link.getAttribute("href") || "";
+    const url = new URL(href, window.location.href);
+    const hashView = url.hash.replace("#", "");
+    const pathView = routeToView[normalizeRoutePath(url.pathname)];
+    const viewName = availableViews.includes(hashView) ? hashView : pathView;
 
     if (!availableViews.includes(viewName)) {
         return;

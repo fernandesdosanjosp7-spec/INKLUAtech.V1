@@ -72,17 +72,18 @@ const speakNumber = (number) => {
         return;
     }
 
+    if (window.InkluaSpeech?.speak) {
+        window.InkluaSpeech.speak(String(number), { interrupt: true, rate: 1, pitch: 1.16 });
+        return;
+    }
+
     const utterance = createFastUtterance(String(number));
 
-<<<<<<< HEAD
     if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
         window.speechSynthesis.cancel();
     }
 
     window.speechSynthesis.resume?.();
-=======
-    const utterance = window.InkluaSpeech?.createUtterance(String(number)) || new SpeechSynthesisUtterance(String(number));
->>>>>>> origin/main
     window.speechSynthesis.speak(utterance);
 };
 

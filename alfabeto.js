@@ -211,11 +211,19 @@ const pickMessage = (messages, lastMessage) => {
 };
 
 const getSuccessMessage = () => {
+    if (window.InkluaFeedback?.getPositivePhrase) {
+        return window.InkluaFeedback.getPositivePhrase();
+    }
+
     lastSuccessMessage = pickMessage(successMessages, lastSuccessMessage);
     return lastSuccessMessage;
 };
 
 const getTryAgainMessage = () => {
+    if (window.InkluaFeedback?.getEncouragementPhrase) {
+        return window.InkluaFeedback.getEncouragementPhrase();
+    }
+
     lastTryAgainMessage = pickMessage(tryAgainMessages, lastTryAgainMessage);
     return lastTryAgainMessage;
 };
@@ -227,9 +235,18 @@ const speakText = (text, options = {}) => {
         return;
     }
 
+    if (window.InkluaSpeech?.speak) {
+        window.InkluaSpeech.speak(text, {
+            rate: options.rate ?? 0.82,
+            pitch: options.pitch ?? 1.16,
+            interrupt: options.interrupt ?? true,
+            onEnd: options.onEnd
+        });
+        return;
+    }
+
     refreshVoice();
 
-<<<<<<< HEAD
     if (window.speechSynthesis.getVoices().length === 0) {
         window.setTimeout(() => speakText(text, options), 300);
         return;
@@ -244,10 +261,6 @@ const speakText = (text, options = {}) => {
     }
 
     window.speechSynthesis.resume?.();
-=======
-    const letterName = letterNames[letter] || letter;
-    const utterance = window.InkluaSpeech?.createUtterance(`${letterName}.`) || new SpeechSynthesisUtterance(`${letterName}.`);
->>>>>>> origin/main
     window.speechSynthesis.speak(utterance);
 };
 
@@ -338,10 +351,25 @@ const setNextTarget = () => {
     scheduleHelp();
 };
 
-const showLetter = (letter) => {
+const scrollAssociationIntoView = () => {
+    if (!alphabetDisplay) {
+        return;
+    }
+
+    window.requestAnimationFrame(() => {
+        alphabetDisplay.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+            inline: "nearest"
+        });
+    });
+};
+
+const showLetter = (letter, options = {}) => {
     const association = alphabetAssociations[letter];
 
     if (alphabetDisplay) {
+        alphabetDisplay.classList.remove("is-revealing");
         alphabetDisplay.innerHTML = `
             <div class="alphabet-card" style="--alphabet-accent: ${association?.color || "#64b5ff"}">
                 <span class="alphabet-card__letter" aria-hidden="true">${letter}</span>
@@ -351,6 +379,14 @@ const showLetter = (letter) => {
                 <strong>${letter} de ${association?.displayWord || letter}</strong>
             </div>
         `;
+
+        window.requestAnimationFrame(() => {
+            alphabetDisplay.classList.add("is-revealing");
+        });
+    }
+
+    if (options.scroll) {
+        scrollAssociationIntoView();
     }
 };
 
@@ -370,7 +406,7 @@ const selectLetter = (button) => {
     window.clearTimeout(nextTargetTimer);
     clearSelection();
     button.classList.add("is-selected", "is-correct");
-    showLetter(letter);
+    showLetter(letter, { scroll: true });
 
     setFeedback(`${letter} de ${association?.displayWord || letter}. ${successMessage}`, "success");
     speakAssociation(letter, true, successMessage);

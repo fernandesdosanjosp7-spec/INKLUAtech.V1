@@ -3,7 +3,7 @@ const gameFeedback = document.querySelector(".game-feedback");
 
 const speakRoutine = (text) => {
     if (window.InkluaSpeech?.speak) {
-        window.InkluaSpeech.speak(text);
+        window.InkluaSpeech.speak(text, { interrupt: true });
         return;
     }
 
@@ -26,19 +26,23 @@ choiceButtons.forEach((button) => {
             return;
         }
 
-        gameFeedback.textContent = button.dataset.correct === "true"
-            ? "Muito bem! Essa escolha combina com a situa\u00e7\u00e3o."
-            : "Boa tentativa. Escolha outra op\u00e7\u00e3o para continuar.";
-        speakRoutine(button.dataset.correct === "true"
-            ? "Muito bem! Essa escolha combina com a situa\u00e7\u00e3o."
-            : "Boa tentativa. Escolha outra op\u00e7\u00e3o para continuar.");
+        const isCorrect = button.dataset.correct === "true";
+        const phrase = isCorrect
+            ? window.InkluaFeedback?.getPositivePhrase?.() || "Voce acertou!"
+            : window.InkluaFeedback?.getEncouragementPhrase?.() || "Boa tentativa, vamos continuar!";
+        const detail = isCorrect
+            ? "Essa escolha combina com a situacao."
+            : "Escolha outra opcao para continuar.";
+
+        gameFeedback.textContent = `${phrase} ${detail}`;
+        speakRoutine(`${phrase} ${detail}`);
 
         window.InkluaGameProgress?.record("rotina", {
             title: "Sequência da Rotina",
             skill: "Interação social",
             item: button.textContent.trim(),
-            correct: button.dataset.correct === "true",
-            completed: button.dataset.correct === "true",
+            correct: isCorrect,
+            completed: isCorrect,
             totalItems: 1
         });
     });

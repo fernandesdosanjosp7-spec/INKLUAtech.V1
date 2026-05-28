@@ -12,16 +12,56 @@ let isAnswerLocked = false;
 let speechRequestId = 0;
 let nextQuestionTimer = null;
 
+const waitForSpeechVoices = (callback) => {
+    if (!("speechSynthesis" in window) || window.speechSynthesis.getVoices().length > 0) {
+        callback();
+        return;
+    }
+
+    let didRun = false;
+    const runOnce = () => {
+        if (didRun) {
+            return;
+        }
+
+        didRun = true;
+        window.speechSynthesis.removeEventListener?.("voiceschanged", runOnce);
+        callback();
+    };
+
+    window.speechSynthesis.addEventListener?.("voiceschanged", runOnce);
+    window.setTimeout(runOnce, 500);
+};
+
+if ("speechSynthesis" in window) {
+    window.speechSynthesis.getVoices();
+}
+
 const scheduleNextQuestion = (delay = 350) => {
     window.clearTimeout(nextQuestionTimer);
     nextQuestionTimer = window.setTimeout(renderQuestion, delay);
 };
 
-const speakColor = (colorName, onEnd) => {
+const speakColor = (colorName, onEnd, options = {}) => {
+    if (window.InkluaSpeech?.speak) {
+        window.InkluaSpeech.speak(`${colorName}.`, {
+            rate: options.rate ?? 0.9,
+            pitch: 1.16,
+            interrupt: options.interrupt,
+            onEnd
+        });
+        return;
+    }
+
     if (!("speechSynthesis" in window)) {
         if (typeof onEnd === "function") {
             window.setTimeout(onEnd, 650);
         }
+        return;
+    }
+
+    if (options.waitForVoices && window.speechSynthesis.getVoices().length === 0) {
+        waitForSpeechVoices(() => speakColor(colorName, onEnd, { ...options, waitForVoices: false }));
         return;
     }
 
@@ -40,34 +80,15 @@ const speakColor = (colorName, onEnd) => {
         }
     };
 
-    if (window.InkluaSpeech?.speak) {
-        window.InkluaSpeech.speak(`${colorName}.`, {
-            rate: 0.78,
-            pitch: 1.16,
-            onEnd: finishSpeech
-        });
-
-        if (typeof onEnd === "function") {
-            const fallbackDelay = Math.max(1200, String(colorName).length * 90);
-            window.setTimeout(finishSpeech, fallbackDelay);
-        }
-
-        return;
-    }
-
     window.speechSynthesis.cancel();
+    window.speechSynthesis.resume();
 
-<<<<<<< HEAD
-    const utterance = window.InkluaSpeech?.createUtterance(`${colorName}.`, { rate: 0.78 }) || new SpeechSynthesisUtterance(`${colorName}.`);
+    const utterance = window.InkluaSpeech?.createUtterance(`${colorName}.`, { rate: 0.9 }) || new SpeechSynthesisUtterance(`${colorName}.`);
     utterance.lang = utterance.lang || "pt-BR";
-    utterance.rate = 0.78;
+    utterance.rate = 0.9;
     utterance.pitch = 1.16;
     utterance.onend = finishSpeech;
     utterance.onerror = utterance.onend;
-
-=======
-    const utterance = window.InkluaSpeech?.createUtterance(`${colorName}.`) || new SpeechSynthesisUtterance(`${colorName}.`);
->>>>>>> origin/main
     window.speechSynthesis.speak(utterance);
 
     if (typeof onEnd === "function") {
@@ -78,7 +99,7 @@ const speakColor = (colorName, onEnd) => {
 
 const shuffle = (items) => [...items].sort(() => Math.random() - 0.5);
 const getLevel = () => Math.min(Math.floor(answeredQuestions / 5) + 1, 6);
-const getLevelColors = () => colors.slice(0, Math.min(2 + (getLevel() * 2), colors.length));
+const getLevelColors = () => colors.slice(0, Math.min(6 + (getLevel() * 2), colors.length));
 
 const renderQuestion = () => {
     window.clearTimeout(nextQuestionTimer);
@@ -101,7 +122,7 @@ const renderQuestion = () => {
         button.classList.remove("is-selected", "is-correct", "is-wrong");
     });
 
-    speakColor(`Encontre ${currentTarget.name}`);
+    speakColor(`Encontre ${currentTarget.name}`, null, { waitForVoices: true });
 };
 
 colorButtons.forEach((button) => {
@@ -122,15 +143,26 @@ colorButtons.forEach((button) => {
             item.disabled = true;
         });
 
+        const feedbackPhrase = window.InkluaFeedback
+            ? (isCorrect ? window.InkluaFeedback.getPositivePhrase() : window.InkluaFeedback.getEncouragementPhrase())
+            : (isCorrect ? "Voce acertou!" : "Boa tentativa, vamos continuar!");
+        const feedbackDetail = isCorrect
+            ? ""
+            : `A cor era ${currentTarget?.name}.`;
+
         if (colorDisplay) {
             colorDisplay.innerHTML = `
                 <span class="game-level-pill">Nivel ${getLevel()}</span>
                 <span class="color-display__swatch" style="--color-swatch: ${colorValue}"></span>
-                <strong>${isCorrect ? "Acertou" : `Era ${currentTarget?.name}`}</strong>
+                <strong>${feedbackPhrase}</strong>
             `;
+            colorDisplay.classList.remove("is-celebrating");
+
+            if (isCorrect) {
+                window.requestAnimationFrame(() => colorDisplay.classList.add("is-celebrating"));
+            }
         }
 
-        speakColor(isCorrect ? `Muito bem. ${colorName}` : `Tudo bem. Voce consegue. A cor era ${currentTarget?.name}`);
         window.InkluaGameProgress?.record("cores", {
             title: "Jogo das Cores",
             skill: "Reconhecimento de cores",
@@ -145,7 +177,19 @@ colorButtons.forEach((button) => {
         });
 
         answeredQuestions += 1;
-        scheduleNextQuestion(isCorrect ? 2200 : 7200);
+        const finishFeedback = () => scheduleNextQuestion(isCorrect ? 650 : 1200);
+
+        if (window.InkluaSpeech?.speak) {
+            window.InkluaSpeech.speak(`${feedbackPhrase} ${feedbackDetail}`.trim(), {
+                rate: 0.86,
+                pitch: 1.16,
+                interrupt: true,
+                onEnd: finishFeedback
+            });
+            return;
+        }
+
+        speakColor(`${feedbackPhrase} ${feedbackDetail}`.trim(), finishFeedback, { interrupt: true, rate: 0.86 });
     });
 });
 

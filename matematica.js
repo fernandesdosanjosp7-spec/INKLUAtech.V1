@@ -140,6 +140,14 @@ const motivationalMessages = {
 const lastMotivationalMessage = {};
 
 const getMotivationalMessage = (type) => {
+    if (type === "correct" && window.InkluaFeedback?.getPositivePhrase) {
+        return window.InkluaFeedback.getPositivePhrase();
+    }
+
+    if ((type === "wrong" || type === "retry") && window.InkluaFeedback?.getEncouragementPhrase) {
+        return window.InkluaFeedback.getEncouragementPhrase();
+    }
+
     const messages = motivationalMessages[type] || motivationalMessages.retry;
     const availableMessages = messages.filter((message) => message !== lastMotivationalMessage[type]);
     const options = availableMessages.length ? availableMessages : messages;
@@ -242,6 +250,12 @@ const scoreFemaleVoice = (voice) => {
 const getFemaleVoice = () => {
     if (!("speechSynthesis" in window)) return null;
 
+    const sharedFemaleVoice = window.InkluaSpeech?.getFemaleVoice?.();
+
+    if (sharedFemaleVoice) {
+        return sharedFemaleVoice;
+    }
+
     const voices = window.speechSynthesis.getVoices();
     const portugueseVoices = voices.filter((voice) => voice.lang?.toLowerCase().startsWith("pt"));
 
@@ -286,16 +300,35 @@ const savePreferences = () => {
     }));
 };
 
-const speak = (text) => {
-    if (!elements.voice.checked || !("speechSynthesis" in window)) return;
+const speak = (text, options = {}) => {
+    if (!elements.voice.checked || !("speechSynthesis" in window)) {
+        options.onEnd?.();
+        return;
+    }
+
+    if (window.InkluaSpeech?.speak) {
+        window.InkluaSpeech.speak(text, {
+            rate: 0.86,
+            pitch: 1.16,
+            interrupt: options.interrupt,
+            onEnd: options.onEnd
+        });
+        return;
+    }
 
     speechRequestId += 1;
     const currentRequestId = speechRequestId;
     const speakNow = () => {
         if (currentRequestId !== speechRequestId) return;
 
-        window.speechSynthesis.cancel();
-        window.speechSynthesis.speak(createFemaleUtterance(text));
+        if (options.interrupt) {
+            window.speechSynthesis.cancel();
+        }
+
+        const utterance = createFemaleUtterance(text);
+        utterance.onend = options.onEnd;
+        utterance.onerror = options.onEnd;
+        window.speechSynthesis.speak(utterance);
     };
 
     if (window.speechSynthesis.getVoices().length > 0) {
@@ -459,7 +492,7 @@ const renderErrorFeedback = (selectedAnswer) => {
         </article>
     `;
     elements.guide.textContent = message;
-    speak(`${message} ${explanation.speech} ${retryMessage}`);
+    speak(`${message} ${explanation.speech} ${retryMessage}`, { interrupt: true, onEnd: scheduleNextQuestion });
 };
 
 const updateAdaptiveDifficulty = (wasCorrect) => {
@@ -572,11 +605,10 @@ const answerQuestion = (answer, button) => {
         elements.feedback.textContent = finalFeedback;
         elements.guide.textContent = phaseMessage || feedback;
         playTone(true);
-        speak(finalFeedback);
+        speak(finalFeedback, { interrupt: true, onEnd: scheduleNextQuestion });
         recordProgress(true);
         updatePanel();
         elements.next.disabled = true;
-        scheduleNextQuestion();
         return;
     } else {
         state.wrong += 1;
@@ -591,7 +623,6 @@ const answerQuestion = (answer, button) => {
         recordProgress(false);
         updatePanel();
         elements.next.disabled = true;
-        scheduleNextQuestion();
     }
 };
 

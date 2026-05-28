@@ -34,12 +34,6 @@ const recoveryMessages = {
 };
 const recoveryCodeStorageKey = "inklua_recovery_code";
 
-const canUsePhpBackend = () => {
-    const port = Number(window.location.port);
-    const isLiveServer = port >= 5500 && port <= 5599;
-    return window.location.protocol !== "file:" && !isLiveServer;
-};
-
 const normalizeCpfValue = (value) => String(value || "").replace(/\D/g, "");
 const normalizeEmailValue = (value) => String(value || "").trim().toLowerCase();
 const normalizeCodeValue = (value) => String(value || "").replace(/\D/g, "").slice(0, 6);
@@ -218,10 +212,10 @@ const validateStoredRecovery = () => {
 };
 
 const canUsePhpBackend = () => {
-    const protocol = window.location.protocol;
-    const staticServerPorts = new Set(["5500", "5501"]);
+    const port = Number(window.location.port);
+    const isLiveServer = port >= 5500 && port <= 5599;
 
-    return protocol !== "file:" && !staticServerPorts.has(window.location.port);
+    return window.location.protocol !== "file:" && !isLiveServer;
 };
 
 const collectRegisterAnswers = (form) => {
@@ -423,11 +417,12 @@ const showBackendResetStatus = () => {
 registerForm?.addEventListener("submit", (event) => {
     localStorage.setItem(formStorageKey, JSON.stringify(collectRegisterAnswers(registerForm)));
 
-<<<<<<< HEAD
-    if (!canUsePhpBackend()) {
-        event.preventDefault();
-        window.location.href = "home.html#formulario";
+    if (canUsePhpBackend() && registerForm.method.toLowerCase() === "post" && registerForm.action.includes("auth.php")) {
+        return;
     }
+
+    event.preventDefault();
+    window.location.href = "home.html#formulario";
 });
 
 entryLoginForm?.addEventListener("submit", (event) => {
@@ -442,27 +437,12 @@ entryLoginForm?.addEventListener("submit", (event) => {
         return;
     }
 
-    if (!canUsePhpBackend()) {
-        event.preventDefault();
-        validateStoredLogin();
-    }
-=======
-    if (canUsePhpBackend() && registerForm.method.toLowerCase() === "post" && registerForm.action.includes("auth.php")) {
-        return;
-    }
-
-    event.preventDefault();
-    window.location.href = "home.html#formulario";
-});
-
-entryLoginForm?.addEventListener("submit", (event) => {
     if (canUsePhpBackend() && entryLoginForm.method.toLowerCase() === "post" && entryLoginForm.action.includes("auth.php")) {
         return;
     }
 
     event.preventDefault();
-    window.location.href = "home.html";
->>>>>>> origin/main
+    validateStoredLogin();
 });
 
 entryRecoveryForm?.addEventListener("submit", (event) => {

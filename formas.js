@@ -6,6 +6,11 @@ const speakShape = (shapeName) => {
         return;
     }
 
+    if (window.InkluaSpeech?.speak) {
+        window.InkluaSpeech.speak(`Forma ${shapeName}.`, { interrupt: true });
+        return;
+    }
+
     window.speechSynthesis.cancel();
 
     const utterance = window.InkluaSpeech?.createUtterance(`Forma ${shapeName}.`) || new SpeechSynthesisUtterance(`Forma ${shapeName}.`);

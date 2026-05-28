@@ -320,11 +320,8 @@ const reportData = {
     ],
     weekly: getWeeklyEvolution(),
     activities: getActivityDistribution(),
-<<<<<<< HEAD
-=======
     platformStats,
     bnccAlignment,
->>>>>>> origin/main
     skills: [
         getSkillScore("Comunicação"),
         getSkillScore("Coordenação motora"),
@@ -468,7 +465,6 @@ if (gameMetricsGrid) {
 if (gamesReportGrid) {
     if (games.length) {
         gamesReportGrid.innerHTML = games.map((game) => {
-<<<<<<< HEAD
             const attempts = Number(game.attempts) || (Number(game.correct) || 0) + (Number(game.wrong) || 0);
             const correct = Number(game.correct) || 0;
             const wrong = Number(game.wrong) || 0;
@@ -478,39 +474,21 @@ if (gamesReportGrid) {
             const progress = Math.min(Math.round((explored / totalItems) * 100), 100);
             const gameSessions = sessions.filter((session) => session.gameId === game.id);
             const gameTimeMs = gameSessions.reduce((sum, session) => sum + Math.max(Number(session.responseTimeMs) || 0, 0), 0);
-=======
-            const totalItems = Math.max(Number(game.totalItems) || 1, 1);
-            const explored = Math.min(game.items?.length || 0, totalItems);
-            const correct = Number(game.correct) || 0;
-            const wrong = Number(game.wrong) || 0;
-            const accuracyTotal = (game.correct || 0) + (game.wrong || 0);
-            const accuracy = accuracyTotal ? Math.round((correct / accuracyTotal) * 100) : 100;
             const level = getGameLevel(game);
             const remaining = getCorrectToNextLevel(game);
->>>>>>> origin/main
 
             return `
                 <article class="game-report-card">
                     <strong>${game.title}</strong>
-<<<<<<< HEAD
-                    <p>${game.skill} - nivel ${game.level || 1}</p>
+                    <p>${game.skill}. Fase atual: ${level}. Acertou ${correct} e errou ${wrong} pergunta(s).</p>
                     <span class="game-report-card__bar" aria-hidden="true"><span style="width: ${progress}%"></span></span>
                     <div class="game-report-card__meta">
                         <span>${explored}/${totalItems} perguntas</span>
                         <span>${correct} acertos</span>
                         <span>${wrong} erros</span>
                         <span>${accuracy}% acerto</span>
-                        <span>${formatDuration(gameTimeMs)} respondendo</span>
-=======
-                    <p>${game.skill}. Fase atual: ${level}. Acertou ${correct} e errou ${wrong} pergunta(s).</p>
-                    <div class="game-report-card__meta">
-                        <span>Fase ${level}</span>
-                        <span>${correct} acerto(s)</span>
-                        <span>${wrong} erro(s)</span>
-                        <span>${explored}/${totalItems} itens</span>
-                        <span>${accuracy}% acerto</span>
                         <span>${remaining} para avancar</span>
->>>>>>> origin/main
+                        <span>${formatDuration(gameTimeMs)} respondendo</span>
                         <span>${game.completed ? "Concluido" : "Em andamento"}</span>
                     </div>
                 </article>
@@ -645,8 +623,6 @@ const createCharts = () => {
 
 createCharts();
 
-<<<<<<< HEAD
-=======
 const getNotes = () => document.getElementById("teacherNotes")?.value.trim() || "";
 
 const canSyncReport = () => {
@@ -681,13 +657,10 @@ const scheduleReportSave = () => {
 document.getElementById("teacherNotes")?.addEventListener("input", scheduleReportSave);
 window.addEventListener("pagehide", saveReportToServer);
 
->>>>>>> origin/main
 document.getElementById("pdfButton")?.addEventListener("click", () => {
     saveReportToServer();
     window.print();
 });
-<<<<<<< HEAD
-=======
 
 document.getElementById("shareButton")?.addEventListener("click", async () => {
     const shareData = {
@@ -723,4 +696,3 @@ document.getElementById("exportButton")?.addEventListener("click", () => {
     link.click();
     URL.revokeObjectURL(url);
 });
->>>>>>> origin/main
