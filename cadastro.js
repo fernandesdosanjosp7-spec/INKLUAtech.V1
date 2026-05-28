@@ -1,6 +1,14 @@
 const formStorageKey = "inklua_formulario_adaptacao";
 const registerForm = document.querySelector(".entry-register-form");
 const entryLoginForm = document.querySelector(".entry-login-form");
+const entryLoginCpf = entryLoginForm?.querySelector('input[name="cpf"]');
+const entryLoginPassword = entryLoginForm?.querySelector('input[name="password"]');
+const entryLoginError = document.getElementById("entryLoginError");
+const loginErrorMessages = {
+    cpf: "CPF n\u00e3o cadastrado.",
+    senha: "Senha incorreta.",
+    required: "Preencha o CPF e a senha para continuar."
+};
 
 const canUsePhpBackend = () => {
     const staticServerPorts = new Set(["5500", "5501"]);
@@ -121,6 +129,46 @@ const setupAgeInput = (input) => {
     }, { passive: false });
 };
 
+const showEntryLoginError = (message, fields = []) => {
+    if (!entryLoginError) {
+        return;
+    }
+
+    entryLoginError.textContent = message;
+    fields.forEach((field) => field?.classList.add("is-invalid"));
+    fields[0]?.focus();
+};
+
+const clearEntryLoginError = () => {
+    if (entryLoginError) {
+        entryLoginError.textContent = "";
+    }
+
+    entryLoginCpf?.classList.remove("is-invalid");
+    entryLoginPassword?.classList.remove("is-invalid");
+};
+
+const showBackendLoginError = () => {
+    const params = new URLSearchParams(window.location.search);
+    const errorCode = params.get("login_error");
+
+    if (!errorCode || !loginErrorMessages[errorCode]) {
+        return;
+    }
+
+    if (errorCode === "cpf") {
+        showEntryLoginError(loginErrorMessages[errorCode], [entryLoginCpf]);
+        return;
+    }
+
+    if (errorCode === "senha") {
+        showEntryLoginError(loginErrorMessages[errorCode], [entryLoginPassword]);
+        return;
+    }
+
+    showEntryLoginError(loginErrorMessages[errorCode], [entryLoginCpf, entryLoginPassword]);
+};
+
 registerForm?.addEventListener("submit", (event) => {
     localStorage.setItem(formStorageKey, JSON.stringify(collectRegisterAnswers(registerForm)));
 
@@ -131,12 +179,16 @@ registerForm?.addEventListener("submit", (event) => {
 });
 
 entryLoginForm?.addEventListener("submit", (event) => {
+    clearEntryLoginError();
     localStorage.setItem(formStorageKey, localStorage.getItem(formStorageKey) || "{}");
 
-    if (!canUsePhpBackend()) {
+    const emptyFields = [entryLoginCpf, entryLoginPassword].filter((field) => !field?.value.trim());
+
+    if (emptyFields.length > 0) {
         event.preventDefault();
-        window.location.href = "home.html";
+        showEntryLoginError(loginErrorMessages.required, emptyFields);
     }
 });
 
 document.querySelectorAll('input[name="aluno_idade"]').forEach(setupAgeInput);
+showBackendLoginError();

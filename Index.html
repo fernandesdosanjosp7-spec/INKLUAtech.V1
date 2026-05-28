@@ -110,6 +110,7 @@
 
                 <form class="entry-login-form" action="auth.php" method="post">
                     <input type="hidden" name="action" value="login">
+                    <input type="hidden" name="login_source" value="Index.html">
                     <div class="entry-login-form__group">
                         <label for="cpf">CPF</label>
                         <input
@@ -119,6 +120,7 @@
                             placeholder="000.000.000-00"
                             autocomplete="username"
                             inputmode="numeric"
+                            aria-describedby="entryLoginError"
                             required
                         >
                     </div>
@@ -131,9 +133,12 @@
                             name="password"
                             placeholder="Digite sua senha"
                             autocomplete="current-password"
+                            aria-describedby="entryLoginError"
                             required
                         >
                     </div>
+
+                    <p class="entry-login-form__error" id="entryLoginError" aria-live="polite"></p>
 
                     <button class="entry-login-form__button" type="submit">Entrar</button>
                 </form>

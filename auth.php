@@ -14,6 +14,15 @@ function requirePostAction(string $expected): bool
     return ($_SERVER["REQUEST_METHOD"] ?? "") === "POST" && ($_POST["action"] ?? "") === $expected;
 }
 
+function loginErrorPath(string $code): string
+{
+    $source = basename((string) ($_POST["login_source"] ?? "Index.html"));
+    $page = $source === "login.html" ? "login.html" : "Index.html";
+    $hash = $page === "Index.html" ? "#login" : "";
+
+    return $page . "?login_error=" . rawurlencode($code) . $hash;
+}
+
 try {
     $pdo = getDatabase();
 
@@ -138,19 +147,27 @@ try {
 
     if (requirePostAction("login")) {
         $cpf = normalizeCpf($_POST["cpf"] ?? "");
-        $password = $_POST["password"] ?? "";
+        $password = (string) ($_POST["password"] ?? "");
+
+        if ($cpf === "" || trim($password) === "") {
+            redirectTo(loginErrorPath("required"));
+        }
 
         $stmt = $pdo->prepare("SELECT id, senha_hash, senha FROM usuarios WHERE cpf = :cpf ORDER BY id DESC LIMIT 1");
         $stmt->execute([":cpf" => $cpf]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
+        if (!$user) {
+            redirectTo(loginErrorPath("cpf"));
+        }
+
         $validPassword = false;
 
-        if ($user && !empty($user["senha_hash"])) {
+        if (!empty($user["senha_hash"])) {
             $validPassword = password_verify($password, $user["senha_hash"]);
         }
 
-        if ($user && !$validPassword && !empty($user["senha"]) && hash_equals($user["senha"], $password)) {
+        if (!$validPassword && !empty($user["senha"]) && hash_equals($user["senha"], $password)) {
             $validPassword = true;
             $stmt = $pdo->prepare("UPDATE usuarios SET senha_hash = :senha_hash, senha = '' WHERE id = :id");
             $stmt->execute([
@@ -159,8 +176,8 @@ try {
             ]);
         }
 
-        if (!$user || !$validPassword) {
-            redirectTo("Index.html#login");
+        if (!$validPassword) {
+            redirectTo(loginErrorPath("senha"));
         }
 
         $_SESSION["user_id"] = (int) $user["id"];

@@ -687,6 +687,21 @@ a {
     box-shadow: 0 0 0 4px rgba(95, 227, 177, 0.28);
 }
 
+.entry-login-form__group input.is-invalid {
+    border-color: #a34843;
+    background: #fffafa;
+    box-shadow: 0 0 0 4px rgba(163, 72, 67, 0.12);
+}
+
+.entry-login-form__error {
+    min-height: 1.25rem;
+    margin: -0.25rem 0 0;
+    color: #a34843;
+    font-size: 0.9rem;
+    font-weight: 800;
+    line-height: 1.4;
+}
+
 .entry-login-form__button {
     min-height: 3.25rem;
     border: 0;
