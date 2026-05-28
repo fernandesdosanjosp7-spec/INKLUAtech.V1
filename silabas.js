@@ -68,6 +68,121 @@ let questionStartedAt = Date.now();
 
 const getLevel = () => Math.min(Math.floor(answeredQuestions / 5) + 1, 8);
 
+const letterSpeechNames = {
+    A: "á",
+    E: "ê",
+    I: "i",
+    O: "ó",
+    U: "u",
+    B: "bê",
+    C: "cê",
+    D: "dê",
+    F: "éfe",
+    G: "gê",
+    J: "jóta",
+    L: "éle",
+    M: "ême",
+    N: "êne",
+    P: "pê",
+    R: "érre",
+    S: "ésse",
+    T: "tê",
+    V: "vê",
+    Z: "zê"
+};
+
+const syllableSpeechNames = {
+    AI: "ai",
+    OI: "ói",
+    AU: "au",
+    EU: "êu",
+    UA: "uá",
+    BA: "bá",
+    BE: "bê",
+    BI: "bi",
+    BO: "bô",
+    CA: "cá",
+    CE: "cê",
+    CO: "cô",
+    DA: "dá",
+    DE: "dê",
+    DO: "dô",
+    FA: "fá",
+    FE: "fê",
+    FO: "fô",
+    GA: "gá",
+    GO: "gô",
+    JA: "já",
+    JO: "jó",
+    LA: "lá",
+    LE: "lê",
+    LO: "lô",
+    LU: "lu",
+    MA: "má",
+    ME: "mê",
+    MI: "mi",
+    MO: "mô",
+    NA: "ná",
+    NE: "nê",
+    NI: "ni",
+    NO: "nô",
+    PA: "pá",
+    PE: "pê",
+    PI: "pi",
+    PO: "pô",
+    RA: "rá",
+    RO: "rô",
+    RU: "ru",
+    SA: "sá",
+    SO: "sô",
+    SU: "su",
+    TA: "tá",
+    TO: "tô",
+    TU: "tu",
+    VE: "vê",
+    VA: "vá",
+    VO: "vô",
+    ZA: "zá",
+    ZI: "zi",
+    ZO: "zô",
+    CHA: "chá",
+    LHO: "lhô",
+    NHA: "nhá",
+    NHO: "nhô",
+    BRA: "brá",
+    PRE: "prê",
+    TRI: "tri",
+    CLO: "clô",
+    FLU: "flu",
+    GRA: "grá",
+    PLE: "plê",
+    DRO: "drô",
+    FRA: "frá",
+    CRU: "cru",
+    BLI: "bli",
+    GLA: "glá",
+    VRO: "vrô",
+    QUE: "quê"
+};
+
+const getSpokenChunk = (chunk) => {
+    const normalized = String(chunk || "").trim().toUpperCase();
+    return syllableSpeechNames[normalized] || letterSpeechNames[normalized] || normalized.toLowerCase();
+};
+
+const getSpokenLetters = (letters) => String(letters || "")
+    .split("+")
+    .map(getSpokenChunk)
+    .join(" mais ");
+
+const getSpokenAnswer = (round) => {
+    if (round.type === "word") {
+        return round.word;
+    }
+
+    return syllableSpeechNames[round.answer] || round.word || round.answer.toLowerCase();
+};
+
 const speakSyllable = (text) => {
     if (!("speechSynthesis" in window)) {
         return;
@@ -127,7 +242,7 @@ const renderRound = () => {
         <button class="syllable-option" type="button" data-option="${option}">${option}</button>
     `).join("");
 
-    speakSyllable(`${round.letters}. ${isWordRound ? "Qual palavra forma?" : "Qual som forma?"}`);
+    speakSyllable(`${getSpokenLetters(round.letters)}. ${isWordRound ? "Qual palavra forma?" : "Qual som forma?"}`);
 };
 
 const finishGame = () => {
@@ -170,7 +285,7 @@ const selectOption = (button) => {
         canContinue = true;
         nextSyllable.disabled = false;
         recordSyllable(round, selected, true);
-        speakSyllable(`${round.word}. Muito bem.`);
+        speakSyllable(`${getSpokenAnswer(round)}. Muito bem.`);
         return;
     }
 

@@ -16,6 +16,7 @@ const entryNewPasswordForm = document.getElementById("entryNewPasswordForm");
 const entryNewPassword = document.getElementById("entryNewPassword");
 const entryConfirmNewPassword = document.getElementById("entryConfirmNewPassword");
 const entryNewPasswordMessage = document.getElementById("entryNewPasswordMessage");
+const entrySaveNewPasswordButton = document.getElementById("entrySaveNewPasswordButton");
 const loginErrorMessages = {
     cpf: "CPF n\u00e3o cadastrado.",
     senha: "Senha incorreta.",
@@ -480,6 +481,12 @@ entryNewPasswordForm?.addEventListener("submit", (event) => {
 
     if (newPassword.trim().length < 4 || newPassword !== confirmPassword) {
         event.preventDefault();
+        saveStoredPassword();
+    }
+});
+
+entrySaveNewPasswordButton?.addEventListener("click", () => {
+    if (!canUsePhpBackend()) {
         saveStoredPassword();
     }
 });
