@@ -2,6 +2,7 @@ const vowelDisplay = document.getElementById("vowelDisplay");
 const vowelButtons = document.querySelectorAll(".vowel-letter");
 let selectedVoice = null;
 let speechWarmed = false;
+let questionStartedAt = Date.now();
 
 const vowelNames = {
     A: "a",
@@ -115,6 +116,19 @@ const selectVowel = (button) => {
     button.classList.add("is-selected", "is-correct");
     showVowel(letter);
     speakVowel(letter);
+    window.InkluaGameProgress?.record("vogais", {
+        title: "Vogais Faladas",
+        skill: "Alfabetizacao",
+        item: letter,
+        selected: letter,
+        question: `Vogal ${letter}`,
+        correct: true,
+        level: 1,
+        maxLevel: 1,
+        totalItems: vowelButtons.length,
+        responseTimeMs: Date.now() - questionStartedAt
+    });
+    questionStartedAt = Date.now();
 };
 
 vowelButtons.forEach((button) => {

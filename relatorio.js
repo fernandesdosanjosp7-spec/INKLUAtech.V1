@@ -11,9 +11,33 @@ Object.keys(defaultEvolution).forEach((key) => {
     defaultEvolution[key] = 0;
 });
 
+const normalizeGameProgress = (progress = {}) => {
+    progress = progress && typeof progress === "object" ? progress : {};
+
+    const normalized = {
+        ...progress,
+        games: progress.games && typeof progress.games === "object" ? progress.games : {},
+        sessions: Array.isArray(progress.sessions) ? progress.sessions : []
+    };
+
+    Object.values(normalized.games).forEach((game) => {
+        const gameSessions = normalized.sessions.filter((session) => session.gameId === game.id && typeof session.correct === "boolean");
+        const sessionCorrect = gameSessions.filter((session) => session.correct === true).length;
+        const sessionWrong = gameSessions.filter((session) => session.correct === false).length;
+        const storedCorrect = Math.max(Number(game.correct) || 0, 0);
+        const storedWrong = Math.max(Number(game.wrong) || 0, 0);
+
+        game.correct = Math.max(storedCorrect, sessionCorrect);
+        game.wrong = Math.max(storedWrong, sessionWrong);
+        game.attempts = Math.max(Number(game.attempts) || 0, game.correct + game.wrong, gameSessions.length);
+    });
+
+    return normalized;
+};
+
 const readGameProgress = () => {
     try {
-        return JSON.parse(localStorage.getItem("inklua_game_progress_v1")) || { games: {}, sessions: [] };
+        return normalizeGameProgress(JSON.parse(localStorage.getItem("inklua_game_progress_v1")) || { games: {}, sessions: [] });
     } catch (error) {
         return { games: {}, sessions: [] };
     }

@@ -52,9 +52,8 @@ try {
     if (requirePostAction("register")) {
         $cpf = normalizeCpf($_POST["cpf"] ?? "");
         $password = $_POST["senha"] ?? "";
-        $email = trim((string) ($_POST["email"] ?? ""));
 
-        if ($cpf === "" || $password === "" || $email === "" || empty($_POST["responsavel_nome"])) {
+        if ($cpf === "" || $password === "" || empty($_POST["responsavel_nome"])) {
             redirectTo("Index.html#cadastro");
         }
 
@@ -144,7 +143,7 @@ try {
         $now = date("c");
         $stmt->execute([
             ":nome" => $_POST["responsavel_nome"] ?? "",
-            ":email" => $email,
+            ":email" => null,
             ":cpf" => $cpf,
             ":senha_hash" => password_hash($password, PASSWORD_DEFAULT),
             ":responsavel_nome" => $_POST["responsavel_nome"] ?? "",

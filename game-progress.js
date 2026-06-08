@@ -170,10 +170,15 @@
         window.setTimeout(waitForVoices, 150);
     };
 
-    const normalizeProgress = (progress) => {
-        const normalized = progress || { games: {}, sessions: [] };
-        normalized.games = normalized.games || {};
-        normalized.sessions = Array.isArray(normalized.sessions) ? normalized.sessions : [];
+    const normalizeProgress = (progress = {}) => {
+        progress = progress && typeof progress === "object" ? progress : {};
+
+        const normalized = {
+            ...progress,
+            games: progress.games && typeof progress.games === "object" ? progress.games : {},
+            sessions: Array.isArray(progress.sessions) ? progress.sessions : [],
+            totalTimeMs: Math.max(Number(progress.totalTimeMs) || 0, 0)
+        };
 
         Object.values(normalized.games).forEach((game) => {
             const gameSessions = normalized.sessions.filter((session) => session.gameId === game.id && typeof session.correct === "boolean");
@@ -198,16 +203,16 @@
         }
     };
 
-    const normalizeProgress = (progress = {}) => ({
-        ...progress,
-        games: progress.games && typeof progress.games === "object" ? progress.games : {},
-        sessions: Array.isArray(progress.sessions) ? progress.sessions : [],
-        totalTimeMs: Math.max(Number(progress.totalTimeMs) || 0, 0)
-    });
+    const notifyProgressChanged = () => {
+        window.dispatchEvent(new CustomEvent("inklua:game-progress-updated", {
+            detail: { progress: readProgress() }
+        }));
+    };
 
     const saveProgress = (progress) => {
         const normalizedProgress = normalizeProgress(progress);
         localStorage.setItem(storageKey, JSON.stringify(normalizedProgress));
+        notifyProgressChanged();
         scheduleServerSync(normalizedProgress);
     };
 
@@ -221,14 +226,16 @@
     const mergeGameProgress = (localGame = {}, serverGame = {}) => {
         const items = uniqueValues([...(localGame.items || []), ...(serverGame.items || [])]);
         const correct = Math.max(Number(localGame.correct) || 0, Number(serverGame.correct) || 0);
+        const wrong = Math.max(Number(localGame.wrong) || 0, Number(serverGame.wrong) || 0);
         const levelState = getLevelState(correct);
 
         return {
             ...serverGame,
             ...localGame,
             interactions: Math.max(Number(localGame.interactions) || 0, Number(serverGame.interactions) || 0),
+            attempts: Math.max(Number(localGame.attempts) || 0, Number(serverGame.attempts) || 0, correct + wrong),
             correct,
-            wrong: Math.max(Number(localGame.wrong) || 0, Number(serverGame.wrong) || 0),
+            wrong,
             items,
             completed: Boolean(localGame.completed || serverGame.completed),
             totalItems: Math.max(Number(localGame.totalItems) || 0, Number(serverGame.totalItems) || 0, 1),
@@ -327,6 +334,7 @@
 
                 const mergedProgress = mergeProgress(readProgress(), payload.progress);
                 localStorage.setItem(storageKey, JSON.stringify(mergedProgress));
+                notifyProgressChanged();
                 syncProgressToServer(mergedProgress);
             })
             .catch(() => {});
@@ -518,6 +526,7 @@
 
         const mergedProgress = mergeProgress(readProgress(), serverProgress);
         localStorage.setItem(storageKey, JSON.stringify(mergedProgress));
+        notifyProgressChanged();
     };
 
     hydrateInitialServerProgress();

@@ -2,6 +2,7 @@ const numberDisplay = document.getElementById("numberDisplay");
 const numberButtons = document.querySelectorAll(".number-button");
 let selectedVoice = null;
 let speechWarmed = false;
+let questionStartedAt = Date.now();
 
 const selectFastVoice = () => {
     if (!("speechSynthesis" in window)) return null;
@@ -107,6 +108,19 @@ const selectNumber = (button) => {
     button.classList.add("is-selected", "is-correct");
     showNumber(number);
     speakNumber(number);
+    window.InkluaGameProgress?.record("numeros", {
+        title: "Numeros Falados",
+        skill: "Reconhecimento de numeros",
+        item: number,
+        selected: number,
+        question: `Numero ${number}`,
+        correct: true,
+        level: 1,
+        maxLevel: 1,
+        totalItems: numberButtons.length,
+        responseTimeMs: Date.now() - questionStartedAt
+    });
+    questionStartedAt = Date.now();
 };
 
 numberButtons.forEach((button) => {

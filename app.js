@@ -906,9 +906,61 @@ const renderReportRecommendations = (answers) => {
     `).join("");
 };
 
+const normalizeGameProgress = (progress = {}) => {
+    progress = progress && typeof progress === "object" ? progress : {};
+
+    const normalized = {
+        ...progress,
+        games: progress.games && typeof progress.games === "object" ? progress.games : {},
+        sessions: Array.isArray(progress.sessions) ? progress.sessions : []
+    };
+
+    normalized.sessions.forEach((session) => {
+        const gameId = session.gameId || "";
+
+        if (!gameId || !isVisibleGame(session)) {
+            return;
+        }
+
+        normalized.games[gameId] = normalized.games[gameId] || {
+            id: gameId,
+            title: session.title || gameId,
+            skill: session.skill || "",
+            interactions: 0,
+            attempts: 0,
+            correct: 0,
+            wrong: 0,
+            level: Number(session.level) || 1,
+            totalItems: 1,
+            completed: false
+        };
+    });
+
+    Object.entries(normalized.games).forEach(([gameId, game]) => {
+        game.id = game.id || gameId;
+
+        const gameSessions = normalized.sessions.filter((session) => {
+            return session.gameId === game.id && typeof session.correct === "boolean";
+        });
+        const sessionCorrect = gameSessions.filter((session) => session.correct === true).length;
+        const sessionWrong = gameSessions.filter((session) => session.correct === false).length;
+        const storedCorrect = Math.max(Number(game.correct) || 0, 0);
+        const storedWrong = Math.max(Number(game.wrong) || 0, 0);
+
+        game.correct = Math.max(storedCorrect, sessionCorrect);
+        game.wrong = Math.max(storedWrong, sessionWrong);
+        game.attempts = Math.max(Number(game.attempts) || 0, game.correct + game.wrong, gameSessions.length);
+        game.interactions = Math.max(Number(game.interactions) || 0, game.attempts, gameSessions.length);
+        game.level = Math.max(Number(game.level) || 1, 1);
+        game.totalItems = Math.max(Number(game.totalItems) || game.attempts || 1, 1);
+    });
+
+    return normalized;
+};
+
 const readGameProgress = () => {
     try {
-        return JSON.parse(localStorage.getItem("inklua_game_progress_v1")) || { games: {}, sessions: [] };
+        return normalizeGameProgress(JSON.parse(localStorage.getItem("inklua_game_progress_v1")) || { games: {}, sessions: [] });
     } catch (error) {
         return { games: {}, sessions: [] };
     }
@@ -1072,14 +1124,25 @@ const getGameDevelopmentScore = (game) => {
 };
 
 const getAreaDevelopmentScore = (gameMap, gameIds) => {
-    const scores = gameIds.map((gameId) => getGameDevelopmentScore(gameMap.get(gameId)));
+    const playedGames = gameIds
+        .map((gameId) => gameMap.get(gameId))
+        .filter((game) => {
+            const answered = Number(game?.attempts) || (Number(game?.correct) || 0) + (Number(game?.wrong) || 0);
+            return game && (answered > 0 || Number(game.interactions) > 0 || (game.items?.length || 0) > 0 || game.completed);
+        });
+
+    if (!playedGames.length) {
+        return 0;
+    }
+
+    const scores = playedGames.map((game) => getGameDevelopmentScore(game));
     const total = scores.reduce((sum, score) => sum + score, 0);
 
     return Math.round(total / Math.max(scores.length, 1));
 };
 
 const renderDevelopmentAreas = (games) => {
-    const gameMap = new Map(games.map((game) => [game.id, game]));
+    const gameMap = new Map(games.map((game) => [game.id || game.gameId, game]));
 
     document.querySelectorAll("[data-development-area]").forEach((area) => {
         const areaName = area.dataset.developmentArea || "";
@@ -1165,6 +1228,7 @@ const renderConsolidatedReport = () => {
 updateReportFields(savedFormAnswers);
 renderReportRecommendations(savedFormAnswers);
 renderConsolidatedReport();
+window.addEventListener("inklua:game-progress-updated", renderConsolidatedReport);
 
 document.addEventListener("click", (event) => {
     const link = event.target instanceof Element ? event.target.closest("a[href]") : null;
